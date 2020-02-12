@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" rel="stylesheet"
+        type='text/css'>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" type="text/css" href="static/css/index.css">
+
+    <script src="static/js/index.js"></script>
+</head>
+
+<body>
+    <div id="header">
+        <h1 class="evil center">Computer Security - Blue Team Game</h1>
+    </div>
+    <div id="middle">
+        <div id="leaderboard">
+            <h2 class="center pixel">Overall Leaders</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Taylor <i class="fas fa-certificate gold"></i></td>
+                        <td>17,120</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Seth <i class="fas fa-certificate silver"></i></td>
+                        <td>14,805</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Vinish <i class="fas fa-certificate bronze"></i></td>
+                        <td>14,584</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Dan <i class="fas fa-ribbon silver"></i></td>
+                        <td>8,088</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Diane <i class="fas fa-ribbon gold"></i></td>
+                        <td>7,774</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Iffy <i class="fas fa-shield-alt gold"></i></td>
+                        <td>7,739</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Megan <i class="fas fa-lock silver"></i></td>
+                        <td>5,565</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Adam <i class="fas fa-lock gold"></i></td>
+                        <td>4,866</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>Katie <i class="fas fa-shield-alt silver"></i></td>
+                        <td>3,836</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>Maris <i class="fas fa-lock bronze"></i></td>
+                        <td>3,360</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><button id="showmore">Show More <i class="fas fa-plus-circle"></i></button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="password-game" style="display: none;">
+            <div class="top-button">
+                <button id="back-button">Back</button>
+            </div>
+            <h2 class="center pixel">Password Platformer</h2>
+            <p class="atari">
+                For the first mini-game, we are planning to make a platformer game based around the idea of being able
+                to identify strong and weak passwords. We are planning to make a game similar to Super Mario where the
+                player moves across a world from left to right and jumps on platforms that have passwords written on
+                them. If the player jumps on a platform with a strong password, they will land safely and be able to
+                continue playing. If the player jumps on a platform with a weak password, the platform will break and
+                the player will fall, causing the game to end. Players will get points based on how far they are able to
+                go before falling and how many passwords they are able to identify as strong or weak.
+            </p>
+            <p class="atari">
+                This game will include levels, where initial levels are quite easy (bad passwords are very obvious, like
+                123456 or passw0rd, and good passwords are similarly easy to identify) progressing forwards to more
+                challenging levels, including passwords based on personal identifying information, common English words,
+                and more. The game will also include a continuous mode where there will be a similar difficulty
+                progression but it will happen as the user continues forward to the right. The challenge here will be
+                balancing the points so that users cannot run away on the leaderboard.
+            </p>
+            <button class="play">Play</button>
+        </div>
+        <div id="messages">
+            <h2 class="center pixel">Messages</h2>
+            <div id="messages-container">
+                <div id="messages-choose">
+                    <div class="message active">
+                        <h5 class="message-title">Free 100 points!</h5>
+                        <p class="from">From: tas127</p>
+                    </div>
+                    <div class="message">
+                        <h5 class="message-title">Check your onyen expiration</h5>
+                        <p class="from">From: dbarker</p>
+                    </div>
+                </div>
+                <div id="message-content">
+                    <p>Click <a href="#">here</a> to receive your 100 points!</p>
+                </div>
+            </div>
+        </div>
+        <div id="info">
+            <h2 class="center pixel">Overview</h2>
+            <p class="atari">
+                This is a collection of Cyber Security based games with an emphasis on social competitiveness.
+            </p>
+            <p class="atari">
+                The client envisions a game that can be played by his various customers, including UNC employees with
+                departments from Facilities to Groundskeeping, with sensitive information to improve their habits
+                online. A UNC onyen would be used to sign into the game and to link scores to an account. There are
+                differences in knowledge among the future users of the game across departments and even in a department
+                (e.g. a manager might have more experience online than someone in the field). One particular topic that
+                was emphasized by the client was not trusting the internet and not clicking the links because they often
+                install malware (spam identification). The client would like to discourage software installed games and
+                prioritize non flash browser games. The game should preferably be compatible with tablets since there
+                will be about 500 tablet-using faculty in the coming years. Finally, the client would also like us to
+                prioritize competition, as this aspect would drive usage and therefore learning, and modularity, since
+                there are many topics to teach and the game should be able to be handed to new developers for further
+                improvement at the end of the semester.
+            </p>
+            <p class="atari">
+                Our most important priority is to get the gamification of this project correct, since we want to keep
+                our users to stay engaged enough to learn the information. As Dan said, "Make it pretty, make it
+                interesting, make it businesslike."
+            </p>
+        </div>
+    </div>
+    <div id="games">
+        <button id="left-arrow" class="arrow">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button id="right-arrow" class="arrow">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <div id="game-cards">
+            <div class="game-card" id="password-card">
+                <div class="game-card-header">
+                    <h5>Password Platformer</h5>
+                </div>
+                <div class="game-card-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="game-card-text">
+                    <p>How good is your password?</p>
+                </div>
+            </div>
+            <div class="game-card disabled">
+                <div class="game-card-header">
+                    <h5>Computer Defense</h5>
+                </div>
+                <div class="game-card-icon">
+                    <i class="fas fa-chess-rook"></i>
+                </div>
+                <div class="game-card-text">
+                    <p>Tower defense gone cyber!</p>
+                </div>
+                <p>Coming soon!</p>
+            </div>
+            <div class="game-card disabled">
+                <div class="game-card-header">
+                    <h5>Jeopardy</h5>
+                </div>
+                <div class="game-card-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="game-card-text">
+                    <p>Test your knowledge!</p>
+                </div>
+                <p>Coming soon!</p>
+            </div>
+            <div class="game-card disabled">
+                <div class="game-card-header">
+                    <h5>Tap Tap Security</h5>
+                </div>
+                <div class="game-card-icon">
+                    <i class="fas fa-ribbon"></i>
+                </div>
+                <div class="game-card-text">
+                    <p>Tap on good practices, leave out the bad!</p>
+                </div>
+                <p>Coming soon!</p>
+            </div>
+            <div class="game-card disabled">
+                <div class="game-card-header">
+                    <h5>Security Shooter</h5>
+                </div>
+                <div class="game-card-icon">
+                    <i class="fas fa-meteor"></i>
+                </div>
+                <div class="game-card-text">
+                    <p>Bubble shooting with a twist!</p>
+                </div>
+                <p>Coming soon!</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
