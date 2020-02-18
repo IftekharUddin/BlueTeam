@@ -129,4 +129,8 @@ $(document).ready(function () {
     $('#showmore').on('click', function () {
         showMoreHandler();
     });
+
+    $('form').on('submit', function (eve) {
+        eve.preventDefault();
+    });
 });
