@@ -18,139 +18,223 @@
         <h1 class="evil center">Computer Security - Blue Team Game</h1>
     </div>
     <div id="middle">
-        <div id="leaderboard">
-            <h2 class="center pixel">Overall Leaders</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Player</th>
-                        <th>Score</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Taylor <i class="fas fa-certificate gold"></i></td>
-                        <td>17,120</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Seth <i class="fas fa-certificate silver"></i></td>
-                        <td>14,805</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Vinish <i class="fas fa-certificate bronze"></i></td>
-                        <td>14,584</td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>Dan <i class="fas fa-ribbon silver"></i></td>
-                        <td>8,088</td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td>Diane <i class="fas fa-ribbon gold"></i></td>
-                        <td>7,774</td>
-                    </tr>
-                    <tr>
-                        <td>6</td>
-                        <td>Iffy <i class="fas fa-shield-alt gold"></i></td>
-                        <td>7,739</td>
-                    </tr>
-                    <tr>
-                        <td>7</td>
-                        <td>Megan <i class="fas fa-lock silver"></i></td>
-                        <td>5,565</td>
-                    </tr>
-                    <tr>
-                        <td>8</td>
-                        <td>Adam <i class="fas fa-lock gold"></i></td>
-                        <td>4,866</td>
-                    </tr>
-                    <tr>
-                        <td>9</td>
-                        <td>Katie <i class="fas fa-shield-alt silver"></i></td>
-                        <td>3,836</td>
-                    </tr>
-                    <tr>
-                        <td>10</td>
-                        <td>Maris <i class="fas fa-lock bronze"></i></td>
-                        <td>3,360</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3"><button id="showmore">Show More <i class="fas fa-plus-circle"></i></button></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div id="password-game" style="display: none;">
-            <div class="top-button">
-                <button id="back-button">Back</button>
-            </div>
-            <h2 class="center pixel">Password Platformer</h2>
-            <p class="atari">
-                For the first mini-game, we are planning to make a platformer game based around the idea of being able
-                to identify strong and weak passwords. We are planning to make a game similar to Super Mario where the
-                player moves across a world from left to right and jumps on platforms that have passwords written on
-                them. If the player jumps on a platform with a strong password, they will land safely and be able to
-                continue playing. If the player jumps on a platform with a weak password, the platform will break and
-                the player will fall, causing the game to end. Players will get points based on how far they are able to
-                go before falling and how many passwords they are able to identify as strong or weak.
-            </p>
-            <p class="atari">
-                This game will include levels, where initial levels are quite easy (bad passwords are very obvious, like
-                123456 or passw0rd, and good passwords are similarly easy to identify) progressing forwards to more
-                challenging levels, including passwords based on personal identifying information, common English words,
-                and more. The game will also include a continuous mode where there will be a similar difficulty
-                progression but it will happen as the user continues forward to the right. The challenge here will be
-                balancing the points so that users cannot run away on the leaderboard.
-            </p>
-            <button class="play">Play</button>
-        </div>
         <div id="messages">
             <h2 class="center pixel">Messages</h2>
             <div id="messages-container">
                 <div id="messages-choose">
-                    <div class="message active">
-                        <h5 class="message-title">Free 100 points!</h5>
-                        <p class="from">From: tas127</p>
+                    <div class="message active" data-message="points-100">
+                        <h5 class="message-from">tas127</h5>
+                        <h4 class="message-title">Free 100 points!</h4>
+                        <p class="message-preview">Click here ...</p>
                     </div>
-                    <div class="message">
-                        <h5 class="message-title">Check your onyen expiration</h5>
-                        <p class="from">From: dbarker</p>
+                    <div class="message" data-message="onyen-expr">
+                        <h5 class="message-from">dbarker</h5>
+                        <h4 class="message-title">Check your onyen expiration</h4>
+                        <p class="message-preview">Enter your ...</p>
                     </div>
                 </div>
-                <div id="message-content">
+                <div class="message-content" id="points-100">
                     <p>Click <a href="#">here</a> to receive your 100 points!</p>
+                </div>
+                <div class="message-content" id="onyen-expr">
+                    <p>Enter your onyen password expiration below!</p>
+                    <form>
+                        <input type="date">
+                        <button type="submit">Submit</button>
+                    </form>
                 </div>
             </div>
         </div>
         <div id="info">
-            <h2 class="center pixel">Overview</h2>
-            <p class="atari">
-                This is a collection of Cyber Security based games with an emphasis on social competitiveness.
-            </p>
-            <p class="atari">
-                The client envisions a game that can be played by his various customers, including UNC employees with
-                departments from Facilities to Groundskeeping, with sensitive information to improve their habits
-                online. A UNC onyen would be used to sign into the game and to link scores to an account. There are
-                differences in knowledge among the future users of the game across departments and even in a department
-                (e.g. a manager might have more experience online than someone in the field). One particular topic that
-                was emphasized by the client was not trusting the internet and not clicking the links because they often
-                install malware (spam identification). The client would like to discourage software installed games and
-                prioritize non flash browser games. The game should preferably be compatible with tablets since there
-                will be about 500 tablet-using faculty in the coming years. Finally, the client would also like us to
-                prioritize competition, as this aspect would drive usage and therefore learning, and modularity, since
-                there are many topics to teach and the game should be able to be handed to new developers for further
-                improvement at the end of the semester.
-            </p>
-            <p class="atari">
-                Our most important priority is to get the gamification of this project correct, since we want to keep
-                our users to stay engaged enough to learn the information. As Dan said, "Make it pretty, make it
-                interesting, make it businesslike."
-            </p>
+            <div id="tabs">
+                <button id="leaderboard-tab" class="tab active" data-info="leaderboard">Leaderboard</button>
+                <button id="password-tab" class="tab" data-info="password-game" style="display: none;">Password
+                    Platformer <i class="far fa-window-close close-tab"></i></button>
+            </div>
+            <div id="leaderboard" class="tab-info">
+                <h2 class="center pixel">Overall Leaders</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Player</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Taylor <i class="fas fa-certificate gold"></i></td>
+                            <td>17,120</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Seth <i class="fas fa-certificate silver"></i></td>
+                            <td>14,805</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Vinish <i class="fas fa-certificate bronze"></i></td>
+                            <td>14,584</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Dan <i class="fas fa-ribbon silver"></i></td>
+                            <td>8,088</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Diane <i class="fas fa-ribbon gold"></i></td>
+                            <td>7,774</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Iffy <i class="fas fa-shield-alt gold"></i></td>
+                            <td>7,739</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Megan <i class="fas fa-lock silver"></i></td>
+                            <td>5,565</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Adam <i class="fas fa-lock gold"></i></td>
+                            <td>4,866</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>Katie <i class="fas fa-shield-alt silver"></i></td>
+                            <td>3,836</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>Maris <i class="fas fa-lock bronze"></i></td>
+                            <td>3,360</td>
+                        </tr>
+                        <tr class="row-info" id="showmore-row">
+                            <td colspan="3"><button id="showmore">Show More <i class="fas fa-plus-circle"></i></button>
+                            </td>
+                        </tr>
+                        <tr class="row-info" id="ellipsis-row">
+                            <td colspan="3"><i class="fas fa-ellipsis-h"></i></td>
+                        </tr>
+                        <tr class="hidden">
+                            <td>11</td>
+                            <td>Savannah</td>
+                            <td>3,229</td>
+                        </tr>
+                        <tr class="hidden">
+                            <td>12</td>
+                            <td>Pranesh</td>
+                            <td>2,693</td>
+                        </tr>
+                        <tr class="hidden">
+                            <td>13</td>
+                            <td>Callie</td>
+                            <td>2,604</td>
+                        </tr>
+                        <tr class="hidden">
+                            <td>14</td>
+                            <td>Callie</td>
+                            <td>2,505</td>
+                        </tr>
+                        <tr class="hidden">
+                            <td>15</td>
+                            <td>Annie</td>
+                            <td>2,447</td>
+                        </tr>
+                        <tr class="hidden">
+                            <td>16</td>
+                            <td>Justis</td>
+                            <td>2,362</td>
+                        </tr>
+                        <tr class="you">
+                            <td>17</td>
+                            <td>You <i class="fas fa-shield-alt bronze"></i></td>
+                            <td>2,054</td>
+                        </tr>
+                        <tr class="hidden">
+                            <td>18</td>
+                            <td>Chandler</td>
+                            <td>2,033</td>
+                        </tr>
+                        <tr class="hidden">
+                            <td>19</td>
+                            <td>Sid</td>
+                            <td>1,918</td>
+                        </tr>
+                        <tr class="hidden">
+                            <td>20</td>
+                            <td>Linnea</td>
+                            <td>1,510</td>
+                        </tr>
+                        <tr class="hidden">
+                            <td>21</td>
+                            <td>Olivia</td>
+                            <td>1,024</td>
+                        </tr>
+                        <tr class="hidden">
+                            <td>22</td>
+                            <td>Hannah</td>
+                            <td>930</td>
+                        </tr>
+                        <tr class="hidden">
+                            <td>23</td>
+                            <td>Lauren</td>
+                            <td>553</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="password-game" class="tab-info">
+                <h2 class="center pixel">Password Platformer</h2>
+                <p class="atari">
+                    How good is your password?
+                </p>
+                <div>
+                    <button class="play">Play</button>
+                </div>
+            </div>
+        </div>
+        <div id="overview">
+            <div>
+                <h2 class="center pixel">Fun Fact</h2>
+                <p class="atari" id="fun-fact">Insert fun fact here!</p>
+            </div>
+            <div>
+                <h2 class="center pixel">Overview</h2>
+                <p class="atari">
+                    This is a collection of Cyber Security based games with an emphasis on social competitiveness. Press
+                    on a game below and start learning!
+                </p>
+            </div>
+            <div>
+                <h2 class="center pixel">Account</h2>
+                <h4 class="pixel">Your Playtime</h4>
+                <div id="playtime">
+                    <div>
+                        <p>1</p>
+                    </div>
+                    <div>
+                        <p>2</p>
+                    </div>
+                    <div>
+                        <p>:</p>
+                    </div>
+                    <div>
+                        <p>1</p>
+                    </div>
+                    <div>
+                        <p>7</p>
+                    </div>
+                </div>
+                <h4 class="pixel">Your Badges</h4>
+                <div id="badges">
+                    <i class="fas fa-shield-alt bronze"></i>
+                </div>
+            </div>
         </div>
     </div>
     <div id="games">
