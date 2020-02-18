@@ -1,0 +1,453 @@
+*::-webkit-scrollbar {
+    width: 2.5%;
+}
+
+*::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+@font-face {
+    font-family: evil;
+    src: url('../fonts/EvilEmpire.ttf');
+}
+
+@font-face {
+    font-family: pixel;
+    src: url('../fonts/PixelEmulator.ttf');
+}
+
+@font-face {
+    font-family: atari;
+    src: url('../fonts/AtariClassic.ttf');
+}
+
+@font-face {
+    font-family: clock;
+    src: url('../fonts/alarmclock.ttf');
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body>div {
+    width: 100%;
+    overflow: hidden;
+}
+
+#header {
+    top: 0;
+    height: 10%;
+    border-bottom: 5px solid black;
+}
+
+.evil {
+    font-family: evil;
+}
+
+.pixel {
+    font-family: pixel;
+}
+
+.atari {
+    font-family: atari;
+}
+
+.clock {
+    font-family: clock;
+}
+
+.center {
+    text-align: center;
+}
+
+#header>h1 {
+    font-size: 3em;
+    transform: translateY(-35%);
+}
+
+#middle {
+    height: 60%;
+}
+
+#games {
+    height: 30%;
+    border-top: 5px solid black;
+    overflow: hidden;
+}
+
+#middle>div {
+    display: inline-block;
+    height: 100%;
+}
+
+#info {
+    width: 40%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#messages {
+    float: left;
+    width: 30%;
+}
+
+#overview {
+    float: right;
+    width: 30%;
+}
+
+#overview>div {
+    height: 33%;
+    overflow-y: auto;
+}
+
+td {
+    text-align: center;
+}
+
+.gold {
+    color: #FEE101;
+}
+
+.silver {
+    color: #A7A7AD;
+}
+
+.bronze {
+    color: #824A02;
+}
+
+thead>tr {
+    background-color: black;
+    color: white;
+}
+
+thead th {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+tr.hidden {
+    display: none;
+}
+
+.you {
+    background-color: #d3d3d3;
+}
+
+#leaderboard {
+    padding-bottom: 10px;
+}
+
+#leaderboard>table {
+    width: 95%;
+}
+
+#leaderboard td, #leaderboard th {
+    font-family: atari;
+}
+
+#leaderboard tbody>tr:first-child {
+    background: blue;
+}
+
+#leaderboard tbody>tr:nth-child(2) {
+    background-color: red;
+}
+
+#leaderboard tbody>tr:nth-child(3) {
+    background-color: yellow;
+}
+
+button {
+    border-radius: .25rem;
+    background-color: transparent;
+    background-image: none;
+    border-color: black;
+    text-align: center;
+    white-space: nowrap;
+}
+
+button:hover {
+    color: white;
+    background-color: black;
+}
+
+#showmore {
+    width: 75%;
+    font-family: atari;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#leaderboard>*:not(h2), #messages>*:not(h2), #password-game>*:not(h2) {
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+}
+
+#info h2, #info p {
+    width: 100%;
+}
+
+#tabs {
+    padding-top: 10px;
+    border-bottom-color: black;
+    overflow-x: auto;
+}
+
+.tab {
+    font-family: atari;
+    border-bottom-left-radius: 0rem;
+    border-bottom-right-radius: 0rem;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.tab.active {
+    background-color: black;
+    color: white;
+}
+
+.close-tab:hover {
+    color: red;
+}
+
+.arrow {
+    display: block;
+    top: 0;
+    width: 5%;
+    height: 100%;
+    background-color: transparent;
+    background-image: none;
+    white-space: nowrap;
+    text-align: center;
+    border: none;
+    transition: 0.5s;
+}
+
+#right-arrow {
+    right: 0;
+    float: right;
+}
+
+#left-arrow {
+    float: left;
+    left: 0;
+}
+
+#game-cards {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    height: 100%;
+}
+
+.disabled {
+    opacity: 0.5;
+}
+
+.disabled:hover {
+    cursor: not-allowed;
+}
+
+.disabled>p {
+    opacity: 1;
+    font-family: atari;
+    position: absolute;
+    top: 50%;
+    right: -10%;
+    font-size: 1.5em;
+    transform: rotate(45deg);
+    z-index: 999;
+}
+
+.game-card {
+    flex: 0 0 auto;
+    margin-left: 25px;
+    margin-right: 25px;
+    position: relative;
+    border: 1px solid black;
+    border-radius: .25rem;
+    top: 10%;
+    height: 75%;
+    width: 20%;
+    transition: 0.5s;
+}
+
+.game-card:hover {
+    background-color: black;
+    color: white;
+}
+
+.game-card>* {
+    width: 100%;
+}
+
+.game-card-header {
+    text-align: center;
+    font-family: pixel;
+    height: 25%;
+    overflow-y: hidden;
+}
+
+.game-card-header>* {
+    transform: translateY(-50%);
+    vertical-align: top;
+}
+
+.game-card-icon {
+    text-align: center;
+    height: 50%;
+}
+
+.game-card-icon>i {
+    display: inline-block;
+    top: 50%;
+    font-size: 3em;
+    transform: translateY(50%);
+}
+
+.game-card-text {
+    font-family: atari;
+    height: 25%;
+    vertical-align: top;
+    text-align: center;
+    font-size: 0.5em;
+}
+
+.game-card-text>p {
+    transform: translateY(50%);
+}
+
+#messages-container>div {
+    height: 100%;
+    display: inline-block;
+}
+
+#messages-choose {
+    width: 34%;
+}
+
+.message-content {
+    float: right;
+    width: 65%;
+}
+
+.message {
+    width: 100%;
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    transition: 0.5s;
+}
+
+.message:hover {
+    background-color: black;
+    color: white;
+}
+
+.message.active {
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+    transition: 0.5s;
+}
+
+.message-from {
+    margin-top: 5px;
+    font-size: 0.5em;
+}
+
+.message-title {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 0.75em;
+}
+
+.message-preview {
+    font-size: 0.5em;
+    margin-bottom: 10px;
+}
+
+.message>* {
+    font-family: atari;
+    vertical-align: middle;
+    margin-left: 5px;
+    /* These are technically the same, but use both */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -ms-word-break: break-all;
+    /* Instead use this non-standard one: */
+    word-break: break-word;
+    /* Adds a hyphen where the word breaks, if supported (No Blink) */
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+.message>*:hover {
+    cursor: default;
+}
+
+.message-content>* {
+    margin-left: 10px;
+    font-family: atari;
+}
+
+.play {
+    color: #90ee90;
+    border-color: #90ee90;
+    font-family: atari;
+    width: 25%;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    display: block;
+    margin: 0 auto;
+}
+
+.play:hover {
+    color: white;
+    background-color: #90ee90;
+}
+
+button[type=submit] {
+    font-family: atari;
+}
+
+#playtime {
+    display: flex;
+    justify-content: space-around;
+}
+
+#playtime p {
+    font-family: clock;
+    font-size: 3em;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#badges {
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+}
+
+#badges>i {
+    display: inline-block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    vertical-align: middle;
+    font-size: 1.5em;
+}
