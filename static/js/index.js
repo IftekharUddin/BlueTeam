@@ -2,6 +2,7 @@ const funFacts = ['Fun Fact 1',
     'Fun Fact 2',
     'Fun Fact 3'];
 
+const scrollAmount = 50;
 const secondsFunFact = 30;
 let rowsShown = 10;
 
@@ -27,13 +28,20 @@ const hideArrows = (currScroll, width) => {
     }
 }
 
+const scroll = (right) => {
+    const currScroll = $('#game-cards').scrollLeft();
+    const newScroll = (right) ? currScroll + scrollAmount : currScroll - scrollAmount;
+    const width = $('#game-cards').get(0).scrollWidth - $('#game-cards').outerWidth();
+    $('#game-cards').scrollLeft(newScroll);
+    hideArrows($('#game-cards').scrollLeft(), width);
+}
+
 const showMoreHandler = () => {
     const rows = $('#leaderboard tbody>tr:not(.row-info)');
     if (rowsShown > rows.length) {
         return;
     }
     for (let i = rowsShown; i < rowsShown + 5; i++) {
-        rows.eq(i).show();
         rows.eq(i).removeClass('hidden');
     }
 
@@ -51,13 +59,7 @@ const showMoreHandler = () => {
     ellipsis.insertBefore(firstHidden);
 }
 
-$(document).ready(function () {
-    const scrollAmount = 50;
-    hideArrows($('#game-cards').scrollLeft(), $('#game-cards').width());
-
-    genFunFact();
-    window.setInterval(genFunFact, secondsFunFact * 1000);
-
+const setup = () => {
     $('.tab-info').hide();
     $('#leaderboard').show();
 
@@ -66,20 +68,11 @@ $(document).ready(function () {
     $('#' + showMessage).show();
 
     $('#left-arrow').on('click', function () {
-        const currScroll = $('#game-cards').scrollLeft();
-        const newScroll = currScroll - scrollAmount;
-        const width = $('#game-cards').get(0).scrollWidth - $('#game-cards').outerWidth();
-        $('#game-cards').scrollLeft(newScroll);
-        hideArrows($('#game-cards').scrollLeft(), width);
+        scroll(false);
     });
 
     $('#right-arrow').on('click', function () {
-        const currScroll = $('#game-cards').scrollLeft();
-        const width = $('#game-cards').outerWidth();
-        const scrollWidth = $('#game-cards').get(0).scrollWidth;
-        const newScroll = currScroll + scrollAmount;
-        $('#game-cards').scrollLeft(newScroll);
-        hideArrows($('#game-cards').scrollLeft(), scrollWidth - width);
+        scroll(true);
     });
 
     $('#main-button').on('click', function () {
@@ -92,12 +85,14 @@ $(document).ready(function () {
         $('#messages').show();
     });
 
-    $('#password-card').on('click', function () {
-        $('.tab-info').hide();
-        $('#password-game').show();
+    $('.game-card:not(.disabled)').on('click', function () {
+        const tab = $('#' + $(this).attr('data-tab'));
+        tab.show();
         $('.tab').removeClass('active');
-        $('#password-tab').show();
-        $('#password-tab').addClass('active');
+        tab.addClass('active');
+        const show = tab.attr('data-info');
+        $('.tab-info').hide();
+        $('#' + show).show();
     });
 
     $('.tab').on('click', function () {
@@ -133,4 +128,59 @@ $(document).ready(function () {
     $('form').on('submit', function (eve) {
         eve.preventDefault();
     });
+}
+
+$(document).ready(function () {
+    hideArrows($('#game-cards').scrollLeft(), $('#game-cards').width());
+
+    genFunFact();
+    window.setInterval(genFunFact, secondsFunFact * 1000);
+
+    fetch('games.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("HTTP error " + response.status);
+            }
+            return response.json();
+        }).then(json => {
+            for (let game of json) {
+                const id = game['id'];
+                const name = game['name'];
+
+                const tab = $('<button id="' + id + '-tab" class="tab" data-info="' + id + '-info" style="display: none;">' + name + '<i class="far fa-window-close close-tab"></i></button>');
+                $('#tabs').append(tab);
+
+                const infoDiv = $('<div id="' + id + '-info" class="tab-info"></div>');
+                infoDiv.append($('<h2 class="center pixel">' + name + '</h2>'));
+                infoDiv.append($('<p class="pixel">' + game['tagline'] + '</p>'));
+                const div = $('<div></div>');
+                const button = $('<button class="play">Play</button>"');
+                button.on('click', function () {
+                    window.location.href = '/' + game['entrypoint'];
+                });
+                div.append(button);
+                infoDiv.append(div);
+                $('#info').append(infoDiv);
+
+                const classes = "game-card" + ((game['disabled']) ? " disabled" : "");
+
+                const gameCard = $('<div class="' + classes + '" id="' + id + '-card" data-tab="' + id + '-tab"></div>');
+                const header = $('<div class="game-card-header"></div>');
+                header.append($('<h5>' + name + '</h5>'));
+                gameCard.append(header);
+                const iconDiv = $('<div class="game-card-icon"></div>');
+                iconDiv.append($(game['icon']));
+                gameCard.append(iconDiv);
+                const cardText = $('<div class="game-card-text"></div>');
+                cardText.append($('<p>' + game['card-text'] + '</p>'));
+                gameCard.append(cardText);
+
+                if (game['disabled']) {
+                    gameCard.append($('<p>Coming soon!</p>'));
+                }
+                $('#game-cards').append(gameCard);
+            }
+        }).then(() => {
+            setup();
+        });
 });
