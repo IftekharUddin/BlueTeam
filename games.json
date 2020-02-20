@@ -1,0 +1,47 @@
+[
+    {
+        "name": "Password Platformer",
+        "id": "password-platformer",
+        "tagline": "How good is your password?",
+        "icon": "<i class=\"fas fa-lock\"></i>",
+        "card-text": "How good is your password?",
+        "disabled": false,
+        "entrypoint": "passwordplatformer/index.html"
+    },
+    {
+        "name": "Computer Defense",
+        "id": "computer-defense",
+        "tagline": "",
+        "icon": "<i class=\"fas fa-chess-rook\"></i>",
+        "card-text": "Tower defense gone cyber!",
+        "disabled": true,
+        "entrypoint": ""
+    },
+    {
+        "name": "Jeopardy",
+        "id": "jeopardy",
+        "tagline": "",
+        "icon": "<i class=\"fas fa-shield-alt\"></i>",
+        "card-text": "Test your knowledge!",
+        "disabled": true,
+        "entrypoint": ""
+    },
+    {
+        "name": "Tap Tap Security",
+        "id": "tap-tap-security",
+        "tagline": "",
+        "icon": "<i class=\"fas fa-ribbon\"></i>",
+        "card-text": "Tap on good practices, leave out the bad!",
+        "disabled": true,
+        "entrypoint": ""
+    },
+    {
+        "name": "Security Shooter",
+        "id": "security-shooter",
+        "tagline": "",
+        "icon": "<i class=\"fas fa-meteor\"></i>",
+        "card-text": "Bubble shooting with a twist!",
+        "disabled": true,
+        "entrypoint": ""
+    }
+]
