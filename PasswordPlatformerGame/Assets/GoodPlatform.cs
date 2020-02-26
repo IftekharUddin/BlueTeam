@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class GoodPlatform : MonoBehaviour
 {
-    public GameController controller;
     public GameObject passwordHolder;
     private TextMesh password;
     private bool hasCollided = false;
@@ -16,11 +15,11 @@ public class GoodPlatform : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        this.password.color = Color.green;
         if (!this.hasCollided)
         {
+            this.password.color = Color.green;
             this.hasCollided = true;
-            controller.updateScore(100);
+            GameController.Instance.updateScore(100);
         }
     }
 }

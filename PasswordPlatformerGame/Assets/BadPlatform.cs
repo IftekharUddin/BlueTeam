@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class BadPlatform : MonoBehaviour
 {
-
-    public GameController controller;
     public GameObject passwordHolder;
     public Rigidbody2D rb;
     private TextMesh password;
@@ -23,13 +21,10 @@ public class BadPlatform : MonoBehaviour
         if (this.hasCollided)
         {
             this.timer -= Time.fixedDeltaTime;
-            Debug.Log(timer);
             if (timer < 0f)
             {
-                Debug.Log("Hello");
                 rb.bodyType = RigidbodyType2D.Dynamic;
                 rb.gravityScale = 1;
-                this.timer = 0;
             }
         }
     }
@@ -40,7 +35,7 @@ public class BadPlatform : MonoBehaviour
         {
             this.password.color = Color.red;
             this.hasCollided = true;
-            controller.updateScore(-100);
+            GameController.Instance.updateScore(-100);
         }
     }
 }

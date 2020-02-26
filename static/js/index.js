@@ -156,7 +156,8 @@ $(document).ready(function () {
                 const div = $('<div></div>');
                 const button = $('<button class="play">Play</button>"');
                 button.on('click', function () {
-                    window.location.href = '/' + game['entrypoint'];
+                    const newLocation = '/' + game['entrypoint'] + '?user=tas127';
+                    window.location.href = newLocation;
                 });
                 div.append(button);
                 infoDiv.append(div);
