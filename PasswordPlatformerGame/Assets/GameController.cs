@@ -1,5 +1,4 @@
 ﻿using System.Collections.Specialized;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Web;
@@ -32,12 +31,11 @@ public class GameController : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
 
         string url = Application.absoluteURL as string;
-        string[] urlParts = url.Split('?');
-        if (urlParts.Length > 1)
+        if (url.Split('?').Length > 1)
         {
             NameValueCollection queryParts = HttpUtility.ParseQueryString(url);
             this.user = queryParts.Get("user") as string;
-            userText.text = url.Split('=')[1];
+            userText.text = this.user;
         }
     }
 
@@ -45,7 +43,6 @@ public class GameController : MonoBehaviour
     {
         score += addScore;
         string newText = $"Score: {score.ToString()}";
-        Debug.Log(newText);
         scoreText.text = newText;
     }
 }

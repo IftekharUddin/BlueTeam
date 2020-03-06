@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BadPlatform : MonoBehaviour
 {
@@ -23,8 +21,9 @@ public class BadPlatform : MonoBehaviour
             this.timer -= Time.fixedDeltaTime;
             if (timer < 0f)
             {
-                rb.bodyType = RigidbodyType2D.Dynamic;
-                rb.gravityScale = 1;
+                Destroy (this.GetComponent<Collider2D>());
+                // rb.bodyType = RigidbodyType2D.Dynamic;
+                // rb.gravityScale = 1;
             }
         }
     }
