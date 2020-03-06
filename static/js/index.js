@@ -1,6 +1,8 @@
-const funFacts = ['Fun Fact 1',
+const funFacts = [
+    'Fun Fact 1',
     'Fun Fact 2',
-    'Fun Fact 3'];
+    'Fun Fact 3'
+];
 
 const scrollAmount = 50;
 const secondsFunFact = 30;
@@ -61,7 +63,8 @@ const showMoreHandler = () => {
 
 const setup = () => {
     $('.tab-info').hide();
-    $('#leaderboard').show();
+    const currDiv = $('.tab.active').attr('data-info');
+    $('#' + currDiv).show();
 
     $('.message-content').hide();
     const showMessage = $('.message.active').attr('data-message');
@@ -148,7 +151,7 @@ $(document).ready(function () {
                 const name = game['name'];
 
                 const tab = $('<button id="' + id + '-tab" class="tab" data-info="' + id + '-info" style="display: none;">' + name + '<i class="far fa-window-close close-tab"></i></button>');
-                $('#tabs').append(tab);
+                $('#top-tabs').append(tab);
 
                 const infoDiv = $('<div id="' + id + '-info" class="tab-info"></div>');
                 infoDiv.append($('<h2 class="center pixel">' + name + '</h2>'));
@@ -161,7 +164,7 @@ $(document).ready(function () {
                 });
                 div.append(button);
                 infoDiv.append(div);
-                $('#info').append(infoDiv);
+                $('#main-middle').append(infoDiv);
 
                 const classes = "game-card" + ((game['disabled']) ? " disabled" : "");
 
