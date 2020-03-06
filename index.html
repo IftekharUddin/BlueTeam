@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" rel="stylesheet"
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" rel="stylesheet"
         type='text/css'>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -18,36 +18,37 @@
         <h1 class="evil center">Computer Security - Blue Team Game</h1>
     </div>
     <div id="middle">
-        <div id="messages">
-            <h2 class="center pixel">Messages</h2>
-            <div id="messages-container">
-                <div id="messages-choose">
-                    <div class="message active" data-message="points-100">
-                        <h5 class="message-from">tas127</h5>
-                        <h4 class="message-title">Free 100 points!</h4>
-                        <p class="message-preview">Click here ...</p>
-                    </div>
-                    <div class="message" data-message="onyen-expr">
-                        <h5 class="message-from">dbarker</h5>
-                        <h4 class="message-title">Check your onyen expiration</h4>
-                        <p class="message-preview">Enter your ...</p>
-                    </div>
-                </div>
-                <div class="message-content" id="points-100">
-                    <p>Click <a href="#">here</a> to receive your 100 points!</p>
-                </div>
-                <div class="message-content" id="onyen-expr">
-                    <p>Enter your onyen password expiration below!</p>
-                    <form>
-                        <input type="date">
-                        <button type="submit">Submit</button>
-                    </form>
-                </div>
-            </div>
+        <div id="top-tabs">
+            <button id="leaderboard-tab" class="tab active" data-info="leaderboard">Leaderboard</button>
+            <button id="messages-tab" class="tab" data-info="messages">Messages</button>
         </div>
-        <div id="info">
-            <div id="tabs">
-                <button id="leaderboard-tab" class="tab active" data-info="leaderboard">Leaderboard</button>
+        <div id="main-middle">
+            <div id="messages" class="tab-info">
+                <h2 class="center pixel">Messages</h2>
+                <div id="messages-container">
+                    <div id="messages-choose">
+                        <div class="message active" data-message="points-100">
+                            <h5 class="message-from">tas127</h5>
+                            <h4 class="message-title">Free 100 points!</h4>
+                            <p class="message-preview">Click here ...</p>
+                        </div>
+                        <div class="message" data-message="onyen-expr">
+                            <h5 class="message-from">dbarker</h5>
+                            <h4 class="message-title">Check your onyen expiration</h4>
+                            <p class="message-preview">Enter your ...</p>
+                        </div>
+                    </div>
+                    <div class="message-content" id="points-100">
+                        <p>Click <a href="#">here</a> to receive your 100 points!</p>
+                    </div>
+                    <div class="message-content" id="onyen-expr">
+                        <p>Enter your onyen password expiration below!</p>
+                        <form>
+                            <input type="date">
+                            <button type="submit">Submit</button>
+                        </form>
+                    </div>
+                </div>
             </div>
             <div id="leaderboard" class="tab-info">
                 <h2 class="center pixel">Overall Leaders</h2>

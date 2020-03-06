@@ -1,5 +1,6 @@
 *::-webkit-scrollbar {
     width: 2.5%;
+    padding-right: 5px;
 }
 
 *::-webkit-scrollbar-track {
@@ -38,6 +39,7 @@ html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    background-color: rgb(250, 250, 250);
 }
 
 body>div {
@@ -86,25 +88,29 @@ body>div {
     overflow: hidden;
 }
 
-#middle>div {
-    display: inline-block;
-    height: 100%;
+#top-tabs {
+    padding-top: 10px;
+    border-bottom-color: black;
+    overflow-x: auto;
+    height: 10%;
+    width: 100%;
 }
 
-#info {
-    width: 40%;
+#middle>div:not(#top-tabs) {
+    display: inline-block;
+    height: 90%;
+}
+
+#main-middle {
+    float: left;
+    width: 60%;
     overflow-y: auto;
     overflow-x: hidden;
 }
 
-#messages {
-    float: left;
-    width: 30%;
-}
-
 #overview {
     float: right;
-    width: 30%;
+    width: 40%;
 }
 
 #overview>div {
@@ -198,12 +204,6 @@ button:hover {
 
 #info h2, #info p {
     width: 100%;
-}
-
-#tabs {
-    padding-top: 10px;
-    border-bottom-color: black;
-    overflow-x: auto;
 }
 
 .tab {
