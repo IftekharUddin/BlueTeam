@@ -61,7 +61,7 @@ public class CharacterController2D : MonoBehaviour
     }
 
 
-    public void Move(float move, bool crouch, bool jump)
+    public void Move(float move, bool crouch, bool jump, float moveVert)
     {
         // If crouching, check to see if the character can stand up
         if (!crouch)
@@ -106,8 +106,20 @@ public class CharacterController2D : MonoBehaviour
                 }
             }
 
+            //AUTHOR SETH L
+            //publicly declare targetVelocity.
+            Vector3 targetVelocity;
             // Move the character by finding the target velocity
-            Vector3 targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.velocity.y);
+            if (moveVert == 0f)
+            {
+                //if the down key is not being pressed, just take the velocity of the y value
+                targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.velocity.y);
+            } else {
+                //else, use the moveVertical value multipled by 10
+                targetVelocity = new Vector2(move * 10f, moveVert * 10f);
+            }
+            //
+
             // And then smoothing it out and applying it to the character
             m_Rigidbody2D.velocity = Vector3.SmoothDamp(m_Rigidbody2D.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);
 
@@ -131,6 +143,7 @@ public class CharacterController2D : MonoBehaviour
             m_Grounded = false;
             m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
         }
+
     }
 
 
