@@ -21,7 +21,7 @@ public class BadPlatform : MonoBehaviour
             this.timer -= Time.fixedDeltaTime;
             if (timer < 0f)
             {
-                Destroy (this.GetComponent<Collider2D>());
+                // Destroy (this.GetComponent<Collider2D>());
                 // rb.bodyType = RigidbodyType2D.Dynamic;
                 // rb.gravityScale = 1;
             }
