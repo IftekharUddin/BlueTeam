@@ -432,7 +432,6 @@ MonoBehaviour:
   controller: {fileID: 374335842}
   runSpeed: 40
   downSpeed: 100
-  camera: {fileID: 519420028}
 --- !u!114 &374335842
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1841,6 +1840,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1405728036}
   - component: {fileID: 1405728037}
+  - component: {fileID: 1405728038}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -1876,6 +1876,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoreText: {fileID: 1976812521}
   userText: {fileID: 2046509947}
+--- !u!114 &1405728038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1405728035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b4ece2cc407e0f43a74807640fafbf3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1430491806
 GameObject:
   m_ObjectHideFlags: 0
@@ -2618,7 +2630,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1856357006}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b4ece2cc407e0f43a74807640fafbf3, type: 3}
+  m_Script: {fileID: 11500000, guid: 37252c4dc6dfc6747a05fc1faf514766, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1949322608
