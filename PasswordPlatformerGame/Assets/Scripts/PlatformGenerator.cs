@@ -208,8 +208,9 @@ public class PlatformGenerator : MonoBehaviour
 
     private Vector3 generatePasswordPlatform(int width, bool goodPassword, Vector3 start, (float, float) yBounds)
     {
-        // a method which delegates to the above method, with similar parameters (see above)
-        (GameObject, Vector3) res = generatePlatform(width, (true, goodPassword), start, yBounds);
+        string pass = (goodPassword) ? PasswordGeneration.Instance.GetGoodPassword() : PasswordGeneration.Instance.GetBadPassword();
+
+        (GameObject, Vector3) res = res = generatePlatform(pass.Length, (true, goodPassword), start, yBounds);
 
         // we have to add the object which holds the TextMesh to password platforms
         GameObject text = new GameObject();
@@ -231,16 +232,8 @@ public class PlatformGenerator : MonoBehaviour
         MeshRenderer meshR = text.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
         meshR.material = this.textMaterial;
 
-        // later, we can hook in the ability to add different passwords
         TextMesh textM = text.AddComponent(typeof(TextMesh)) as TextMesh;
-        if (goodPassword)
-        {
-            textM.text = "GOOD";
-        }
-        else
-        {
-            textM.text = "BAD";
-        }
+        textM.text = pass;
         textM.color = Color.white;
         textM.characterSize = 0.75f;
         textM.font = this.textFont;
