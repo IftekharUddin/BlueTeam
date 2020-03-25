@@ -1,8 +1,6 @@
-const funFacts = [
-    'Fun Fact 1',
-    'Fun Fact 2',
-    'Fun Fact 3'
-];
+const funFacts = ['There is a hacker attack every 39 seconds',
+    'In 2018 hackers stole half a billion personal records',
+    '93% of breaches in 2017 could have been easily prevented by using good cyber practices'];
 
 const scrollAmount = 50;
 const secondsFunFact = 30;
