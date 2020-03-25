@@ -199,7 +199,7 @@ public class PasswordGeneration : MonoBehaviour
 
     private string sub(char ch, string[] choices)
     {
-        return (Random.value > .2f) ? ("" + ch) : choices[Mathf.FloorToInt(Random.Range(0, choices.Length))];
+        return (Random.value > .1f) ? ("" + ch) : choices[Mathf.FloorToInt(Random.Range(0, choices.Length))];
     }
 
     private string l33tword(string word)
