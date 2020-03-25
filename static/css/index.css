@@ -18,6 +18,16 @@
 }
 
 @font-face {
+    font-family: xcel;
+    src: url('../fonts/Arbeka\ \ Bold.ttf');
+}
+
+@font-face {
+    font-family: archery;
+    src: url('../fonts/Archery\ Black\ Rounded.ttf');
+}
+
+@font-face {
     font-family: pixel;
     src: url('../fonts/PixelEmulator.ttf');
 }
@@ -53,6 +63,14 @@ body>div {
 
 .evil {
     font-family: evil;
+}
+
+.xcel {
+    font-family: xcel;
+}
+
+.data {
+    font-family: data;
 }
 
 .pixel {
@@ -155,19 +173,20 @@ tr.hidden {
 }
 
 #leaderboard td, #leaderboard th {
-    font-family: atari;
+    font-family: archery;
+    font-size: 25px;
 }
 
 #leaderboard tbody>tr:first-child {
-    background: blue;
+    background: #6666ff;
 }
 
 #leaderboard tbody>tr:nth-child(2) {
-    background-color: red;
+    background-color: #ff6666;
 }
 
 #leaderboard tbody>tr:nth-child(3) {
-    background-color: yellow;
+    background-color: #ffff66;
 }
 
 button {
@@ -207,7 +226,7 @@ button:hover {
 }
 
 .tab {
-    font-family: atari;
+    font-family: archery;
     border-bottom-left-radius: 0rem;
     border-bottom-right-radius: 0rem;
     padding-top: 10px;
