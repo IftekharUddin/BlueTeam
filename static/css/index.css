@@ -57,6 +57,23 @@ body>div {
     overflow: hidden;
 }
 
+#unc-bar {
+    height: 5%;
+    background-color: #4B9CD3;
+}
+
+#unc-bar>i {
+    float: right;
+    font-size: 2em;
+    height: 100%;
+    color: white;
+}
+
+#unc-bar>i::before {
+    vertical-align: middle;
+    line-height: 100%;
+}
+
 #header {
     top: 0;
     height: 10%;
@@ -98,7 +115,7 @@ body>div {
 }
 
 #middle {
-    height: 60%;
+    height: 55%;
 }
 
 #games {
