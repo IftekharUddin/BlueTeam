@@ -210,7 +210,9 @@ public class PlatformGenerator : MonoBehaviour
     {
         string pass = (goodPassword) ? PasswordGeneration.Instance.GetGoodPassword() : PasswordGeneration.Instance.GetBadPassword();
 
-        (GameObject, Vector3) res = res = generatePlatform(pass.Length, (true, goodPassword), start, yBounds);
+        int platformWidth = Mathf.RoundToInt(Mathf.Ceil((float)pass.Length / 3.5f));
+
+        (GameObject, Vector3) res = res = generatePlatform(platformWidth, (true, goodPassword), start, yBounds);
 
         // we have to add the object which holds the TextMesh to password platforms
         GameObject text = new GameObject();
@@ -235,7 +237,7 @@ public class PlatformGenerator : MonoBehaviour
         TextMesh textM = text.AddComponent(typeof(TextMesh)) as TextMesh;
         textM.text = pass;
         textM.color = Color.white;
-        textM.characterSize = 0.75f;
+        textM.characterSize = 0.25f;
         textM.font = this.textFont;
         textM.anchor = TextAnchor.MiddleCenter;
 
