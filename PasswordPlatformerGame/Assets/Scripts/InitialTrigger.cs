@@ -27,6 +27,6 @@ public class InitialTrigger : MonoBehaviour
 
         PlatformGenerator.Instance.setRight(right);
 
-        PlatformGenerator.Instance.generatePlatforms(2);
+        PlatformGenerator.Instance.generatePlatforms(4);
     }
 }
