@@ -31,19 +31,5 @@ public class MaterialController : MonoBehaviour
 
         _instance = this;
         DontDestroyOnLoad(this.gameObject);
-
-        // load the text material from the Resources folder
-        Material[] mats = Resources.LoadAll<Material>("");
-        this.textMaterial = mats[0];
-
-        // load the text font from the Resources folder
-        Font[] fonts = Resources.LoadAll<Font>("");
-        this.textFont = fonts[0];
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }
