@@ -2244,7 +2244,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   passwordHolder: {fileID: 1605801527}
-  rb: {fileID: 1326782325}
 --- !u!50 &1326782325
 Rigidbody2D:
   serializedVersion: 4
@@ -2440,6 +2439,7 @@ GameObject:
   - component: {fileID: 1405728037}
   - component: {fileID: 1405728038}
   - component: {fileID: 1405728039}
+  - component: {fileID: 1405728040}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -2499,6 +2499,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 220b08c1ea299d94e9d19abc34a77404, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1405728040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1405728035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 820f415a723a74f498ba83fb52b14c9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FEEDBACK_LAYER: 11
+  textMaterial: {fileID: 0}
+  textFont: {fileID: 0}
 --- !u!1 &1430491806
 GameObject:
   m_ObjectHideFlags: 0

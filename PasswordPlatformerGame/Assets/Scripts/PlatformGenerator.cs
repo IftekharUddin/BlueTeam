@@ -36,12 +36,6 @@ public class PlatformGenerator : MonoBehaviour
     // the value subtracted or added to the camera's y position to generate the "upper half" or "lower half" of the screen without moving too far
     private float cameraHeight;
 
-    // the material used by the TextMesh 
-    private Material textMaterial;
-    // the font used by the TextMesh - can easily be changed by substituting the file in the Resources folder
-    private Font textFont;
-
-
     /// <value> The singleton instance of this class which can be accessed by whoever wants to generate platforms. </value>
     public static PlatformGenerator Instance
     {
@@ -83,14 +77,6 @@ public class PlatformGenerator : MonoBehaviour
         this.height = fakeRenderer.bounds.size.y;
 
         Destroy(fake);
-
-        // load the text material from the Resources folder
-        Material[] mats = Resources.LoadAll<Material>("");
-        this.textMaterial = mats[0];
-
-        // load the text font from the Resources folder
-        Font[] fonts = Resources.LoadAll<Font>("");
-        this.textFont = fonts[0];
     }
 
     public void setRight(Vector3 right)
@@ -232,13 +218,13 @@ public class PlatformGenerator : MonoBehaviour
         }
 
         MeshRenderer meshR = text.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-        meshR.material = this.textMaterial;
+        meshR.material = MaterialController.Instance.textMaterial;
 
         TextMesh textM = text.AddComponent(typeof(TextMesh)) as TextMesh;
         textM.text = pass;
         textM.color = Color.white;
         textM.characterSize = 0.25f;
-        textM.font = this.textFont;
+        textM.font = MaterialController.Instance.textFont;
         textM.anchor = TextAnchor.MiddleCenter;
 
         return res.Item2;

@@ -28,13 +28,6 @@ public class GameController : MonoBehaviour
     private int streak = 0;
     private int multiplier = 1;
 
-    private const int FEEDBACK_LAYER = 11;
-
-    // the material used by the TextMesh 
-    private Material textMaterial;
-    // the font used by the TextMesh - can easily be changed by substituting the file in the Resources folder
-    private Font textFont;
-
     /// <value> The singleton instance of this class which can be accessed by any other GameObject </value>
     public static GameController Instance
     {
@@ -63,29 +56,21 @@ public class GameController : MonoBehaviour
             this.user = queryParts.Get("user") as string;
             userText.text = this.user;
         }
-
-        // load the text material from the Resources folder
-        Material[] mats = Resources.LoadAll<Material>("");
-        this.textMaterial = mats[0];
-
-        // load the text font from the Resources folder
-        Font[] fonts = Resources.LoadAll<Font>("");
-        this.textFont = fonts[0];
     }
 
     private void makeMultiplier(int multiplier)
     {
         GameObject score = new GameObject();
-        score.layer = FEEDBACK_LAYER;
+        score.layer = MaterialController.Instance.FEEDBACK_LAYER;
 
         MeshRenderer meshR = score.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-        meshR.material = this.textMaterial;
+        meshR.material = MaterialController.Instance.textMaterial;
 
         TextMesh textM = score.AddComponent(typeof(TextMesh)) as TextMesh;
         textM.text = $"{multiplier}x!";
         textM.color = new Color(77f / 255f, 172f / 255f, 38f / 255f);
         textM.characterSize = 0.75f;
-        textM.font = this.textFont;
+        textM.font = MaterialController.Instance.textFont;
         textM.anchor = TextAnchor.MiddleCenter;
 
         score.transform.position = this.scoreText.transform.position + 5 * Vector3.left;
@@ -102,16 +87,16 @@ public class GameController : MonoBehaviour
     private void makeAdd(int plus, bool good)
     {
         GameObject score = new GameObject();
-        score.layer = FEEDBACK_LAYER;
+        score.layer = MaterialController.Instance.FEEDBACK_LAYER;
 
         MeshRenderer meshR = score.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-        meshR.material = this.textMaterial;
+        meshR.material = MaterialController.Instance.textMaterial;
 
         TextMesh textM = score.AddComponent(typeof(TextMesh)) as TextMesh;
         textM.text = (good) ? $"+{plus}" : $"{plus}";
         textM.color = (good) ? new Color(77f / 255f, 172f / 255f, 38f / 255f) : new Color(208f / 255f, 28f / 255f, 139f / 255f);
         textM.characterSize = 0.5f;
-        textM.font = this.textFont;
+        textM.font = MaterialController.Instance.textFont;
         textM.anchor = TextAnchor.MiddleCenter;
 
         score.transform.position = this.scoreText.transform.position + 6 * Vector3.left;
