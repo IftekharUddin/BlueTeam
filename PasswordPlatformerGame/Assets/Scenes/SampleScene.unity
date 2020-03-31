@@ -336,7 +336,7 @@ TextMesh:
   m_Font: {fileID: 12800000, guid: dfc1bb03d2874d4449b581724705610e, type: 3}
   m_Color:
     serializedVersion: 2
-    rgba: 4287902331
+    rgba: 4287306960
 --- !u!23 &95744067
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1199,7 +1199,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: a87da10458a283145b2dddbda6af59db, type: 3}
-  m_Color: {r: 0, g: 0.53333336, b: 0.21568628, a: 1}
+  m_Color: {r: 0.3019608, g: 0.6745098, b: 0.14901961, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1566,7 +1566,7 @@ TextMesh:
   m_Font: {fileID: 12800000, guid: bf2d9884a56254a4cb5db02d33bdfa0b, type: 3}
   m_Color:
     serializedVersion: 2
-    rgba: 4287902331
+    rgba: 4287306960
 --- !u!23 &1046040309
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2829,7 +2829,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 51c5bbbd112dcac49a61ef2ada09888d, type: 3}
-  m_Color: {r: 0.48235294, g: 0.19607843, b: 0.5803922, a: 1}
+  m_Color: {r: 0.8156863, g: 0.10980392, b: 0.54509807, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -3178,7 +3178,7 @@ TextMesh:
   m_Font: {fileID: 12800000, guid: dfc1bb03d2874d4449b581724705610e, type: 3}
   m_Color:
     serializedVersion: 2
-    rgba: 4281829376
+    rgba: 4280724557
 --- !u!23 &1661276763
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3289,7 +3289,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 51c5bbbd112dcac49a61ef2ada09888d, type: 3}
-  m_Color: {r: 0, g: 0.53333336, b: 0.21568628, a: 1}
+  m_Color: {r: 0.3019608, g: 0.6745098, b: 0.14901961, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -3643,7 +3643,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: a87da10458a283145b2dddbda6af59db, type: 3}
-  m_Color: {r: 0.48235294, g: 0.19607843, b: 0.5803922, a: 1}
+  m_Color: {r: 0.8156863, g: 0.10980392, b: 0.54509807, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
