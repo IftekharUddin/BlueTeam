@@ -2499,6 +2499,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 220b08c1ea299d94e9d19abc34a77404, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  badPasswordsText: {fileID: 4900000, guid: 8423a464b5d3a6f4bbcfdcf68c5fa758, type: 3}
+  wordsText: {fileID: 4900000, guid: 2f4c92e8bc51e194d956834b937ca2da, type: 3}
 --- !u!114 &1405728040
 MonoBehaviour:
   m_ObjectHideFlags: 0

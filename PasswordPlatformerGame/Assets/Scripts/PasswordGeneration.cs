@@ -1,15 +1,18 @@
 ﻿using UnityEngine;
 using System.IO;
-using System.Collections;
+using System.Collections.Generic;
 using Zxcvbn;
 using System.Text;
 
 
 public class PasswordGeneration : MonoBehaviour
 {
+    public TextAsset badPasswordsText;
+    public TextAsset wordsText;
+
     private static PasswordGeneration _instance;
-    private ArrayList badPasswords;
-    private ArrayList commonWords;
+    private List<string> badPasswords;
+    private List<string> commonWords;
     private Zxcvbn.Zxcvbn passwordChecker;
 
     /// <value> The singleton instance of this class which can be accessed by whoever wants to generate passwords. </value>
@@ -35,10 +38,9 @@ public class PasswordGeneration : MonoBehaviour
 
         this.passwordChecker = new Zxcvbn.Zxcvbn();
 
-        TextAsset text = Resources.Load<TextAsset>("BAD_PASSWORDS");
-        string passwords = text.text;
+        string passwords = this.badPasswordsText.text;
 
-        this.badPasswords = new ArrayList();
+        this.badPasswords = new List<string>();
         using (StringReader reader = new StringReader(passwords))
         {
             string line = string.Empty;
@@ -56,10 +58,9 @@ public class PasswordGeneration : MonoBehaviour
         // var result = this.passwordChecker.EvaluatePassword(first);
         // Debug.Log($"{first}: {result.CrackTime} {result.CrackTimeDisplay} {result.Score} {result.CalcTime}");
 
-        TextAsset wordsAsset = Resources.Load<TextAsset>("1000_COMMON_WORDS");
-        string words = wordsAsset.text;
+        string words = this.wordsText.text;
 
-        this.commonWords = new ArrayList();
+        this.commonWords = new List<string>();
         using (StringReader reader = new StringReader(words))
         {
             string line = string.Empty;
@@ -83,7 +84,7 @@ public class PasswordGeneration : MonoBehaviour
     public string GetBadPassword()
     {
         int randIndex = Mathf.FloorToInt(Random.Range(0f, (float)this.badPasswords.Count));
-        string item = this.badPasswords[randIndex] as string;
+        string item = this.badPasswords[randIndex];
         this.badPasswords.RemoveAt(randIndex);
         return item;
     }
