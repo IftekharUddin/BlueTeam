@@ -1,4 +1,7 @@
-﻿using System.Collections.Specialized;
+﻿using UnityEngine.SceneManagement;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Web;
@@ -123,5 +126,29 @@ public class GameController : MonoBehaviour
 
         string newText = $"Score: {score.ToString()}";
         scoreText.text = newText;
+    }
+
+    
+    public void EndGame()
+    {
+        Debug.Log("RESTARt");
+//        StartCoroutine(Register());
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    IEnumerator Register()
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("name", user);
+        WWW www = new WWW("http://https://games.fo.unc.edu/sqlconnect/register.php", form);
+        yield return www;
+        if (www.text == "0")
+        {
+            Debug.Log("User created sucessfully.");
+        }
+        else 
+        {
+            Debug.Log("User creation failed. Error #" + www.text);
+        }
     }
 }
