@@ -30,7 +30,7 @@ public class GoodPlatform : MonoBehaviour
     {
         if (!this.hasCollided)
         {
-            this.password.color = Color.green;
+            this.password.color = new Color(77f / 255f, 172f / 255f, 38f / 255f);
             this.hasCollided = true;
             GameController.Instance.updateScore(GameController.Score.GOOD);
 

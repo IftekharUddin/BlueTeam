@@ -120,7 +120,7 @@ public class PasswordGeneration : MonoBehaviour
         }
         else if (ch == 'h' || ch == 'H')
         {
-            return sub(ch, new string[] { "|-|", "[-]", "{-}", "}-{", "}{", "|=|", "[=]", "{=}" });
+            return sub(ch, new string[] { "|-|", "[-]", "}-{", "}{", "|=|", "[=]" });
         }
         else if (ch == 'i' || ch == 'I')
         {
@@ -140,7 +140,7 @@ public class PasswordGeneration : MonoBehaviour
         }
         else if (ch == 'm' || ch == 'M')
         {
-            return sub(ch, new string[] { "|\\/|", "^^", "/\\/\\" });
+            return sub(ch, new string[] { "|\\/|", "/\\/\\" });
         }
         else if (ch == 'n' || ch == 'N')
         {

@@ -47,7 +47,7 @@ public class BadPlatform : MonoBehaviour
     {
         if (!this.hasCollided)
         {
-            this.password.color = Color.red;
+            this.password.color = new Color(208f / 255f, 28f / 255f, 139f / 255f);
             this.hasCollided = true;
             GameController.Instance.updateScore(GameController.Score.BAD);
 
