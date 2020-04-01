@@ -140,6 +140,7 @@ public class GameController : MonoBehaviour
     {
         WWWForm form = new WWWForm();
         form.AddField("name", user);
+        form.AddField("score", score);
         WWW www = new WWW("http://https://games.fo.unc.edu/sqlconnect/register.php", form);
         yield return www;
         if (www.text == "0")
