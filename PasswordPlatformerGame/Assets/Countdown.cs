@@ -9,15 +9,16 @@ public class Countdown : MonoBehaviour
     public Text timeText;
 
     // time limit set here in seconds
-    float timeLeft = 20.0f;
+    float timeLeft = 50.0f;
 
     // Update is called once per frame
     void Update()
     {
-        timeLeft -=  Time.deltaTime;
+        timeLeft -= Time.deltaTime;
         string newText = $"{timeLeft.ToString("#.0")}";
         timeText.text = newText;
-        if(timeLeft < 0){
+        if (timeLeft < 0)
+        {
             FindObjectOfType<GameController>().EndGame();
         }
     }
