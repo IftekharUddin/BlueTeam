@@ -59,25 +59,23 @@ body>div {
 
 #unc-bar {
     height: 5%;
-    background-color: #4B9CD3;
+    background-color: #fff;
+    border-bottom: 3px solid black;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    
 }
 
-#unc-bar>i {
-    float: right;
-    font-size: 2em;
+#unc-bar>img {
+    float: left;
     height: 100%;
-    color: white;
-}
-
-#unc-bar>i::before {
-    vertical-align: middle;
-    line-height: 100%;
 }
 
 #header {
     top: 0;
     height: 10%;
-    border-bottom: 5px solid black;
+    border-bottom: 3px solid black;
 }
 
 .evil {
@@ -115,7 +113,7 @@ body>div {
 }
 
 #middle {
-    height: 55%;
+    height: 53%;
 }
 
 #games {
@@ -252,7 +250,7 @@ button:hover {
     padding-bottom: 10px;
     padding-left: 20px;
     padding-right: 20px;
-    font-size: 1.25em;
+    font-size: 1em;
 }
 
 .tab.active {

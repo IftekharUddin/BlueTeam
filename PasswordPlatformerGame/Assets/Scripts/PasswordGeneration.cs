@@ -91,6 +91,18 @@ public class PasswordGeneration : MonoBehaviour
 
     private string l33t(char ch)
     {
+        // ['a'] = "4@",
+        //         ['b'] = "8",
+        //         ['c'] = "({[<",
+        //         ['e'] = "3",
+        //         ['g'] = "69",
+        //         ['i'] = "1!|",
+        //         ['l'] = "1|7",
+        //         ['o'] = "0",
+        //         ['s'] = "$5",
+        //         ['t'] = "+7",
+        //         ['x'] = "%",
+        //         ['z'] = "2"
         if (ch == 'a' || ch == 'A')
         {
             return sub(ch, new string[] { "4", "@" });

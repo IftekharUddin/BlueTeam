@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Web;
+using UnityEngine.Networking;
+using System.Text;
 
 /// <summary>
 /// A singleton class which serves as a controller for the game, storing such game-wide information as the score 
@@ -52,9 +53,69 @@ public class GameController : MonoBehaviour
         if (url.Split('?').Length > 1)
         {
             // accesses the URL GET fields so as to get the ability to properly query the database
-            NameValueCollection queryParts = HttpUtility.ParseQueryString(url);
+            NameValueCollection queryParts = new NameValueCollection();
+            this.ParseQueryString(url, Encoding.UTF8, queryParts);
             this.user = queryParts.Get("user") as string;
             userText.text = this.user;
+        }
+    }
+
+    private void ParseQueryString(string query, Encoding encoding, NameValueCollection result)
+    {
+        if (query.Length == 0)
+            return;
+
+        var decodedLength = query.Length;
+        var namePos = 0;
+        var first = true;
+
+        while (namePos <= decodedLength)
+        {
+            int valuePos = -1, valueEnd = -1;
+            for (var q = namePos; q < decodedLength; q++)
+            {
+                if ((valuePos == -1) && (query[q] == '='))
+                {
+                    valuePos = q + 1;
+                }
+                else if (query[q] == '&')
+                {
+                    valueEnd = q;
+                    break;
+                }
+            }
+
+            if (first)
+            {
+                first = false;
+                if (query[namePos] == '?')
+                    namePos++;
+            }
+
+            string name;
+            if (valuePos == -1)
+            {
+                name = null;
+                valuePos = namePos;
+            }
+            else
+            {
+                name = UnityWebRequest.UnEscapeURL(query.Substring(namePos, valuePos - namePos - 1), encoding);
+            }
+            if (valueEnd < 0)
+            {
+                namePos = -1;
+                valueEnd = query.Length;
+            }
+            else
+            {
+                namePos = valueEnd + 1;
+            }
+            var value = UnityWebRequest.UnEscapeURL(query.Substring(valuePos, valueEnd - valuePos), encoding);
+
+            result.Add(name, value);
+            if (namePos == -1)
+                break;
         }
     }
 
@@ -142,11 +203,11 @@ public class GameController : MonoBehaviour
         scoreText.text = newText;
     }
 
-    
+
     public void EndGame()
     {
         Debug.Log("RESTARt");
-//        StartCoroutine(Register());
+        //        StartCoroutine(Register());
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
@@ -160,7 +221,7 @@ public class GameController : MonoBehaviour
         {
             Debug.Log("User created sucessfully.");
         }
-        else 
+        else
         {
             Debug.Log("User creation failed. Error #" + www.text);
         }

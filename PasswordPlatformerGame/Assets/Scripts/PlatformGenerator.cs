@@ -185,7 +185,7 @@ public class PlatformGenerator : MonoBehaviour
             curr = makeNewPlatform(parent);
             currRenderer = curr.AddComponent(typeof(SpriteRenderer)) as SpriteRenderer;
             currRenderer.sprite = currSprite;
-            curr.transform.position = parent.transform.position + currXPosition * Vector3.right;
+            curr.transform.position = parent.transform.position + currXPosition * Vector3.right + 0.4f*Vector3.forward;
             currXPosition += oneWidth;
         }
 
