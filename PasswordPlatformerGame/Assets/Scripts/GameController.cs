@@ -132,8 +132,8 @@ public class GameController : MonoBehaviour
     public void EndGame()
     {
         Debug.Log("RESTARt");
-//        StartCoroutine(Register());
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        StartCoroutine(Register());
+//        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     IEnumerator Register()

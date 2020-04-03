@@ -9,7 +9,7 @@ public class Countdown : MonoBehaviour
     public Text timeText;
 
     // time limit set here in seconds
-    float timeLeft = 20.0f;
+    float timeLeft = 10.0f;
 
     // Update is called once per frame
     void Update()
@@ -18,6 +18,7 @@ public class Countdown : MonoBehaviour
         string newText = $"{timeLeft.ToString("#.0")}";
         timeText.text = newText;
         if(timeLeft < 0){
+            timeText.text = $"Update";
             FindObjectOfType<GameController>().EndGame();
         }
     }
