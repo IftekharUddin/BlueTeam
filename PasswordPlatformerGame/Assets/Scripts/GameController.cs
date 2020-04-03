@@ -214,17 +214,17 @@ public class GameController : MonoBehaviour
     IEnumerator Register()
     {
         WWWForm form = new WWWForm();
-        form.AddField("name", user);
-        form.AddField("score", score);
-        WWW www = new WWW("http://https://games.fo.unc.edu/sqlconnect/register.php", form);
-        yield return www;
-        if (www.text == "0")
+        form.AddField("name", user.ToString());
+        form.AddField("score", score.ToString());
+        UnityWebRequest www = UnityWebRequest.Post("http://https://games.fo.unc.edu/sqlconnect/register.php", form);
+        yield return www.SendWebRequest();
+        if (www.isNetworkError || www.isHttpError)
         {
-            Debug.Log("User created sucessfully.");
+            Debug.Log(www.error);
         }
         else
         {
-            Debug.Log("User creation failed. Error #" + www.text);
+            Debug.Log("Form Upload Complete!");
         }
     }
 }
