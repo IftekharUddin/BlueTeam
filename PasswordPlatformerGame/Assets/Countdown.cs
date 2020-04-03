@@ -14,7 +14,7 @@ public class Countdown : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        timeLeft -=  Time.deltaTime;
+        timeLeft -= Time.deltaTime;
         string newText = $"{timeLeft.ToString("#.0")}";
         timeText.text = newText;
         if(timeLeft < 0){

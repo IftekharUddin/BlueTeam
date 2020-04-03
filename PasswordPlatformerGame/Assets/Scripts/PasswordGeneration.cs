@@ -1,15 +1,18 @@
 ﻿using UnityEngine;
 using System.IO;
-using System.Collections;
+using System.Collections.Generic;
 using Zxcvbn;
 using System.Text;
 
 
 public class PasswordGeneration : MonoBehaviour
 {
+    public TextAsset badPasswordsText;
+    public TextAsset wordsText;
+
     private static PasswordGeneration _instance;
-    private ArrayList badPasswords;
-    private ArrayList commonWords;
+    private List<string> badPasswords;
+    private List<string> commonWords;
     private Zxcvbn.Zxcvbn passwordChecker;
 
     /// <value> The singleton instance of this class which can be accessed by whoever wants to generate passwords. </value>
@@ -35,10 +38,9 @@ public class PasswordGeneration : MonoBehaviour
 
         this.passwordChecker = new Zxcvbn.Zxcvbn();
 
-        TextAsset text = Resources.Load<TextAsset>("BAD_PASSWORDS");
-        string passwords = text.text;
+        string passwords = this.badPasswordsText.text;
 
-        this.badPasswords = new ArrayList();
+        this.badPasswords = new List<string>();
         using (StringReader reader = new StringReader(passwords))
         {
             string line = string.Empty;
@@ -56,10 +58,9 @@ public class PasswordGeneration : MonoBehaviour
         // var result = this.passwordChecker.EvaluatePassword(first);
         // Debug.Log($"{first}: {result.CrackTime} {result.CrackTimeDisplay} {result.Score} {result.CalcTime}");
 
-        TextAsset wordsAsset = Resources.Load<TextAsset>("1000_COMMON_WORDS");
-        string words = wordsAsset.text;
+        string words = this.wordsText.text;
 
-        this.commonWords = new ArrayList();
+        this.commonWords = new List<string>();
         using (StringReader reader = new StringReader(words))
         {
             string line = string.Empty;
@@ -83,20 +84,32 @@ public class PasswordGeneration : MonoBehaviour
     public string GetBadPassword()
     {
         int randIndex = Mathf.FloorToInt(Random.Range(0f, (float)this.badPasswords.Count));
-        string item = this.badPasswords[randIndex] as string;
+        string item = this.badPasswords[randIndex];
         this.badPasswords.RemoveAt(randIndex);
         return item;
     }
 
     private string l33t(char ch)
     {
+        // ['a'] = "4@",
+        //         ['b'] = "8",
+        //         ['c'] = "({[<",
+        //         ['e'] = "3",
+        //         ['g'] = "69",
+        //         ['i'] = "1!|",
+        //         ['l'] = "1|7",
+        //         ['o'] = "0",
+        //         ['s'] = "$5",
+        //         ['t'] = "+7",
+        //         ['x'] = "%",
+        //         ['z'] = "2"
         if (ch == 'a' || ch == 'A')
         {
-            return sub(ch, new string[] { "4", "/-\\", "/_\\", "@", "/\\" });
+            return sub(ch, new string[] { "4", "@" });
         }
         else if (ch == 'b' || ch == 'B')
         {
-            return sub(ch, new string[] { "8", "|3", "13", "|}", "|:", "|8", "18", "6", "|B", "|8", "lo", "|o", "j3" });
+            return sub(ch, new string[] { "8", "|3", "|8", "lo", "|o", });
         }
         else if (ch == 'c' || ch == 'C')
         {
@@ -112,39 +125,39 @@ public class PasswordGeneration : MonoBehaviour
         }
         else if (ch == 'f' || ch == 'F')
         {
-            return sub(ch, new string[] { "|=", "ph", "|#", "|\"" });
+            return "" + ch;
         }
         else if (ch == 'g' || ch == 'G')
         {
-            return sub(ch, new string[] { "[", "-", "[+", "6", "C-" });
+            return sub(ch, new string[] { "6" });
         }
         else if (ch == 'h' || ch == 'H')
         {
-            return sub(ch, new string[] { "4", "|-|", "[-]", "{-}", "}-{", "}{", "|=|", "[=]", "{=}", "/-/", "(-)", ")-(", ":-:", "I+I" });
+            return sub(ch, new string[] { "|-|", "[-]", "}-{", "}{", "|=|", "[=]" });
         }
         else if (ch == 'i' || ch == 'I')
         {
-            return sub(ch, new string[] { "1", "|", "!", "9" });
+            return sub(ch, new string[] { "1", "|", "!" });
         }
         else if (ch == 'j' || ch == 'J')
         {
-            return sub(ch, new string[] { "_|", "_/", "_7", "_)", "_]", "_}" });
+            return sub(ch, new string[] { "_|", "_)", "_]", "_}" });
         }
         else if (ch == 'k' || ch == 'K')
         {
-            return sub(ch, new string[] { "|<", "1<", "l<", "|{", "l{" });
+            return sub(ch, new string[] { "|<", "1<", "l<" });
         }
         else if (ch == 'l' || ch == 'L')
         {
-            return sub(ch, new string[] { "|_", "|", "1", "][" });
+            return sub(ch, new string[] { "|_", "|", "1" });
         }
         else if (ch == 'm' || ch == 'M')
         {
-            return sub(ch, new string[] { "44", "|\\/|", "^^", "/\\/\\", "/X\\", "[]\\/][", "[]V[]", "][\\\\//][", "(V),//.", ".\\\\", "N\\\\," });
+            return sub(ch, new string[] { "|\\/|", "/\\/\\" });
         }
         else if (ch == 'n' || ch == 'N')
         {
-            return sub(ch, new string[] { "|\\|", "/\\/", "/V", "][\\\\][" });
+            return sub(ch, new string[] { "|\\|" });
         }
         else if (ch == 'o' || ch == 'O')
         {
@@ -152,15 +165,15 @@ public class PasswordGeneration : MonoBehaviour
         }
         else if (ch == 'p' || ch == 'P')
         {
-            return sub(ch, new string[] { "|o", "|O", "|>", "|*", "|°", "|D", "/o", "[]D", "|7}" });
+            return sub(ch, new string[] { "|O", "|>", "|*" });
         }
         else if (ch == 'q' || ch == 'Q')
         {
-            return sub(ch, new string[] { "O_", "9", "(,)", "kw" });
+            return sub(ch, new string[] { "O_" });
         }
         else if (ch == 'r' || ch == 'R')
         {
-            return sub(ch, new string[] { "|2", "12", ".-", "|^" });
+            return "" + ch;
         }
         else if (ch == 's' || ch == 'S')
         {
@@ -168,11 +181,11 @@ public class PasswordGeneration : MonoBehaviour
         }
         else if (ch == 't' || ch == 'T')
         {
-            return sub(ch, new string[] { "7", "+", "7`", "'|'", "`|`", "~|~", "-|-", "']['" });
+            return sub(ch, new string[] { "+", "'|'", "`|`", "~|~", "-|-" });
         }
         else if (ch == 'u' || ch == 'U')
         {
-            return sub(ch, new string[] { "|_|", "\\_\\", "/_/", "\\_/", "(_)", "[_]", "{_}" });
+            return sub(ch, new string[] { "|_|" });
         }
         else if (ch == 'v' || ch == 'V')
         {
@@ -180,19 +193,19 @@ public class PasswordGeneration : MonoBehaviour
         }
         else if (ch == 'w' || ch == 'W')
         {
-            return sub(ch, new string[] { "\\/\\/", "(/\\)", "\\^/", "|/\\|", "\\X/", "\\\\'", "'//", "\\_|_/", "\\\\//\\\\//", "2u", "\\V/" });
+            return sub(ch, new string[] { "\\/\\/" });
         }
         else if (ch == 'x' || ch == 'X')
         {
-            return sub(ch, new string[] { "%", "*", "><", "}{", ")(" });
+            return sub(ch, new string[] { "><" });
         }
         else if (ch == 'y' || ch == 'Y')
         {
-            return sub(ch, new string[] { "`/", "]\\|/" });
+            return "" + ch;
         }
         else if (ch == 'z' || ch == 'Z')
         {
-            return sub(ch, new string[] { "2", "5", "7_", ">_", "(/)" });
+            return "" + ch;
         }
         return "" + ch;
     }
@@ -217,7 +230,7 @@ public class PasswordGeneration : MonoBehaviour
         return this.commonWords[Mathf.FloorToInt(Random.Range(0, this.commonWords.Count))] as string;
     }
 
-    public string GetGoodPassword()
+    private string generateGoodPassword()
     {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 2; i++)
@@ -227,9 +240,19 @@ public class PasswordGeneration : MonoBehaviour
         return sb.ToString();
     }
 
-    // Update is called once per frame
-    void Update()
+    public string GetGoodPassword()
     {
+        string pw = generateGoodPassword();
 
+        // var result = this.passwordChecker.EvaluatePassword(first);
+        // Debug.Log($"{first}: {result.CrackTime} {result.CrackTimeDisplay} {result.Score} {result.CalcTime}");
+        var result = this.passwordChecker.EvaluatePassword(pw);
+
+        while (result.Score < 3)
+        {
+            pw = generateGoodPassword();
+            result = this.passwordChecker.EvaluatePassword(pw);
+        }
+        return pw;
     }
 }
