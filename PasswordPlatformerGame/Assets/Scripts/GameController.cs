@@ -207,24 +207,26 @@ public class GameController : MonoBehaviour
     public void EndGame()
     {
         Debug.Log("RESTARt");
-        StartCoroutine(Register());
+        StartCoroutine(SendScore());
 //        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+// temp comment
     }
 
-    IEnumerator Register()
+    IEnumerator SendScore()
     {
         WWWForm form = new WWWForm();
         form.AddField("name", user.ToString());
         form.AddField("score", score.ToString());
-        UnityWebRequest www = UnityWebRequest.Post("http://https://games.fo.unc.edu/sqlconnect/register.php", form);
-        yield return www.SendWebRequest();
-        if (www.isNetworkError || www.isHttpError)
+        UnityWebRequest sendScoreRequest = UnityWebRequest.Post("https://games.fo.unc.edu/sqlconnect/sendScore.php", form);
+        yield return sendScoreRequest.SendWebRequest();
+        if (sendScoreRequest.isNetworkError || sendScoreRequest.isHttpError)
         {
-            Debug.Log(www.error);
+            Debug.Log(sendScoreRequest.error);
         }
         else
         {
             Debug.Log("Form Upload Complete!");
         }
     }
+
 }

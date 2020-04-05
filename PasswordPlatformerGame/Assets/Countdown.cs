@@ -19,7 +19,7 @@ public class Countdown : MonoBehaviour
         timeText.text = newText;
         if(timeLeft < 0){
             timeText.text = $"Update";
-            FindObjectOfType<GameController>().EndGame();
+            GameController.Instance.EndGame();
         }
     }
 }
