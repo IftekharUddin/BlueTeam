@@ -52,10 +52,14 @@ public class GameController : MonoBehaviour
         string url = Application.absoluteURL as string;
         if (url.Split('?').Length > 1)
         {
+            string query = url.Split('?')[1];
+            // Debug.Log($"Query: {query}");
             // accesses the URL GET fields so as to get the ability to properly query the database
             NameValueCollection queryParts = new NameValueCollection();
-            this.ParseQueryString(url, Encoding.UTF8, queryParts);
-            this.user = queryParts.Get("user") as string;
+            this.ParseQueryString(query, Encoding.UTF8, queryParts);
+            string user = queryParts.Get("user") as string;
+            // Debug.Log($"User: {user}");
+            this.user = user;
             userText.text = this.user;
         }
     }

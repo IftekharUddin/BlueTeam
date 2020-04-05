@@ -77,9 +77,6 @@ namespace Zxcvbn
 
             var timer = System.Diagnostics.Stopwatch.StartNew();
 
-            Debug.Log($"Trying to match {password}");
-			// Console.WriteLine($"Trying to match {password}");
-
             foreach (var matcher in matcherFactory.CreateMatchers(userInputs))
             {
                 var currMatches = matcher.MatchPassword(password);
@@ -90,16 +87,10 @@ namespace Zxcvbn
                 // matches = matches.Union(matcher.MatchPassword(password));
             }
 
-            Debug.Log($"Finished for loop!");
-			// Console.WriteLine("Finished for loop!");
-
             var result = FindMinimumEntropyMatch(password, matches);
 
             timer.Stop();
             result.CalcTime = timer.ElapsedMilliseconds;
-
-            Debug.Log($"Returning!");
-			// Console.WriteLine("Returning!");
 
             return result;
         }
