@@ -239,6 +239,7 @@ MonoBehaviour:
   nameField: {fileID: 1167459586}
   scoreField: {fileID: 556590503}
   submitButton: {fileID: 43993047}
+  debugText: {fileID: 1221475322}
 --- !u!1 &43993045
 GameObject:
   m_ObjectHideFlags: 0

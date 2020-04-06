@@ -12,6 +12,8 @@ public class EndMenu : MonoBehaviour
 
     public Button submitButton;
 
+    public Text debugText;
+
     public void Restart()
     {
         SceneManager.LoadScene(1);
@@ -19,16 +21,24 @@ public class EndMenu : MonoBehaviour
 
    public void CallSendScore()
    {
+       updateText("About to send Coroutine");
        StartCoroutine(SendScore());
    } 
+
+   void updateText(string text){
+        string newText = $"{text.ToString()}";
+        debugText.text = newText;
+   }
 
     IEnumerator SendScore()
     {
         WWWForm form = new WWWForm();
         form.AddField("name", nameField.text);
         form.AddField("score", scoreField.text);
-        UnityWebRequest sendScoreRequest = UnityWebRequest.Post("https://games.fo.unc.edu/sqlconnect/sendScore.php", form);
+        updateText("Connection Setup");
+        UnityWebRequest sendScoreRequest = UnityWebRequest.Post("https://localhost/sqlconnect/sendScore.php", form);
         yield return sendScoreRequest.SendWebRequest();
+        updateText("Connection Sent");
         if (sendScoreRequest.isNetworkError || sendScoreRequest.isHttpError)
         {
             Debug.Log(sendScoreRequest.error);
