@@ -392,7 +392,7 @@ GameObject:
   - component: {fileID: 374335842}
   m_Layer: 8
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2440,6 +2440,7 @@ GameObject:
   - component: {fileID: 1405728038}
   - component: {fileID: 1405728039}
   - component: {fileID: 1405728040}
+  - component: {fileID: 1405728041}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -2520,6 +2521,19 @@ MonoBehaviour:
   FEEDBACK_LAYER: 11
   textMaterial: {fileID: 2100000, guid: dfc1bb03d2874d4449b581724705610e, type: 3}
   textFont: {fileID: 12800000, guid: dfc1bb03d2874d4449b581724705610e, type: 3}
+--- !u!114 &1405728041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1405728035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0630301dc0494724eb6ba8a403c53b13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeText: {fileID: 1185609562}
 --- !u!1 &1430491806
 GameObject:
   m_ObjectHideFlags: 0
@@ -2714,7 +2728,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2664d790f2a11248ba23225f1f7b8be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeText: {fileID: 1185609562}
 --- !u!1 &1440853778
 GameObject:
   m_ObjectHideFlags: 0

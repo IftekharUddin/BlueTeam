@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Zxcvbn;
 using System.Text;
 using System;
-// using System.Diagnostics;
+using System.Diagnostics;
 using System.Linq;
 
 
@@ -16,7 +16,6 @@ public class PasswordGeneration : MonoBehaviour
 
     private DifficultyUtility.Difficulty difficulty;
     public TextAsset badPasswordsText;
-    public TextAsset wordsText;
     public TextAsset zxcvbnPasswordsText;
     public TextAsset maleNamesText;
     public TextAsset femaleNamesText;
@@ -25,7 +24,6 @@ public class PasswordGeneration : MonoBehaviour
 
     private static PasswordGeneration _instance;
     private List<string> badPasswordsFromInternet = new List<string>();
-    private List<string> commonWords = new List<string>();
     private List<string> zxcvbnPasswords = new List<string>();
     private List<string> maleNames = new List<string>();
     private List<string> femaleNames = new List<string>();
@@ -47,8 +45,7 @@ public class PasswordGeneration : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         if (_instance != null && _instance != this)
         {
@@ -57,15 +54,13 @@ public class PasswordGeneration : MonoBehaviour
         }
 
         _instance = this;
-        DontDestroyOnLoad(this.gameObject);
+        // DontDestroyOnLoad(this.gameObject);
 
         this.passwordChecker = new Zxcvbn.Zxcvbn();
 
         string passwords = this.badPasswordsText.text;
 
         this.readTextAssetIntoList(this.badPasswordsText, this.badPasswordsFromInternet);
-
-        this.readTextAssetIntoList(this.wordsText, this.commonWords);
 
         this.readTextAssetIntoList(this.zxcvbnPasswordsText, this.zxcvbnPasswords);
 
@@ -77,24 +72,31 @@ public class PasswordGeneration : MonoBehaviour
 
         this.readTextAssetIntoList(this.englishWordsText, this.englishWords);
 
-        foreach (var i in Enumerable.Range(0, 10))
+        foreach (var i in Enumerable.Range(0, 100))
         {
+            Stopwatch sw = Stopwatch.StartNew();
             this.badPasswords.Add(this.generateBadPassword());
+            sw.Stop();
+            UnityEngine.Debug.Log($"Bad: {sw.ElapsedMilliseconds}");
+            Stopwatch sw2 = Stopwatch.StartNew();
             this.goodPasswords.Add(this.generateGoodPassword());
+            sw2.Stop();
+            UnityEngine.Debug.Log($"Good: {sw2.ElapsedMilliseconds}");
         }
+
     }
 
-    void FixedUpdate()
-    {
-        if (this.badPasswords.Count > 100)
-        {
-            this.badPasswords.Add(this.generateBadPassword());
-        }
-        if (this.goodPasswords.Count > 100)
-        {
-            this.goodPasswords.Add(this.generateGoodPassword());
-        }
-    }
+    // void FixedUpdate()
+    // {
+    //     if (this.badPasswords.Count < 100)
+    //     {
+    //         this.badPasswords.Add(this.generateBadPassword());
+    //     }
+    //     if (this.goodPasswords.Count < 100)
+    //     {
+    //         this.goodPasswords.Add(this.generateGoodPassword());
+    //     }
+    // }
 
     private void readTextAssetIntoList(TextAsset asset, List<string> list)
     {
@@ -161,7 +163,7 @@ public class PasswordGeneration : MonoBehaviour
         {
             int randIndex = Mathf.FloorToInt(UnityEngine.Random.Range(0f, (float)this.badPasswordsFromInternet.Count));
             string item = this.badPasswordsFromInternet[randIndex];
-            this.badPasswordsFromInternet.RemoveAt(randIndex);
+            // this.badPasswordsFromInternet.RemoveAt(randIndex);
             return item;
         }
         else if (diff == DifficultyUtility.Difficulty.MEDIUM)
@@ -369,25 +371,13 @@ public class PasswordGeneration : MonoBehaviour
         return sb.ToString();
     }
 
-    private string getRandomWord()
-    {
-        return this.commonWords[Mathf.FloorToInt(UnityEngine.Random.value * this.commonWords.Count)] as string;
-    }
-
     private string generateGoodCandidatePassword()
     {
         int numWords = Mathf.FloorToInt(UnityEngine.Random.value * 2 + 2);
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < numWords; i++)
         {
-            if (this.difficulty == DifficultyUtility.Difficulty.EASY)
-            {
-                sb.Append(l33tword(getRandomWord()));
-            }
-            else
-            {
-                sb.Append(l33tword(this.getRandFromArray(this.englishWords)));
-            }
+            sb.Append(l33tword(this.getRandFromArray(this.englishWords)));
         }
         return sb.ToString();
     }
@@ -398,7 +388,7 @@ public class PasswordGeneration : MonoBehaviour
 
         var result = this.passwordChecker.EvaluatePassword(pw);
 
-        int cutoff = (this.difficulty == DifficultyUtility.Difficulty.EASY) ? 14 : 24;
+        int cutoff = 24;
 
         while (result.Score <= 3 || pw.Length > cutoff)
         {
@@ -410,6 +400,7 @@ public class PasswordGeneration : MonoBehaviour
 
     public string GetGoodPassword()
     {
+        UnityEngine.Debug.Log(this.currGoodPassWord);
         return this.goodPasswords[this.currGoodPassWord++];
     }
 }

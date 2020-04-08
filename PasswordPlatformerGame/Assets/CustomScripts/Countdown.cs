@@ -5,11 +5,10 @@ using UnityEngine.UI;
 
 public class Countdown : MonoBehaviour
 {
-    // Start is called before the first frame update
     public Text timeText;
 
     // time limit set here in seconds
-    float timeLeft = 50.0f;
+    float timeLeft = 10.0f;
 
     // Update is called once per frame
     void Update()
@@ -19,7 +18,8 @@ public class Countdown : MonoBehaviour
         timeText.text = newText;
         if (timeLeft < 0)
         {
-            FindObjectOfType<GameController>().EndGame();
+            GameController.Instance.EndGame();
+            Destroy(this.gameObject);
         }
     }
 }

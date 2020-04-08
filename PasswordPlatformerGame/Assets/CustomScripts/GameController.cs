@@ -47,7 +47,7 @@ public class GameController : MonoBehaviour
         }
 
         _instance = this;
-        DontDestroyOnLoad(this.gameObject);
+        // DontDestroyOnLoad(this.gameObject);
 
         string url = Application.absoluteURL as string;
         if (url.Split('?').Length > 1)
@@ -239,9 +239,8 @@ public class GameController : MonoBehaviour
 
     public void EndGame()
     {
-        Debug.Log("RESTARt");
-        //        StartCoroutine(Register());
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        PlayerPrefs.SetInt("score", this.score);
+        SceneManager.LoadSceneAsync("GameOver");
     }
 
     IEnumerator Register()
