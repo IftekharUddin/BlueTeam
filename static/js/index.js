@@ -176,7 +176,7 @@ $(document).ready(function () {
                 gameCard.append(cardText);
 
                 if (game['disabled']) {
-                    gameCard.append($('<p>Coming soon!</p>'));
+                    gameCard.append($('<p>Coming someday!</p>'));
                 }
                 $('#game-cards').append(gameCard);
             }
