@@ -122,15 +122,30 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public void setDifficulty(DifficultyUtility.Difficulty newDifficulty)
+    void OnEnable()
     {
-        this.difficulty = newDifficulty;
-        if (newDifficulty == DifficultyUtility.Difficulty.MEDIUM)
+        int difficulty = PlayerPrefs.GetInt("difficulty");
+        switch (difficulty)
+        {
+            case 0:
+                this.difficulty = DifficultyUtility.Difficulty.EASY;
+                break;
+            case 1:
+                this.difficulty = DifficultyUtility.Difficulty.MEDIUM;
+                break;
+            case 2:
+                this.difficulty = DifficultyUtility.Difficulty.HARD;
+                break;
+            default:
+                Application.Quit();
+                return;
+        }
+        if (this.difficulty == DifficultyUtility.Difficulty.MEDIUM)
         {
             this.goodScore *= 2;
             this.badScore *= 2;
         }
-        else if (newDifficulty == DifficultyUtility.Difficulty.HARD)
+        else if (this.difficulty == DifficultyUtility.Difficulty.HARD)
         {
             this.goodScore *= 4;
             this.badScore *= 4;

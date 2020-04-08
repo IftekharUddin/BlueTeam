@@ -130,7 +130,6 @@ public class PasswordGeneration : MonoBehaviour
                 Application.Quit();
                 return;
         }
-        GameController.Instance.setDifficulty(this.difficulty);
     }
 
     public string EvaluatePassword(string password)
@@ -293,7 +292,7 @@ public class PasswordGeneration : MonoBehaviour
     private string generateBadPassword()
     {
         string word = this.badPassword(this.difficulty);
-        while (this.passwordChecker.EvaluatePassword(word).Score > 2)
+        while (this.passwordChecker.EvaluatePassword(word).Score > 2 || word.Length > 24)
         {
             word = this.badPassword(this.difficulty);
         }
@@ -377,11 +376,18 @@ public class PasswordGeneration : MonoBehaviour
 
     private string generateGoodCandidatePassword()
     {
-        int numWords = Mathf.FloorToInt(UnityEngine.Random.value * 3 + 2);
+        int numWords = Mathf.FloorToInt(UnityEngine.Random.value * 2 + 2);
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < numWords; i++)
         {
-            sb.Append(l33tword(getRandomWord()));
+            if (this.difficulty == DifficultyUtility.Difficulty.EASY)
+            {
+                sb.Append(l33tword(getRandomWord()));
+            }
+            else
+            {
+                sb.Append(l33tword(this.getRandFromArray(this.englishWords)));
+            }
         }
         return sb.ToString();
     }
@@ -392,7 +398,9 @@ public class PasswordGeneration : MonoBehaviour
 
         var result = this.passwordChecker.EvaluatePassword(pw);
 
-        while (result.Score <= 3)
+        int cutoff = (this.difficulty == DifficultyUtility.Difficulty.EASY) ? 14 : 24;
+
+        while (result.Score <= 3 || pw.Length > cutoff)
         {
             pw = generateGoodCandidatePassword();
             result = this.passwordChecker.EvaluatePassword(pw);
