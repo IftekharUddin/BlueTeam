@@ -16,8 +16,8 @@ public class GameController : MonoBehaviour
     private static GameController _instance;
     private int score = 0;
     public Text scoreText;
-    public Text userText;
     private string user;
+    private DifficultyUtility.Difficulty difficulty;
 
     public enum Score
     {
@@ -60,7 +60,6 @@ public class GameController : MonoBehaviour
             string user = queryParts.Get("user") as string;
             // Debug.Log($"User: {user}");
             this.user = user;
-            userText.text = this.user;
         }
     }
 
@@ -120,6 +119,21 @@ public class GameController : MonoBehaviour
             result.Add(name, value);
             if (namePos == -1)
                 break;
+        }
+    }
+
+    public void setDifficulty(DifficultyUtility.Difficulty newDifficulty)
+    {
+        this.difficulty = newDifficulty;
+        if (newDifficulty == DifficultyUtility.Difficulty.MEDIUM)
+        {
+            this.goodScore *= 2;
+            this.badScore *= 2;
+        }
+        else if (newDifficulty == DifficultyUtility.Difficulty.HARD)
+        {
+            this.goodScore *= 4;
+            this.badScore *= 4;
         }
     }
 

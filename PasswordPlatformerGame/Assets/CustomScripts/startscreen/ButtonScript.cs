@@ -4,12 +4,6 @@ using UnityEngine.SceneManagement;
 
 public class ButtonScript : MonoBehaviour
 {
-    private enum Difficulty
-    {
-        EASY,
-        MEDIUM,
-        HARD
-    }
     public Button easyButton, mediumButton, hardButton;
 
     // Start is called before the first frame update
@@ -22,30 +16,30 @@ public class ButtonScript : MonoBehaviour
 
     void Easy()
     {
-        loadPlayScene(Difficulty.EASY);
+        loadPlayScene(DifficultyUtility.Difficulty.EASY);
     }
 
     void Medium()
     {
-        loadPlayScene(Difficulty.MEDIUM);
+        loadPlayScene(DifficultyUtility.Difficulty.MEDIUM);
     }
 
     private void Hard()
     {
-        loadPlayScene(Difficulty.HARD);
+        loadPlayScene(DifficultyUtility.Difficulty.HARD);
     }
 
-    private void loadPlayScene(Difficulty chosen)
+    private void loadPlayScene(DifficultyUtility.Difficulty chosen)
     {
         switch (chosen)
         {
-            case Difficulty.EASY:
+            case DifficultyUtility.Difficulty.EASY:
                 PlayerPrefs.SetInt("difficulty", 0);
                 break;
-            case Difficulty.MEDIUM:
+            case DifficultyUtility.Difficulty.MEDIUM:
                 PlayerPrefs.SetInt("difficulty", 1);
                 break;
-            case Difficulty.HARD:
+            case DifficultyUtility.Difficulty.HARD:
                 PlayerPrefs.SetInt("difficulty", 2);
                 break;
             default:

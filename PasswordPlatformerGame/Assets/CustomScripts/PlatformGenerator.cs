@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+// using System.Diagnostics;
 
 /// <summary>
 /// A singleton class which serves as a generator for platforms. To perform this duty, it stores the current rightmost
@@ -158,6 +159,9 @@ public class PlatformGenerator : MonoBehaviour
         BoxCollider2D boxCollider = parent.AddComponent(typeof(BoxCollider2D)) as BoxCollider2D;
         boxCollider.size = new Vector2(totalWidth, this.height);
         parent.transform.position = new Vector3(start.x + middlePlatform, platformY, start.z);
+        Rigidbody2D rigidbody = parent.AddComponent(typeof(Rigidbody2D)) as Rigidbody2D;
+        rigidbody.bodyType = RigidbodyType2D.Kinematic;
+        // rigidbody.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
         // add password components
         if (passwordData.Item1)
@@ -185,7 +189,7 @@ public class PlatformGenerator : MonoBehaviour
             curr = makeNewPlatform(parent);
             currRenderer = curr.AddComponent(typeof(SpriteRenderer)) as SpriteRenderer;
             currRenderer.sprite = currSprite;
-            curr.transform.position = parent.transform.position + currXPosition * Vector3.right + 0.4f*Vector3.forward;
+            curr.transform.position = parent.transform.position + currXPosition * Vector3.right + 0.4f * Vector3.forward;
             currXPosition += oneWidth;
         }
 
@@ -274,9 +278,24 @@ public class PlatformGenerator : MonoBehaviour
 
         Vector3 start = this.right;
 
+        // Stopwatch stopwatch = Stopwatch.StartNew();
         Vector3 vec = generatePasswordPlatform(Mathf.FloorToInt(Random.Range(3f, 6f)), goodBad.Item1, this.right, yBounds.Item1);
+        // stopwatch.Stop();
+        // var one = stopwatch.ElapsedMilliseconds;
+        // Stopwatch stopwatch2 = Stopwatch.StartNew();
         vec = generatePasswordPlatform(Mathf.FloorToInt(Random.Range(3f, 6f)), goodBad.Item2, vec, yBounds.Item2);
+        // stopwatch2.Stop();
+        // var two = stopwatch2.ElapsedMilliseconds;
         this.right = generateFinalPlatform(Mathf.FloorToInt(Random.Range(5f, 11f)), vec, (this.cameraY - this.cameraHeight, this.cameraY + this.cameraHeight));
+
+        // if (goodBad.Item1)
+        // {
+        //     UnityEngine.Debug.Log($"Good: {one}, Bad: {two}");
+        // }
+        // else
+        // {
+        //     UnityEngine.Debug.Log($"Good: {two}, Bad: {one}");
+        // }
 
         this.generatePortals(start, this.right);
     }
