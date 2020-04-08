@@ -15,6 +15,15 @@ public class GoodPlatform : MonoBehaviour
     {
         if (!this.hasCollided)
         {
+            Vector2 normal = col.GetContact(0).normal;
+            float dotUp = Vector2.Dot(normal, Vector2.up);
+            float upPower = Mathf.Abs(Vector2.Dot(normal, Vector2.up));
+            float dotRight = Mathf.Abs(Vector2.Dot(normal, Vector2.right));
+            if (dotRight > upPower || dotUp > 0)
+            {
+                return;
+            }
+
             this.password.color = new Color(77f / 255f, 172f / 255f, 38f / 255f);
             this.hasCollided = true;
             GameController.Instance.updateScore(GameController.Score.GOOD);

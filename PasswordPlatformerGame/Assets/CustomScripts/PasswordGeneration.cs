@@ -3,17 +3,38 @@ using System.IO;
 using System.Collections.Generic;
 using Zxcvbn;
 using System.Text;
+using System;
+using System.Diagnostics;
+using System.Linq;
 
 
 public class PasswordGeneration : MonoBehaviour
 {
+    private string[] punctuation = new string[] { ";", ".", "!", "?", "-", "_", "+", "=", "/", "\\", "~", "|" };
+    private string[] months = new string[] { "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december", "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sept", "oct", "nov", "dec" };
+    private string[] days = new string[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "twenty-one", "twenty-two", "twenty-three", "twenty-four", "twenty-five", "twenty-six", "twenty-seven", "twenty-eight", "twenty-nine", "thirty", "thirty-one" };
+
+    private DifficultyUtility.Difficulty difficulty;
     public TextAsset badPasswordsText;
-    public TextAsset wordsText;
+    public TextAsset zxcvbnPasswordsText;
+    public TextAsset maleNamesText;
+    public TextAsset femaleNamesText;
+    public TextAsset surnamesText;
+    public TextAsset englishWordsText;
 
     private static PasswordGeneration _instance;
-    private List<string> badPasswords;
-    private List<string> commonWords;
+    private List<string> badPasswordsFromInternet = new List<string>();
+    private List<string> zxcvbnPasswords = new List<string>();
+    private List<string> maleNames = new List<string>();
+    private List<string> femaleNames = new List<string>();
+    private List<string> surnames = new List<string>();
+    private List<string> englishWords = new List<string>();
     private Zxcvbn.Zxcvbn passwordChecker;
+
+    private List<string> badPasswords = new List<string>();
+    private List<string> goodPasswords = new List<string>();
+    private int currBadPassWord = 0;
+    private int currGoodPassWord = 0;
 
     /// <value> The singleton instance of this class which can be accessed by whoever wants to generate passwords. </value>
     public static PasswordGeneration Instance
@@ -24,8 +45,7 @@ public class PasswordGeneration : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         if (_instance != null && _instance != this)
         {
@@ -34,14 +54,53 @@ public class PasswordGeneration : MonoBehaviour
         }
 
         _instance = this;
-        DontDestroyOnLoad(this.gameObject);
+        // DontDestroyOnLoad(this.gameObject);
 
         this.passwordChecker = new Zxcvbn.Zxcvbn();
 
         string passwords = this.badPasswordsText.text;
 
-        this.badPasswords = new List<string>();
-        using (StringReader reader = new StringReader(passwords))
+        this.readTextAssetIntoList(this.badPasswordsText, this.badPasswordsFromInternet);
+
+        this.readTextAssetIntoList(this.zxcvbnPasswordsText, this.zxcvbnPasswords);
+
+        this.readTextAssetIntoList(this.maleNamesText, this.maleNames);
+
+        this.readTextAssetIntoList(this.femaleNamesText, this.femaleNames);
+
+        this.readTextAssetIntoList(this.surnamesText, this.surnames);
+
+        this.readTextAssetIntoList(this.englishWordsText, this.englishWords);
+
+        foreach (var i in Enumerable.Range(0, 50))
+        {
+            Stopwatch sw = Stopwatch.StartNew();
+            this.badPasswords.Add(this.generateBadPassword());
+            sw.Stop();
+            // UnityEngine.Debug.Log($"Bad: {sw.ElapsedMilliseconds}");
+            Stopwatch sw2 = Stopwatch.StartNew();
+            this.goodPasswords.Add(this.generateGoodPassword());
+            sw2.Stop();
+            // UnityEngine.Debug.Log($"Good: {sw2.ElapsedMilliseconds}");
+        }
+
+    }
+
+    // void FixedUpdate()
+    // {
+    //     if (this.badPasswords.Count < 100)
+    //     {
+    //         this.badPasswords.Add(this.generateBadPassword());
+    //     }
+    //     if (this.goodPasswords.Count < 100)
+    //     {
+    //         this.goodPasswords.Add(this.generateGoodPassword());
+    //     }
+    // }
+
+    private void readTextAssetIntoList(TextAsset asset, List<string> list)
+    {
+        using (StringReader reader = new StringReader(asset.text))
         {
             string line = string.Empty;
             do
@@ -49,29 +108,29 @@ public class PasswordGeneration : MonoBehaviour
                 line = reader.ReadLine();
                 if (line != null)
                 {
-                    this.badPasswords.Add(line);
+                    list.Add(line);
                 }
             } while (line != null);
         }
+    }
 
-        // string first = this.badPasswords[0] as string;
-        // var result = this.passwordChecker.EvaluatePassword(first);
-        // Debug.Log($"{first}: {result.CrackTime} {result.CrackTimeDisplay} {result.Score} {result.CalcTime}");
-
-        string words = this.wordsText.text;
-
-        this.commonWords = new List<string>();
-        using (StringReader reader = new StringReader(words))
+    void OnEnable()
+    {
+        int difficulty = PlayerPrefs.GetInt("difficulty");
+        switch (difficulty)
         {
-            string line = string.Empty;
-            do
-            {
-                line = reader.ReadLine();
-                if (line != null)
-                {
-                    this.commonWords.Add(line);
-                }
-            } while (line != null);
+            case 0:
+                this.difficulty = DifficultyUtility.Difficulty.EASY;
+                break;
+            case 1:
+                this.difficulty = DifficultyUtility.Difficulty.MEDIUM;
+                break;
+            case 2:
+                this.difficulty = DifficultyUtility.Difficulty.HARD;
+                break;
+            default:
+                Application.Quit();
+                return;
         }
     }
 
@@ -81,138 +140,225 @@ public class PasswordGeneration : MonoBehaviour
         return $"{result.CrackTimeDisplay}!";
     }
 
+    private string getRandFromArray(List<string> arr)
+    {
+        return arr[Mathf.FloorToInt(UnityEngine.Random.value * arr.Count)];
+    }
+
+    private string getRandPunctuation()
+    {
+        return this.punctuation[Mathf.FloorToInt(UnityEngine.Random.value * this.punctuation.Length)];
+    }
+
+    private string reverse(string s)
+    {
+        char[] chars = s.ToCharArray();
+        Array.Reverse(chars);
+        return new string(chars);
+    }
+
+    private string badPassword(DifficultyUtility.Difficulty diff)
+    {
+        if (diff == DifficultyUtility.Difficulty.EASY)
+        {
+            int randIndex = Mathf.FloorToInt(UnityEngine.Random.Range(0f, (float)this.badPasswordsFromInternet.Count));
+            string item = this.badPasswordsFromInternet[randIndex];
+            // this.badPasswordsFromInternet.RemoveAt(randIndex);
+            return item;
+        }
+        else if (diff == DifficultyUtility.Difficulty.MEDIUM)
+        {
+            int choice = Mathf.FloorToInt(UnityEngine.Random.value * 5);
+            string res;
+            switch (choice)
+            {
+                case 0:
+                    int randIndex = Mathf.FloorToInt(UnityEngine.Random.value * this.zxcvbnPasswords.Count);
+                    string item = this.zxcvbnPasswords[randIndex];
+                    this.zxcvbnPasswords.RemoveAt(randIndex);
+                    res = item;
+                    break;
+                case 1:
+                    res = this.getRandFromArray(this.maleNames);
+                    break;
+                case 2:
+                    res = this.getRandFromArray(this.femaleNames);
+                    break;
+                case 3:
+                    res = this.getRandFromArray(this.surnames);
+                    break;
+                case 4:
+                    int numberWords = Mathf.FloorToInt(UnityEngine.Random.value * 3 + 1);
+                    StringBuilder sb = new StringBuilder();
+                    for (var i = 0; i < numberWords; i++)
+                    {
+                        sb.Append(this.getRandFromArray(this.englishWords));
+                    }
+                    res = sb.ToString();
+                    break;
+                default:
+                    res = badPassword(DifficultyUtility.Difficulty.EASY);
+                    break;
+            }
+            if (UnityEngine.Random.value > 0.75f)
+            {
+                return l33tword(res);
+            }
+            return res;
+        }
+        else
+        {
+            int choice = Mathf.FloorToInt(UnityEngine.Random.value * 7);
+            string res;
+            switch (choice)
+            {
+                case 0:
+                    int randIndex = Mathf.FloorToInt(UnityEngine.Random.value * this.zxcvbnPasswords.Count);
+                    string item = this.zxcvbnPasswords[randIndex];
+                    this.zxcvbnPasswords.RemoveAt(randIndex);
+                    res = item;
+                    break;
+                case 1:
+                    res = this.getRandFromArray(this.maleNames) + this.getRandFromArray(this.surnames);
+                    break;
+                case 2:
+                    res = this.getRandFromArray(this.femaleNames) + this.getRandFromArray(this.surnames);
+                    break;
+                case 3:
+                    res = this.getRandFromArray(this.surnames) + this.getRandFromArray(this.maleNames);
+                    break;
+                case 4:
+                    res = this.getRandFromArray(this.surnames) + this.getRandFromArray(this.femaleNames);
+                    break;
+                case 5:
+                    int numberWords = Mathf.FloorToInt(UnityEngine.Random.value * 3 + 1);
+                    StringBuilder sb = new StringBuilder();
+                    for (var i = 0; i < numberWords; i++)
+                    {
+                        sb.Append(this.getRandFromArray(englishWords));
+                        if (UnityEngine.Random.value > .8f)
+                        {
+                            sb.Append(this.getRandPunctuation());
+                        }
+                    }
+                    string val = sb.ToString();
+                    if (UnityEngine.Random.value > .9f)
+                    {
+                        res = this.reverse(val);
+                        break;
+                    }
+                    res = val;
+                    break;
+                case 6:
+                    int monthInt = Mathf.FloorToInt(UnityEngine.Random.value * 12 + 1);
+                    string monthString = monthInt < 10 ? "0" + monthInt : "" + monthInt;
+                    string month = (UnityEngine.Random.value > 0.5f) ? this.getRandFromArray(this.months.ToList()) : monthString;
+
+                    int dayInt = Mathf.FloorToInt(UnityEngine.Random.value * 31 + 1);
+                    string dayString = dayInt < 10 ? "0" + dayInt : "" + dayInt;
+                    string day = (UnityEngine.Random.value > 0.5f) ? this.getRandFromArray(this.days.ToList()) : dayString;
+
+                    bool hasSeparator = UnityEngine.Random.value > 0.5f;
+                    bool hasYear = UnityEngine.Random.value > 0.5f;
+                    if (hasSeparator)
+                    {
+                        string separator = (UnityEngine.Random.value > 0.5f) ? "-" : "/";
+                        if (hasYear)
+                        {
+                            string year = "" + Mathf.FloorToInt(UnityEngine.Random.value * 90 + 10);
+                            return month + separator + day + separator + year;
+                        }
+                        return month + separator + day;
+                    }
+                    else
+                    {
+                        if (hasYear)
+                        {
+                            string year = "" + Mathf.FloorToInt(UnityEngine.Random.value * 90 + 10);
+                            return month + day + year;
+                        }
+                        return month + day;
+                    }
+                default:
+                    res = badPassword(DifficultyUtility.Difficulty.EASY);
+                    break;
+            }
+            if (UnityEngine.Random.value > 0.75f)
+            {
+                return l33tword(res);
+            }
+            return res;
+        }
+    }
+
+    private string generateBadPassword()
+    {
+        string word = this.badPassword(this.difficulty);
+        while (this.passwordChecker.EvaluatePassword(word).Score > 2 || word.Length > 24)
+        {
+            word = this.badPassword(this.difficulty);
+        }
+        return word;
+    }
+
     public string GetBadPassword()
     {
-        int randIndex = Mathf.FloorToInt(Random.Range(0f, (float)this.badPasswords.Count));
-        string item = this.badPasswords[randIndex];
-        this.badPasswords.RemoveAt(randIndex);
-        return item;
+        return this.badPasswords[this.currBadPassWord++];
     }
 
     private string l33t(char ch)
     {
-        // ['a'] = "4@",
-        //         ['b'] = "8",
-        //         ['c'] = "({[<",
-        //         ['e'] = "3",
-        //         ['g'] = "69",
-        //         ['i'] = "1!|",
-        //         ['l'] = "1|7",
-        //         ['o'] = "0",
-        //         ['s'] = "$5",
-        //         ['t'] = "+7",
-        //         ['x'] = "%",
-        //         ['z'] = "2"
-        if (ch == 'a' || ch == 'A')
+        switch (ch)
         {
-            return sub(ch, new string[] { "4", "@" });
+            case 'a':
+            case 'A':
+                return sub(ch, new string[] { "4", "@" });
+            case 'b':
+            case 'B':
+                return sub(ch, new string[] { "8" });
+            case 'c':
+            case 'C':
+                return sub(ch, new string[] { "(", "{", "[", "<" });
+            case 'e':
+            case 'E':
+                return sub(ch, new string[] { "3" });
+            case 'g':
+            case 'G':
+                return sub(ch, new string[] { "6", "9" });
+            case 'i':
+            case 'I':
+                return sub(ch, new string[] { "1", "!", "|" });
+            case 'l':
+            case 'L':
+                return sub(ch, new string[] { "1", "|", "7" });
+            case 'o':
+            case 'O':
+                return sub(ch, new string[] { "0" });
+            case 's':
+            case 'S':
+                return sub(ch, new string[] { "$", "5" });
+            case 't':
+            case 'T':
+                return sub(ch, new string[] { "+", "7" });
+            case 'x':
+            case 'X':
+                return sub(ch, new string[] { "%" });
+            case 'z':
+            case 'Z':
+                return sub(ch, new string[] { "2" });
+            default:
+                return "" + ch;
         }
-        else if (ch == 'b' || ch == 'B')
-        {
-            return sub(ch, new string[] { "8", "|3", "|8", "lo", "|o", });
-        }
-        else if (ch == 'c' || ch == 'C')
-        {
-            return sub(ch, new string[] { "<", "{", "[", "(" });
-        }
-        else if (ch == 'd' || ch == 'D')
-        {
-            return sub(ch, new string[] { "|)", "|}", "|]", "|>" });
-        }
-        else if (ch == 'e' || ch == 'E')
-        {
-            return sub(ch, new string[] { "3" });
-        }
-        else if (ch == 'f' || ch == 'F')
-        {
-            return "" + ch;
-        }
-        else if (ch == 'g' || ch == 'G')
-        {
-            return sub(ch, new string[] { "6" });
-        }
-        else if (ch == 'h' || ch == 'H')
-        {
-            return sub(ch, new string[] { "|-|", "[-]", "}-{", "}{", "|=|", "[=]" });
-        }
-        else if (ch == 'i' || ch == 'I')
-        {
-            return sub(ch, new string[] { "1", "|", "!" });
-        }
-        else if (ch == 'j' || ch == 'J')
-        {
-            return sub(ch, new string[] { "_|", "_)", "_]", "_}" });
-        }
-        else if (ch == 'k' || ch == 'K')
-        {
-            return sub(ch, new string[] { "|<", "1<", "l<" });
-        }
-        else if (ch == 'l' || ch == 'L')
-        {
-            return sub(ch, new string[] { "|_", "|", "1" });
-        }
-        else if (ch == 'm' || ch == 'M')
-        {
-            return sub(ch, new string[] { "|\\/|", "/\\/\\" });
-        }
-        else if (ch == 'n' || ch == 'N')
-        {
-            return sub(ch, new string[] { "|\\|" });
-        }
-        else if (ch == 'o' || ch == 'O')
-        {
-            return sub(ch, new string[] { "0", "()", "[]", "{}", "<>", "oh" });
-        }
-        else if (ch == 'p' || ch == 'P')
-        {
-            return sub(ch, new string[] { "|O", "|>", "|*" });
-        }
-        else if (ch == 'q' || ch == 'Q')
-        {
-            return sub(ch, new string[] { "O_" });
-        }
-        else if (ch == 'r' || ch == 'R')
-        {
-            return "" + ch;
-        }
-        else if (ch == 's' || ch == 'S')
-        {
-            return sub(ch, new string[] { "5", "$" });
-        }
-        else if (ch == 't' || ch == 'T')
-        {
-            return sub(ch, new string[] { "+", "'|'", "`|`", "~|~", "-|-" });
-        }
-        else if (ch == 'u' || ch == 'U')
-        {
-            return sub(ch, new string[] { "|_|" });
-        }
-        else if (ch == 'v' || ch == 'V')
-        {
-            return sub(ch, new string[] { "\\/" });
-        }
-        else if (ch == 'w' || ch == 'W')
-        {
-            return sub(ch, new string[] { "\\/\\/" });
-        }
-        else if (ch == 'x' || ch == 'X')
-        {
-            return sub(ch, new string[] { "><" });
-        }
-        else if (ch == 'y' || ch == 'Y')
-        {
-            return "" + ch;
-        }
-        else if (ch == 'z' || ch == 'Z')
-        {
-            return "" + ch;
-        }
-        return "" + ch;
     }
 
     private string sub(char ch, string[] choices)
     {
-        return (Random.value > .1f) ? ("" + ch) : choices[Mathf.FloorToInt(Random.Range(0, choices.Length))];
+        return sub(ch, choices, .25f);
+    }
+
+    private string sub(char ch, string[] choices, float probLeet)
+    {
+        return (UnityEngine.Random.value > probLeet) ? ("" + ch) : choices[Mathf.FloorToInt(UnityEngine.Random.value * choices.Length)];
     }
 
     private string l33tword(string word)
@@ -225,34 +371,36 @@ public class PasswordGeneration : MonoBehaviour
         return sb.ToString();
     }
 
-    private string getRandomWord()
+    private string generateGoodCandidatePassword()
     {
-        return this.commonWords[Mathf.FloorToInt(Random.Range(0, this.commonWords.Count))] as string;
-    }
-
-    private string generateGoodPassword()
-    {
+        int numWords = Mathf.FloorToInt(UnityEngine.Random.value * 2 + 2);
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < numWords; i++)
         {
-            sb.Append(l33tword(getRandomWord()));
+            sb.Append(l33tword(this.getRandFromArray(this.englishWords)));
         }
         return sb.ToString();
     }
 
-    public string GetGoodPassword()
+    private string generateGoodPassword()
     {
-        string pw = generateGoodPassword();
+        string pw = generateGoodCandidatePassword();
 
-        // var result = this.passwordChecker.EvaluatePassword(first);
-        // Debug.Log($"{first}: {result.CrackTime} {result.CrackTimeDisplay} {result.Score} {result.CalcTime}");
         var result = this.passwordChecker.EvaluatePassword(pw);
 
-        while (result.Score < 3)
+        int cutoff = 24;
+
+        while (result.Score <= 3 || pw.Length > cutoff)
         {
-            pw = generateGoodPassword();
+            pw = generateGoodCandidatePassword();
             result = this.passwordChecker.EvaluatePassword(pw);
         }
         return pw;
+    }
+
+    public string GetGoodPassword()
+    {
+        // UnityEngine.Debug.Log(this.currGoodPassWord);
+        return this.goodPasswords[this.currGoodPassWord++];
     }
 }

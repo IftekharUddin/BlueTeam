@@ -16,8 +16,8 @@ public class GameController : MonoBehaviour
     private static GameController _instance;
     private int score = 0;
     public Text scoreText;
-    public Text userText;
     private string user;
+    private DifficultyUtility.Difficulty difficulty;
 
     public enum Score
     {
@@ -47,7 +47,7 @@ public class GameController : MonoBehaviour
         }
 
         _instance = this;
-        DontDestroyOnLoad(this.gameObject);
+        // DontDestroyOnLoad(this.gameObject);
 
         string url = Application.absoluteURL as string;
         if (url.Split('?').Length > 1)
@@ -60,7 +60,6 @@ public class GameController : MonoBehaviour
             string user = queryParts.Get("user") as string;
             // Debug.Log($"User: {user}");
             this.user = user;
-            userText.text = this.user;
         }
     }
 
@@ -120,6 +119,36 @@ public class GameController : MonoBehaviour
             result.Add(name, value);
             if (namePos == -1)
                 break;
+        }
+    }
+
+    void OnEnable()
+    {
+        int difficulty = PlayerPrefs.GetInt("difficulty");
+        switch (difficulty)
+        {
+            case 0:
+                this.difficulty = DifficultyUtility.Difficulty.EASY;
+                break;
+            case 1:
+                this.difficulty = DifficultyUtility.Difficulty.MEDIUM;
+                break;
+            case 2:
+                this.difficulty = DifficultyUtility.Difficulty.HARD;
+                break;
+            default:
+                Application.Quit();
+                return;
+        }
+        if (this.difficulty == DifficultyUtility.Difficulty.MEDIUM)
+        {
+            this.goodScore *= 2;
+            this.badScore *= 2;
+        }
+        else if (this.difficulty == DifficultyUtility.Difficulty.HARD)
+        {
+            this.goodScore *= 4;
+            this.badScore *= 4;
         }
     }
 
@@ -210,9 +239,8 @@ public class GameController : MonoBehaviour
 
     public void EndGame()
     {
-        Debug.Log("RESTARt");
-        //        StartCoroutine(Register());
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        PlayerPrefs.SetInt("score", this.score);
+        SceneManager.LoadSceneAsync("GameOver");
     }
 
     IEnumerator Register()
