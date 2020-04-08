@@ -72,16 +72,16 @@ public class PasswordGeneration : MonoBehaviour
 
         this.readTextAssetIntoList(this.englishWordsText, this.englishWords);
 
-        foreach (var i in Enumerable.Range(0, 100))
+        foreach (var i in Enumerable.Range(0, 50))
         {
             Stopwatch sw = Stopwatch.StartNew();
             this.badPasswords.Add(this.generateBadPassword());
             sw.Stop();
-            UnityEngine.Debug.Log($"Bad: {sw.ElapsedMilliseconds}");
+            // UnityEngine.Debug.Log($"Bad: {sw.ElapsedMilliseconds}");
             Stopwatch sw2 = Stopwatch.StartNew();
             this.goodPasswords.Add(this.generateGoodPassword());
             sw2.Stop();
-            UnityEngine.Debug.Log($"Good: {sw2.ElapsedMilliseconds}");
+            // UnityEngine.Debug.Log($"Good: {sw2.ElapsedMilliseconds}");
         }
 
     }
@@ -400,7 +400,7 @@ public class PasswordGeneration : MonoBehaviour
 
     public string GetGoodPassword()
     {
-        UnityEngine.Debug.Log(this.currGoodPassWord);
+        // UnityEngine.Debug.Log(this.currGoodPassWord);
         return this.goodPasswords[this.currGoodPassWord++];
     }
 }

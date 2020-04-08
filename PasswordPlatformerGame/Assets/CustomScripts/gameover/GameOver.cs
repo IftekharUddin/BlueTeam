@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Networking;
 
 public class GameOver : MonoBehaviour
 {
@@ -23,6 +25,27 @@ public class GameOver : MonoBehaviour
 
     void Restart()
     {
+        // Debug.Log("Called");
+        StartCoroutine(SendScore());
         SceneManager.LoadSceneAsync("StartScreen");
+    }
+
+    IEnumerator SendScore()
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("name", "tas127");
+        form.AddField("score", this.score);
+
+        UnityWebRequest sendScoreRequest = UnityWebRequest.Post("https://games.fo.unc.edu/sqlconnect/sendScore.php", form);
+        yield return sendScoreRequest.SendWebRequest();
+
+        if (sendScoreRequest.isNetworkError || sendScoreRequest.isHttpError)
+        {
+            Debug.Log(sendScoreRequest.error);
+        }
+        else
+        {
+            Debug.Log("Form Upload Complete!");
+        }
     }
 }

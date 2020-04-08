@@ -242,6 +242,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreText: {fileID: 1666726251}
+  restartButton: {fileID: 615630725}
 --- !u!1 &549181237
 GameObject:
   m_ObjectHideFlags: 0
