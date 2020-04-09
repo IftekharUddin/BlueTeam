@@ -64,7 +64,6 @@ body>div {
     padding-top: 10px;
     padding-bottom: 10px;
     padding-left: 10px;
-    
 }
 
 #unc-bar>img {
@@ -305,7 +304,7 @@ button:hover {
     opacity: 1;
     font-family: xcel;
     position: absolute;
-    top: 50%;
+    top: 40%;
     right: -10%;
     font-size: 1.5em;
     transform: rotate(45deg);
@@ -447,8 +446,9 @@ button:hover {
 }
 
 .play {
-    color: #90ee90;
-    border-color: #90ee90;
+    background-color: #66ff66;
+    color: black;
+    border-color: #1aff1a;
     font-family: xcel;
     width: 25%;
     padding-top: 25px;
@@ -458,8 +458,12 @@ button:hover {
 }
 
 .play:hover {
-    color: white;
-    background-color: #90ee90;
+    color: black;
+    background-color: #1aff1a;
+}
+
+.tab-info > p {
+    margin-left: 10px;
 }
 
 button[type=submit] {
