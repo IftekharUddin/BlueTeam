@@ -38,7 +38,9 @@ public class GameOver : MonoBehaviour
         form.AddField("onyen", "tas127");
         form.AddField("score", this.score);
 
-        UnityWebRequest sendScoreRequest = UnityWebRequest.Post("localhost:8000/db/php/games/UpdateScores.php", form);
+        string host = (Application.isEditor) ? "localhost:8000" : "https://games.fo.unc.edu";
+
+        UnityWebRequest sendScoreRequest = UnityWebRequest.Post($"{host}/db/php/games/UpdateScores.php", form);
         yield return sendScoreRequest.SendWebRequest();
 
         if (sendScoreRequest.isNetworkError || sendScoreRequest.isHttpError)
