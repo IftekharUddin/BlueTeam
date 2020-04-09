@@ -156,7 +156,7 @@ $(document).ready(function () {
                 const button = $('<button class="play">Play</button>"');
                 button.on('click', function () {
                     const newLocation = '/' + game['entrypoint'] + '?user=tas127';
-                    window.location.href = newLocation;
+                    window.open(newLocation, '_blank');
                 });
                 div.append(button);
                 infoDiv.append(div);
@@ -176,7 +176,7 @@ $(document).ready(function () {
                 gameCard.append(cardText);
 
                 if (game['disabled']) {
-                    gameCard.append($('<p>Coming soon!</p>'));
+                    gameCard.append($('<p>Coming someday!</p>'));
                 }
                 $('#game-cards').append(gameCard);
             }
