@@ -240,6 +240,7 @@ public class GameController : MonoBehaviour
     public void EndGame()
     {
         PlayerPrefs.SetInt("score", this.score);
+        PlayerPrefs.SetString("user", this.user);
         SceneManager.LoadSceneAsync("GameOver");
     }
 

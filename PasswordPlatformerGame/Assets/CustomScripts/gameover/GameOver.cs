@@ -9,6 +9,7 @@ public class GameOver : MonoBehaviour
 
     public Text scoreText;
     private int score;
+    private string user;
     public Button restartButton;
 
     void Start()
@@ -19,24 +20,25 @@ public class GameOver : MonoBehaviour
     void OnEnable()
     {
         this.score = PlayerPrefs.GetInt("score");
+        this.user = PlayerPrefs.GetString("user");
 
         this.scoreText.text = $"Your Score: {this.score}";
+
+        StartCoroutine(SendScore());
     }
 
     void Restart()
     {
-        // Debug.Log("Called");
-        StartCoroutine(SendScore());
         SceneManager.LoadSceneAsync("StartScreen");
     }
 
     IEnumerator SendScore()
     {
         WWWForm form = new WWWForm();
-        form.AddField("name", "tas127");
+        form.AddField("onyen", "tas127");
         form.AddField("score", this.score);
 
-        UnityWebRequest sendScoreRequest = UnityWebRequest.Post("https://games.fo.unc.edu/sqlconnect/sendScore.php", form);
+        UnityWebRequest sendScoreRequest = UnityWebRequest.Post("localhost:8000/db/php/games/UpdateScores.php", form);
         yield return sendScoreRequest.SendWebRequest();
 
         if (sendScoreRequest.isNetworkError || sendScoreRequest.isHttpError)
