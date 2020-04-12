@@ -44,11 +44,7 @@ public class GameOver : MonoBehaviour
         // debug check. If running locally, you'll connect through localhost and not our server
         string host = (Application.isEditor) ? "localhost:8000" : "https://games.fo.unc.edu";
 
-        // TODO1: Check if the user doesn't have a score. Set newHighScore as currScore, set exist to false
-        // TODO2: If the user has a score, get that score and set that as prevScore
-        // TODO3: Compare that score, if bigger, set newHighScore as true
-        // tODO4: Depending on "userExist" and "newHighScore", make post request to add/update score. 
-        UnityWebRequest sendScoreRequest = UnityWebRequest.Post($"{host}/db/php/games/UpdateScores.php", form);
+        UnityWebRequest sendScoreRequest = UnityWebRequest.Post($"{host}/sqlconnect/sendScore.php", form);
         yield return sendScoreRequest.SendWebRequest();
 
         if (sendScoreRequest.isNetworkError || sendScoreRequest.isHttpError)
@@ -60,4 +56,9 @@ public class GameOver : MonoBehaviour
             Debug.Log("Form Upload Complete!");
         }
     }
+
+        // TODO1: Check if the user doesn't have a score. Set newHighScore as currScore, set exist to false
+        // TODO2: If the user has a score, get that score and set that as prevScore
+        // TODO3: Compare that score, if bigger, set newHighScore as true
+        // tODO4: Depending on "userExist" and "newHighScore", make post request to add/update score. 
 }
