@@ -8,6 +8,7 @@ public class Countdown : MonoBehaviour
     public Text timeText;
 
     // time limit set here in seconds
+//    float timeLeft = 45.0f;
     float timeLeft = 45.0f;
 
     // Update is called once per frame

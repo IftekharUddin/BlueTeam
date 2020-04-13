@@ -34,13 +34,17 @@ public class GameOver : MonoBehaviour
 
     IEnumerator SendScore()
     {
+        // start form to add variables to send with our post request
         WWWForm form = new WWWForm();
-        form.AddField("onyen", "tas127");
+
+        // add user's onyen and score to the form
+        form.AddField("onyen", this.user);
         form.AddField("score", this.score);
 
+        // debug check. If running locally, you'll connect through localhost and not our server
         string host = (Application.isEditor) ? "localhost:8000" : "https://games.fo.unc.edu";
 
-        UnityWebRequest sendScoreRequest = UnityWebRequest.Post($"{host}/db/php/games/UpdateScores.php", form);
+        UnityWebRequest sendScoreRequest = UnityWebRequest.Post($"{host}/sqlconnect/updateScore.php", form);
         yield return sendScoreRequest.SendWebRequest();
 
         if (sendScoreRequest.isNetworkError || sendScoreRequest.isHttpError)
@@ -52,4 +56,5 @@ public class GameOver : MonoBehaviour
             Debug.Log("Form Upload Complete!");
         }
     }
+
 }
