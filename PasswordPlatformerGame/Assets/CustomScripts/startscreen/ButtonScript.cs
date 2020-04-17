@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class ButtonScript : MonoBehaviour
 {
-    public Button easyButton, mediumButton, hardButton;
+    public Button easyButton, mediumButton, hardButton, backButton;
 
     // Start is called before the first frame update
     void Start()
@@ -12,6 +12,7 @@ public class ButtonScript : MonoBehaviour
         this.easyButton.onClick.AddListener(Easy);
         this.mediumButton.onClick.AddListener(Medium);
         this.hardButton.onClick.AddListener(Hard);
+        this.backButton.onClick.AddListener(GoBack);
     }
 
     void Easy()
@@ -27,6 +28,11 @@ public class ButtonScript : MonoBehaviour
     private void Hard()
     {
         loadPlayScene(DifficultyUtility.Difficulty.HARD);
+    }
+
+    private void GoBack()
+    {
+        SceneManager.LoadSceneAsync("StartMenu");
     }
 
     private void loadPlayScene(DifficultyUtility.Difficulty chosen)
@@ -45,6 +51,6 @@ public class ButtonScript : MonoBehaviour
             default:
                 break;
         }
-        SceneManager.LoadSceneAsync("SampleScene");
+        SceneManager.LoadSceneAsync("Game");
     }
 }

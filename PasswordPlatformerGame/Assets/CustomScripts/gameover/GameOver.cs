@@ -29,7 +29,7 @@ public class GameOver : MonoBehaviour
 
     void Restart()
     {
-        SceneManager.LoadSceneAsync("StartScreen");
+        SceneManager.LoadSceneAsync("SelectLevel");
     }
 
     IEnumerator SendScore()
