@@ -60,6 +60,8 @@ public class GameController : MonoBehaviour
             string user = queryParts.Get("user") as string;
             // Debug.Log($"User: {user}");
             this.user = user;
+        } else {
+            this.user = "tas127";
         }
     }
 

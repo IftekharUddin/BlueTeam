@@ -29,7 +29,7 @@ public class GameOver : MonoBehaviour
 
     void Restart()
     {
-        SceneManager.LoadSceneAsync("StartScreen");
+        SceneManager.LoadSceneAsync("SelectLevel");
     }
 
     IEnumerator SendScore()
@@ -42,9 +42,10 @@ public class GameOver : MonoBehaviour
         form.AddField("score", this.score);
 
         // debug check. If running locally, you'll connect through localhost and not our server
-        string host = (Application.isEditor) ? "localhost:8000" : "https://games.fo.unc.edu";
+        // string host = (Application.isEditor) ? "localhost:8000" : "https://games.fo.unc.edu";
+        string host = "https://games.fo.unc.edu";
 
-        UnityWebRequest sendScoreRequest = UnityWebRequest.Post($"{host}/sqlconnect/updateScore.php", form);
+        UnityWebRequest sendScoreRequest = UnityWebRequest.Post($"{host}/sqlconnect/games/updateScore.php", form);
         yield return sendScoreRequest.SendWebRequest();
 
         if (sendScoreRequest.isNetworkError || sendScoreRequest.isHttpError)

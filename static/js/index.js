@@ -26,6 +26,20 @@ const hideArrows = (currScroll, width) => {
     }
 }
 
+const getUserRequest = () => {
+    return $.ajax('/getUser.php', {
+        type: 'GET'
+    });
+}
+
+const getUser = () => {
+    return getUserRequest().then(response => {
+        return response['user'];
+    }).catch(err => {
+        return err.responseJSON['message'];
+    });
+}
+
 const scroll = (right) => {
     const currScroll = $('#game-cards').scrollLeft();
     const newScroll = (right) ? currScroll + scrollAmount : currScroll - scrollAmount;
@@ -55,6 +69,45 @@ const showMoreHandler = () => {
     }
     showMore.insertBefore(firstHidden);
     ellipsis.insertBefore(firstHidden);
+}
+
+const setUpGame = (game, user) => {
+    const id = game['id'];
+    const name = game['name'];
+
+    const tab = $('<button id="' + id + '-tab" class="tab" data-info="' + id + '-info" style="display: none;">' + name + '<i class="far fa-window-close close-tab"></i></button>');
+    $('#top-tabs').append(tab);
+
+    const infoDiv = $('<div id="' + id + '-info" class="tab-info"></div>');
+    infoDiv.append($('<h2 class="center pixel">' + name + '</h2>'));
+    infoDiv.append($('<p class="pixel">' + game['tagline'] + '</p>'));
+    const div = $('<div></div>');
+    const button = $('<button class="play">Play</button>"');
+    button.on('click', function () {
+        const newLocation = '/' + game['entrypoint'] + '?user=' + encodeURIComponent(user);
+        window.open(newLocation, '_blank');
+    });
+    div.append(button);
+    infoDiv.append(div);
+    $('#main-middle').append(infoDiv);
+
+    const classes = "game-card" + ((game['disabled']) ? " disabled" : "");
+
+    const gameCard = $('<div class="' + classes + '" id="' + id + '-card" data-tab="' + id + '-tab"></div>');
+    const header = $('<div class="game-card-header"></div>');
+    header.append($('<h5>' + name + '</h5>'));
+    gameCard.append(header);
+    const iconDiv = $('<div class="game-card-icon"></div>');
+    iconDiv.append($(game['icon']));
+    gameCard.append(iconDiv);
+    const cardText = $('<div class="game-card-text"></div>');
+    cardText.append($('<p>' + game['card-text'] + '</p>'));
+    gameCard.append(cardText);
+
+    if (game['disabled']) {
+        gameCard.append($('<p>Coming someday!</p>'));
+    }
+    $('#game-cards').append(gameCard);
 }
 
 const setup = () => {
@@ -130,57 +183,29 @@ const setup = () => {
 }
 
 $(document).ready(function () {
-    hideArrows($('#game-cards').scrollLeft(), $('#game-cards').width());
+    getUser().then((user) => {
+        console.log(user);
 
-    genFunFact();
-    window.setInterval(genFunFact, secondsFunFact * 1000);
+        hideArrows($('#game-cards').scrollLeft(), $('#game-cards').width());
 
-    fetch('games.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("HTTP error " + response.status);
-            }
-            return response.json();
-        }).then(json => {
-            for (let game of json) {
-                const id = game['id'];
-                const name = game['name'];
+        genFunFact();
+        window.setInterval(genFunFact, secondsFunFact * 1000);
 
-                const tab = $('<button id="' + id + '-tab" class="tab" data-info="' + id + '-info" style="display: none;">' + name + '<i class="far fa-window-close close-tab"></i></button>');
-                $('#top-tabs').append(tab);
-
-                const infoDiv = $('<div id="' + id + '-info" class="tab-info"></div>');
-                infoDiv.append($('<h2 class="center pixel">' + name + '</h2>'));
-                infoDiv.append($('<p class="pixel">' + game['tagline'] + '</p>'));
-                const div = $('<div></div>');
-                const button = $('<button class="play">Play</button>"');
-                button.on('click', function () {
-                    const newLocation = '/' + game['entrypoint'] + '?user=tas127';
-                    window.open(newLocation, '_blank');
-                });
-                div.append(button);
-                infoDiv.append(div);
-                $('#main-middle').append(infoDiv);
-
-                const classes = "game-card" + ((game['disabled']) ? " disabled" : "");
-
-                const gameCard = $('<div class="' + classes + '" id="' + id + '-card" data-tab="' + id + '-tab"></div>');
-                const header = $('<div class="game-card-header"></div>');
-                header.append($('<h5>' + name + '</h5>'));
-                gameCard.append(header);
-                const iconDiv = $('<div class="game-card-icon"></div>');
-                iconDiv.append($(game['icon']));
-                gameCard.append(iconDiv);
-                const cardText = $('<div class="game-card-text"></div>');
-                cardText.append($('<p>' + game['card-text'] + '</p>'));
-                gameCard.append(cardText);
-
-                if (game['disabled']) {
-                    gameCard.append($('<p>Coming someday!</p>'));
+        fetch('games.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP error " + response.status);
                 }
-                $('#game-cards').append(gameCard);
-            }
-        }).then(() => {
-            setup();
-        });
+                return response.json();
+            }).then(json => {
+                for (let game of json) {
+                    setUpGame(game, user);
+                }
+            }).then(() => {
+                setup();
+            });
+    }).catch((errorMessage) => {
+        // handle the error case when not able to get user
+        console.log(errorMessage);
+    });
 });
