@@ -36,7 +36,16 @@ const getUser = () => {
     return getUserRequest().then(response => {
         return response['user'];
     }).catch(err => {
-        return err.responseJSON['message'];
+        const errJSON = err.responseJSON;
+        if (errJSON.hasOwnProperty('message')) {
+            return {
+                'user': randomChoice(['tas127', 'sethl', 'vinish', 'iftekhar']),
+                'errorMessage': err.responseJSON['message']
+            };
+        }
+        return {
+            'user': randomChoice(['tas127', 'sethl', 'vinish', 'iftekhar'])
+        };
     });
 }
 
@@ -182,30 +191,48 @@ const setup = () => {
     });
 }
 
+const fetchGames = (user) => {
+    fetch('games.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("HTTP error " + response.status);
+            }
+            return response.json();
+        }).then(json => {
+            for (let game of json) {
+                setUpGame(game, user);
+            }
+        }).then(() => {
+            setup();
+        });
+}
+
 $(document).ready(function () {
-    getUser().then((user) => {
-        console.log(user);
+    getUser().then((response) => {
+        let user;
+        if (response === undefined) {
+            // for debug purposes on server not running PHP
+            user = randomChoice(['tas127', 'sethl', 'vinish', 'iftekhar']);
+        } else {
+            if (response.hasOwnProperty('errorMessage')) {
+                // handle the error case when not able to get user
+                console.log(response['errorMessage']);
+            }
+
+            if (response.hasOwnProperty('user')) {
+                user = response['user'];
+            } else {
+                user = response;
+            }
+
+        }
+        console.log('User: ' + user);
 
         hideArrows($('#game-cards').scrollLeft(), $('#game-cards').width());
 
         genFunFact();
         window.setInterval(genFunFact, secondsFunFact * 1000);
 
-        fetch('games.json')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("HTTP error " + response.status);
-                }
-                return response.json();
-            }).then(json => {
-                for (let game of json) {
-                    setUpGame(game, user);
-                }
-            }).then(() => {
-                setup();
-            });
-    }).catch((errorMessage) => {
-        // handle the error case when not able to get user
-        console.log(errorMessage);
+        fetchGames(user);
     });
 });
