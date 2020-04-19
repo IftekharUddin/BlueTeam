@@ -45,7 +45,7 @@ public class GameOver : MonoBehaviour
         // string host = (Application.isEditor) ? "localhost:8000" : "https://games.fo.unc.edu";
         string host = "https://games.fo.unc.edu";
 
-        UnityWebRequest sendScoreRequest = UnityWebRequest.Post($"{host}/sqlconnect/games/updateScore.php", form);
+        UnityWebRequest sendScoreRequest = UnityWebRequest.Post($"{host}/sqlconnect/games/updatePlatformerScore.php", form);
         yield return sendScoreRequest.SendWebRequest();
 
         if (sendScoreRequest.isNetworkError || sendScoreRequest.isHttpError)
