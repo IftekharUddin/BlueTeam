@@ -122,11 +122,11 @@ body>div {
 }
 
 #top-tabs {
-    padding-top: 10px;
+    padding-top: 3px;
     padding-left: 10px;
     border-bottom-color: black;
     overflow-x: auto;
-    height: 10%;
+    height: 15%;
     width: 100%;
 }
 
@@ -243,8 +243,8 @@ button:hover {
 
 .tab {
     font-family: archery;
-    border-bottom-left-radius: 0rem;
-    border-bottom-right-radius: 0rem;
+    border-bottom-left-radius: 0.3rem;
+    border-bottom-right-radius: 0.3rem;
     padding-top: 10px;
     padding-bottom: 10px;
     padding-left: 20px;
@@ -293,7 +293,7 @@ button:hover {
 }
 
 .disabled {
-    opacity: 0.5;
+    opacity: .5;
 }
 
 .disabled:hover {
@@ -304,10 +304,10 @@ button:hover {
     opacity: 1;
     font-family: xcel;
     position: absolute;
-    top: 40%;
-    right: -10%;
-    font-size: 1.5em;
-    transform: rotate(45deg);
+    top: 20%;
+    right: 0%;
+    font-size: 1.65em;
+    transform: rotate(25deg);
     z-index: 999;
 }
 
