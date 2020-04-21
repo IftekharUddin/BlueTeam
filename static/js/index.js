@@ -1,3 +1,7 @@
+import { correctButtonPress } from './messages.js';
+import { incorrectButtonPress } from './messages.js';
+
+
 //funFacts imported using a txt file thanks to this video https://www.youtube.com/watch?time_continue=319&v=OWxVjS3yD1c&feature=emb_title
 let funFacts;
 fetch('static/js/funFacts.txt')
@@ -457,4 +461,12 @@ $(document).ready(function () {
 
         setUpAccount(user);
     });
+
+    //messages on button press - this will trigger the php call that will update the db
+    $('.correctButton').on('click', function () {
+        correctButtonPress;
+    })
+    $('.incorrectButton').on('click', function () {
+        incorrectButtonPress;
+    })
 });
