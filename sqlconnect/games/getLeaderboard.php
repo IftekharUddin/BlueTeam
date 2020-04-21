@@ -10,7 +10,15 @@ if ($pdo == null) {
 }
 
 // have to join this wih message board data when available
-$stmt = $pdo->prepare('SELECT Onyen, Score FROM dbo.PasswordPlatformerScores ORDER BY Score DESC;');
+$query = 'SELECT dbo.PasswordPlatformerScores.Onyen AS "Onyen", 
+            dbo.PasswordPlatformerScores.Score AS "Password Platformer", 
+            dbo.MessageBoardScores.Score AS "Message Board", 
+            ISNULL(dbo.PasswordPlatformerScores.Score, 0) + ISNULL(dbo.MessageBoardScores.Score, 0) AS "Total" 
+            FROM dbo.PasswordPlatformerScores 
+            FULL OUTER JOIN dbo.MessageBoardScores 
+            ON dbo.PasswordPlatformerScores.Onyen = dbo.MessageBoardScores.Onyen 
+            ORDER BY Total DESC;';
+$stmt = $pdo->prepare($query);
 $stmt->execute();
 
 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);

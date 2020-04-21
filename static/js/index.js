@@ -91,20 +91,25 @@ const getTimesPlayed = (user) => {
     return getTimesPlayedRequest(user).then(response => {
         return response;
     }).catch(err => {
-        const errJSON = err.responseJSON;
-        if (errJSON === undefined) {
-            return {
-                'Password Platformer': { 'timesPlayed': 0 }
-            }
-        } else if (errJSON.hasOwnProperty('message')) {
-            return {
-                'Password Platformer': { 'timesPlayed': 0 },
-                'errorMessage': err.responseJSON['message']
-            };
-        }
+        console.log(err);
         return {
             'Password Platformer': { 'timesPlayed': 0 }
         }
+    })
+}
+
+const getLeaderboardRequest = () => {
+    return $.ajax('/sqlconnect/games/getLeaderboard.php', {
+        type: 'POST'
+    });
+}
+
+const getLeaderboard = () => {
+    return getLeaderboardRequest().then(response => {
+        return response;
+    }).catch(err => {
+        console.log(err);
+        return [{ 'Onyen': 'tas127', 'Password Platformer': 17110, 'Message Board': 100, 'Total': 17120 }, { 'Onyen': 'sethl', 'Password Platformer': 14805, 'Message Board': null, 'Total': 14805 }, { 'Onyen': 'vinish', 'Password Platformer': 14684, 'Message Board': -100, 'Total': 14584 }, { 'Onyen': 'iftekhar', 'Password Platformer': 7739, 'Message Board': null, 'Total': 7739 }];
     })
 }
 
@@ -112,7 +117,6 @@ const setUpAccount = (user) => {
     $('#account>h2').text(user);
     getTimesPlayed(user).then((response) => {
         let timesPlayed;
-        console.log(response);
         if (response === undefined) {
             // for debug purposes on server not running PHP
             timesPlayed = {
@@ -149,6 +153,89 @@ const setUpAccount = (user) => {
             }
         }
     })
+}
+
+const clearLeaderboard = () => {
+    $('#leaderboard>table>tbody').empty();
+}
+
+const setUpLeaderboard = (user, gameJSON) => {
+    clearLeaderboard();
+
+    const games = {};
+    for (const game of gameJSON) {
+        games[game['name']] = game;
+    }
+
+    getLeaderboard().then(scores => {
+        let results;
+        if (scores === undefined) {
+            // for debug purposes on server not running PHP
+            results = [{ 'Onyen': 'tas127', 'Password Platformer': 17110, 'Message Board': 100, 'Total': 17120 }, { 'Onyen': 'sethl', 'Password Platformer': 14805, 'Message Board': null, 'Total': 14805 }, { 'Onyen': 'vinish', 'Password Platformer': 14684, 'Message Board': -100, 'Total': 14584 }, { 'Onyen': 'iftekhar', 'Password Platformer': 7739, 'Message Board': null, 'Total': 7739 }];
+        } else {
+            results = scores;
+        }
+
+        const leaderboard = $('#leaderboard>table>tbody');
+
+        let potentialBadges = [];
+        for (const key of Object.keys(results[0])) {
+            if (key == 'Onyen' || key == 'Total') {
+                continue;
+            }
+            if (games.hasOwnProperty(key)) {
+                potentialBadges.push(key);
+            }
+        }
+
+        let badgeList = {};
+        for (const val of potentialBadges) {
+            const currVals = results.filter(item => (item[val] != null));
+            currVals.sort((itemOne, itemTwo) => itemTwo[val] - itemOne[val]);
+
+            let numWithBadge = Math.floor(currVals.length * .15);
+            if (numWithBadge == 0) numWithBadge = 1;
+
+            const onyensWithBadge = currVals.map(item => item['Onyen']).slice(0, numWithBadge);
+            for (const onyen of onyensWithBadge) {
+                if (badgeList.hasOwnProperty(onyen)) {
+                    badgeList[onyen].push(val);
+                } else {
+                    badgeList[onyen] = [val];
+                }
+            }
+        }
+
+        if (badgeList.hasOwnProperty(user)) {
+            $('#badges').empty();
+            for (const badge of badgeList[user]) {
+                $('#badges').append(games[badge]['icon']);
+            }
+        }
+
+        let rank = 1;
+        for (const row of results) {
+            const tr = $('<tr></tr>');
+            const tdRank = $('<td>' + rank + '</td>');
+
+            let name = row['Onyen'];
+            if (badgeList.hasOwnProperty(row['Onyen'])) {
+                for (const badge of badgeList[row['Onyen']]) {
+                    name += ' ' + games[badge]['icon'];
+                }
+            }
+            const tdName = $('<td>' + name + '</td>');
+            const tdScore = $('<td>' + row['Total'] + '</td>');
+
+            tr.append(tdRank);
+            tr.append(tdName);
+            tr.append(tdScore);
+
+            leaderboard.append(tr);
+
+            rank++;
+        }
+    });
 }
 
 const setUpGame = (game, user) => {
@@ -273,6 +360,7 @@ const fetchGames = (user) => {
             for (let game of json) {
                 setUpGame(game, user);
             }
+            setUpLeaderboard(user, json);
         }).then(() => {
             setup();
         });
