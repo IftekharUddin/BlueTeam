@@ -165,7 +165,11 @@ const setUpAccount = (user) => {
 }
 
 const clearLeaderboard = () => {
-    $('#leaderboard>table>tbody').empty();
+    $('#leaderboard-overall>tbody').empty();
+    const leaderboards = $('.leaderboard-table');
+    for (let i = 1; i < leaderboards.length; i++) {
+        leaderboards.eq(i).remove();
+    }
 }
 
 const setUpLeaderboard = (user, gameJSON) => {
@@ -176,7 +180,7 @@ const setUpLeaderboard = (user, gameJSON) => {
         games[game['name']] = game;
     }
 
-    getLeaderboard().then(scores => {
+    return getLeaderboard().then(scores => {
         let results;
         if (scores === undefined) {
             // for debug purposes on server not running PHP
@@ -185,7 +189,7 @@ const setUpLeaderboard = (user, gameJSON) => {
             results = scores;
         }
 
-        const leaderboard = $('#leaderboard>table>tbody');
+        const leaderboard = $('#leaderboard-overall>tbody');
 
         let potentialBadges = [];
         for (const key of Object.keys(results[0])) {
@@ -201,6 +205,34 @@ const setUpLeaderboard = (user, gameJSON) => {
         for (const val of potentialBadges) {
             const currVals = results.filter(item => (item[val] != null));
             currVals.sort((itemOne, itemTwo) => itemTwo[val] - itemOne[val]);
+
+            const newDiv = $('<div class="leaderboard-table"></div>');
+            newDiv.append($('<h2 class="center xcel">' + val + ' Leaders</h2>'));
+
+            const newTable = $('<table></table>');
+
+            const thead = $('<thead></thead>');
+            const theadtr = $('<tr></tr>');
+            theadtr.append($('<th>Rank</th>'));
+            theadtr.append($('<th>Player</th>'));
+            theadtr.append($('<th>Score</th>'));
+            thead.append(theadtr);
+            newTable.append(thead);
+
+            const tbody = $('<tbody></tbody>');
+            let rank = 1;
+            for (const row of currVals) {
+                const tr = $('<tr></tr>');
+                tr.append($('<td>' + rank++ + '</td>'));
+                tr.append($('<td>' + row['Onyen'] + '</td>'));
+                tr.append($('<td>' + row[val].toLocaleString() + '</td>'));
+                tbody.append(tr);
+            }
+            newTable.append(tbody);
+            newDiv.append(newTable);
+
+            newDiv.insertBefore($('#right-arrow-leaderboard'));
+            newDiv.hide();
 
             let numWithBadge = Math.floor(currVals.length * .15);
             if (numWithBadge == 0) numWithBadge = 1;
@@ -234,7 +266,7 @@ const setUpLeaderboard = (user, gameJSON) => {
                 }
             }
             const tdName = $('<td>' + name + '</td>');
-            const tdScore = $('<td>' + row['Total'] + '</td>');
+            const tdScore = $('<td>' + row['Total'].toLocaleString() + '</td>');
 
             tr.append(tdRank);
             tr.append(tdName);
@@ -303,6 +335,26 @@ const setup = () => {
         scroll(true);
     });
 
+    let idx = 0;
+    const leaderboards = $('.leaderboard-table');
+    $('#left-arrow-leaderboard').on('click', function () {
+        leaderboards.eq(idx).hide();
+        idx++;
+        if (idx >= leaderboards.length) {
+            idx = 0;
+        }
+        leaderboards.eq(idx).show();
+    });
+
+    $('#right-arrow-leaderboard').on('click', function () {
+        leaderboards.eq(idx).hide();
+        idx--;
+        if (idx < 0) {
+            idx = leaderboards.length - 1;
+        }
+        leaderboards.eq(idx).show();
+    });
+
     $('#main-button').on('click', function () {
         $('#messages').hide();
         $('#info').show();
@@ -369,9 +421,9 @@ const fetchGames = (user) => {
             for (let game of json) {
                 setUpGame(game, user);
             }
-            setUpLeaderboard(user, json);
-        }).then(() => {
-            setup();
+            setUpLeaderboard(user, json).then(() => {
+                setup();
+            });
         });
 }
 

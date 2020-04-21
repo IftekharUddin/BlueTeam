@@ -180,7 +180,6 @@ thead th {
 
 table {
     table-layout: fixed;
-    width: 95%;
 }
 
 tr.hidden {
@@ -195,8 +194,29 @@ tr.hidden {
     padding-bottom: 10px;
 }
 
-#leaderboard>table, #account>table {
+#account>table {
     width: 95%;
+}
+
+#left-arrow-leaderboard {
+    left: 0;
+    float: left;
+}
+
+#right-arrow-leaderboard {
+    right: 0;
+    float: right;
+}
+
+#leaderboard>div {
+    width: 90%;
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#leaderboard table {
+    width: 100%;
 }
 
 #account>table {
@@ -247,7 +267,7 @@ button:hover {
     padding-bottom: 5px;
 }
 
-#leaderboard>*:not(h2), #messages>*:not(h2), #password-game>*:not(h2) {
+#messages>*:not(h2), #password-game>*:not(h2) {
     margin-left: 2.5%;
     margin-right: 2.5%;
 }
@@ -475,6 +495,11 @@ button:hover {
 .play:hover {
     color: black;
     background-color: #1aff1a;
+}
+
+.tab-info {
+    height: 100%;
+    width: 100%;
 }
 
 .tab-info>p {
