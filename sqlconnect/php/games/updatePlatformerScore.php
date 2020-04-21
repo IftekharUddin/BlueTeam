@@ -25,7 +25,7 @@ if ($count == 0) {
     $stmt->bindParam(':score', $score, PDO::PARAM_INT);
     $stmt->execute();
 } else {
-    $oldScore = $row[0]['score'];
+    $oldScore = $row[0]['Score'];
 
     if ($score > $oldScore) {
         $stmt = $pdo->prepare('UPDATE dbo.PasswordPlatformerScores SET Score = :score WHERE Onyen = :onyen;');
@@ -37,8 +37,5 @@ if ($count == 0) {
     $stmt = $pdo->prepare('UPDATE dbo.PasswordPlatformerScores SET TimesPlayed = TimesPlayed + 1 WHERE Onyen = :onyen;');
     $stmt->bindParam(':onyen', $onyen);
     $stmt->execute();
-
-    
-
 }
 exit(0);

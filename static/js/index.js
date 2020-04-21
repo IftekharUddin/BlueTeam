@@ -80,6 +80,68 @@ const showMoreHandler = () => {
     ellipsis.insertBefore(firstHidden);
 }
 
+const getTimesPlayedRequest = (user) => {
+    return $.ajax('/sqlconnect/php/games/getTimesPlayed.php', {
+        type: 'POST',
+        data: { 'onyen': user }
+    });
+}
+
+const getTimesPlayed = (user) => {
+    return getTimesPlayedRequest(user).then(response => {
+        console.log(response);
+        return response;
+    }).catch(err => {
+        const errJSON = err.responseJSON;
+        if (errJSON === undefined) {
+            return {
+                'Password Platformer': 1
+            }
+        } else if (errJSON.hasOwnProperty('message')) {
+            return {
+                'Password Platformer': 1,
+                'errorMessage': err.responseJSON['message']
+            };
+        }
+        return {
+            'Password Platformer': 1
+        }
+    })
+}
+
+const setUpAccount = (user) => {
+    $('#account>h2').text(user);
+    getTimesPlayed(user).then((response) => {
+        let timesPlayed;
+        console.log(response);
+        if (response === undefined) {
+            // for debug purposes on server not running PHP
+            timesPlayed = {
+                'Password Platformer': 1
+            }
+        } else {
+            if (response.hasOwnProperty('errorMessage')) {
+                // handle error case
+                console.log(response['errorMessage']);
+            }
+
+            timesPlayed = response;
+        }
+
+        const table = $('#playtime-table>tbody');
+        for (let [key, value] of Object.entries(timesPlayed)) {
+            if (key == 'errorMessage') continue;
+
+            const tr = $('<tr></tr>');
+            const tdGame = $('<td>' + key + '</td>');
+            const tdNumber = $('<td>' + value + '</td>');
+            tr.append(tdGame);
+            tr.append(tdNumber);
+            table.append(tr);
+        }
+    })
+}
+
 const setUpGame = (game, user) => {
     const id = game['id'];
     const name = game['name'];
@@ -234,5 +296,7 @@ $(document).ready(function () {
         window.setInterval(genFunFact, secondsFunFact * 1000);
 
         fetchGames(user);
+
+        setUpAccount(user);
     });
 });

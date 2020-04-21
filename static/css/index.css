@@ -190,13 +190,23 @@ tr.hidden {
     padding-bottom: 10px;
 }
 
-#leaderboard>table {
+#leaderboard>table, #account>table {
     width: 95%;
+}
+
+#account>table {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #leaderboard td, #leaderboard th {
     font-family: archery;
     font-size: 25px;
+}
+
+#account td, #account th {
+    font-family: archery;
+    font-size: 1.25em;
 }
 
 #leaderboard tbody>tr:first-child {
@@ -462,24 +472,12 @@ button:hover {
     background-color: #1aff1a;
 }
 
-.tab-info > p {
+.tab-info>p {
     margin-left: 10px;
 }
 
 button[type=submit] {
     font-family: xcel;
-}
-
-#playtime {
-    display: flex;
-    justify-content: space-around;
-}
-
-#playtime p {
-    font-family: clock;
-    font-size: 3em;
-    margin-top: 5px;
-    margin-bottom: 5px;
 }
 
 #account>h4 {
