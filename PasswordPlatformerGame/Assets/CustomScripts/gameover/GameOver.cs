@@ -10,11 +10,12 @@ public class GameOver : MonoBehaviour
     public Text scoreText;
     private int score;
     private string user;
-    public Button restartButton;
+    public Button restartButton, quitButton;
 
     void Start()
     {
         this.restartButton.onClick.AddListener(Restart);
+        this.quitButton.onClick.AddListener(Quit);
     }
 
     void OnEnable()
@@ -30,6 +31,20 @@ public class GameOver : MonoBehaviour
     void Restart()
     {
         SceneManager.LoadSceneAsync("SelectLevel");
+    }
+
+    void Quit()
+    {
+#if (UNITY_EDITOR || DEVELOPMENT_BUILD)
+        Debug.Log(this.name+" : "+this.GetType()+" : "+System.Reflection.MethodBase.GetCurrentMethod().Name); 
+#endif
+#if (UNITY_EDITOR)
+        UnityEditor.EditorApplication.isPlaying = false;
+#elif (UNITY_STANDALONE)
+        Application.Quit();
+#elif (UNITY_WEBGL)
+        Application.OpenURL("about:blank");
+#endif
     }
 
     IEnumerator SendScore()
