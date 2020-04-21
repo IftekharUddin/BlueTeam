@@ -81,7 +81,7 @@ const showMoreHandler = () => {
 }
 
 const getTimesPlayedRequest = (user) => {
-    return $.ajax('/sqlconnect/php/games/getTimesPlayed.php', {
+    return $.ajax('/sqlconnect/games/getTimesPlayed.php', {
         type: 'POST',
         data: { 'onyen': user }
     });
@@ -89,22 +89,21 @@ const getTimesPlayedRequest = (user) => {
 
 const getTimesPlayed = (user) => {
     return getTimesPlayedRequest(user).then(response => {
-        console.log(response);
         return response;
     }).catch(err => {
         const errJSON = err.responseJSON;
         if (errJSON === undefined) {
             return {
-                'Password Platformer': 1
+                'Password Platformer': 0
             }
         } else if (errJSON.hasOwnProperty('message')) {
             return {
-                'Password Platformer': 1,
+                'Password Platformer': 0,
                 'errorMessage': err.responseJSON['message']
             };
         }
         return {
-            'Password Platformer': 1
+            'Password Platformer': 0
         }
     })
 }
