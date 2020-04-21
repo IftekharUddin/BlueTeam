@@ -132,7 +132,7 @@ body>div {
 
 #middle>div:not(#top-tabs) {
     display: inline-block;
-    height: 90%;
+    height: 85%;
 }
 
 #main-middle {
