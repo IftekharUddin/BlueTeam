@@ -1,4 +1,13 @@
-import funFacts from './funFacts.js';
+//funFacts imported using a txt file thanks to this video https://www.youtube.com/watch?time_continue=319&v=OWxVjS3yD1c&feature=emb_title
+let funFacts;
+fetch('static/js/funFacts.txt')
+.then(function(response) {return response.text();})
+.then(function(data) {
+  funFacts = data.split("\n");
+})
+.catch(function(error) {
+  console.log('Error:', error);
+});
 
 const scrollAmount = 50;
 const secondsFunFact = 30;
