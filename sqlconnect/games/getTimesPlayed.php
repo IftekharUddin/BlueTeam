@@ -15,7 +15,7 @@ $onyen = $_POST["onyen"];
 // this can be refactored either to use a function in the future or to use an alternate method
 $data = array();
 
-$stmt = $pdo->prepare('SELECT TimesPlayed FROM dbo.PasswordPlatformerScores WHERE Onyen = :onyen;');
+$stmt = $pdo->prepare('SELECT Score, TimesPlayed FROM dbo.PasswordPlatformerScores WHERE Onyen = :onyen;');
 $stmt->bindParam(':onyen', $onyen);
 $stmt->execute();
 
@@ -23,9 +23,9 @@ $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $count = !$row ? 0 : 1;
 
 if ($count == 0) {
-    $data['Password Platformer'] = 0;
+    $data['Password Platformer'] = array('timesPlayed' => 0);
 } else {
-    $data['Password Platformer'] = $row[0]['TimesPlayed'];
+    $data['Password Platformer'] = array('timesPlayed' => $row[0]['TimesPlayed'], 'score' => $row[0]['Score']);
 }
 
 

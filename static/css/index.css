@@ -178,6 +178,11 @@ thead th {
     padding-bottom: 5px;
 }
 
+table {
+    table-layout: fixed;
+    width: 95%;
+}
+
 tr.hidden {
     display: none;
 }

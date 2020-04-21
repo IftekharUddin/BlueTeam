@@ -94,16 +94,16 @@ const getTimesPlayed = (user) => {
         const errJSON = err.responseJSON;
         if (errJSON === undefined) {
             return {
-                'Password Platformer': 0
+                'Password Platformer': { 'timesPlayed': 0 }
             }
         } else if (errJSON.hasOwnProperty('message')) {
             return {
-                'Password Platformer': 0,
+                'Password Platformer': { 'timesPlayed': 0 },
                 'errorMessage': err.responseJSON['message']
             };
         }
         return {
-            'Password Platformer': 0
+            'Password Platformer': { 'timesPlayed': 0 }
         }
     })
 }
@@ -116,7 +116,7 @@ const setUpAccount = (user) => {
         if (response === undefined) {
             // for debug purposes on server not running PHP
             timesPlayed = {
-                'Password Platformer': 1
+                'Password Platformer': { 'timesPlayed': 0 }
             }
         } else {
             if (response.hasOwnProperty('errorMessage')) {
@@ -127,16 +127,26 @@ const setUpAccount = (user) => {
             timesPlayed = response;
         }
 
-        const table = $('#playtime-table>tbody');
+        const tableGamesPlayed = $('#playtime-table>tbody');
+        const tableScores = $('#your-score-table>tbody');
         for (let [key, value] of Object.entries(timesPlayed)) {
             if (key == 'errorMessage') continue;
 
-            const tr = $('<tr></tr>');
-            const tdGame = $('<td>' + key + '</td>');
-            const tdNumber = $('<td>' + value + '</td>');
-            tr.append(tdGame);
-            tr.append(tdNumber);
-            table.append(tr);
+            const trTimesPlayed = $('<tr></tr>');
+            const tdTimesPlayedGame = $('<td>' + key + '</td>');
+            const tdTimesPlayedNumber = $('<td>' + value['timesPlayed'] + '</td>');
+            trTimesPlayed.append(tdTimesPlayedGame);
+            trTimesPlayed.append(tdTimesPlayedNumber);
+            tableGamesPlayed.append(trTimesPlayed);
+
+            if (value.hasOwnProperty('score')) {
+                const trScores = $('<tr></tr>');
+                const tdScoresGame = $('<td>' + key + '</td>');
+                const tdScoresNumber = $('<td>' + value['score'] + '</td>');
+                trScores.append(tdScoresGame);
+                trScores.append(tdScoresNumber);
+                tableScores.append(trScores);
+            }
         }
     })
 }
