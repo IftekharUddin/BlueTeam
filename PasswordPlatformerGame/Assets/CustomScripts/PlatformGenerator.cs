@@ -175,10 +175,9 @@ public class PlatformGenerator : MonoBehaviour
                 parent.AddComponent(typeof(BadPlatform));
             }
         }
-        else
-        {
-            parent.AddComponent(typeof(PlatformTrigger));
-        }
+
+        // trigger platform creation when land on any platform
+        parent.AddComponent(typeof(PlatformTrigger));
 
         GameObject curr;
         SpriteRenderer currRenderer;

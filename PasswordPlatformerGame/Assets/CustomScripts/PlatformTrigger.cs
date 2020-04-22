@@ -11,6 +11,7 @@ public class PlatformTrigger : MonoBehaviour
         if (!this.hasCollided)
         {
             PlatformGenerator.Instance.generatePlatforms();
+            this.hasCollided = true;
         }
     }
 }

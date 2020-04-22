@@ -1,13 +1,6 @@
-//funFacts imported using a txt file thanks to this video https://www.youtube.com/watch?time_continue=319&v=OWxVjS3yD1c&feature=emb_title
-let funFacts;
-fetch('static/js/funFacts.txt')
-.then(function(response) {return response.text();})
-.then(function(data) {
-  funFacts = data.split("\n");
-})
-.catch(function(error) {
-  console.log('Error:', error);
-});
+import fetchMessages from './messages.js';
+import { correctButtonPress } from './messages.js';
+import { incorrectButtonPress } from './messages.js';
 
 const scrollAmount = 50;
 const secondsFunFact = 30;
@@ -15,10 +8,6 @@ let rowsShown = 10;
 
 const randomChoice = (arr) => {
     return arr[Math.floor(Math.random() * arr.length)];
-}
-
-const genFunFact = () => {
-    $('#fun-fact').text(randomChoice(funFacts));
 }
 
 const hideArrows = (currScroll, width) => {
@@ -66,43 +55,21 @@ const scroll = (right) => {
     hideArrows($('#game-cards').scrollLeft(), width);
 }
 
-const showMoreHandler = () => {
-    const rows = $('#leaderboard tbody>tr:not(.row-info)');
-    if (rowsShown > rows.length) {
-        return;
-    }
-    for (let i = rowsShown; i < rowsShown + 5; i++) {
-        rows.eq(i).removeClass('hidden');
-    }
-
-    rowsShown += 5;
-
-    const firstHidden = $('tr.hidden').eq(0);
-    const showMore = $('#showmore-row');
-    const ellipsis = $('#ellipsis-row');
-    showMore.detach();
-    ellipsis.detach();
-    if (firstHidden.length == 0) {
-        return;
-    }
-    showMore.insertBefore(firstHidden);
-    ellipsis.insertBefore(firstHidden);
-}
-
-const getTimesPlayedRequest = (user) => {
-    return $.ajax('/sqlconnect/games/getTimesPlayed.php', {
+const getAccountDataRequest = (user) => {
+    return $.ajax('/sqlconnect/games/getAccountData.php', {
         type: 'POST',
         data: { 'onyen': user }
     });
 }
 
-const getTimesPlayed = (user) => {
-    return getTimesPlayedRequest(user).then(response => {
+const getAccountData = (user) => {
+    return getAccountDataRequest(user).then(response => {
         return response;
     }).catch(err => {
         console.log(err);
         return {
-            'Password Platformer': { 'timesPlayed': 0 }
+            'Password Platformer': { 'timesPlayed': 0 },
+            'Message Board': { 'timesPlayed': 0 }
         }
     })
 }
@@ -124,27 +91,21 @@ const getLeaderboard = () => {
 
 const setUpAccount = (user) => {
     $('#account>h2').text(user);
-    getTimesPlayed(user).then((response) => {
+    getAccountData(user).then((response) => {
         let timesPlayed;
         if (response === undefined) {
             // for debug purposes on server not running PHP
             timesPlayed = {
-                'Password Platformer': { 'timesPlayed': 0 }
+                'Password Platformer': { 'timesPlayed': 0 },
+                'Message Board': { 'timesPlayed': 0 }
             }
         } else {
-            if (response.hasOwnProperty('errorMessage')) {
-                // handle error case
-                console.log(response['errorMessage']);
-            }
-
             timesPlayed = response;
         }
 
         const tableGamesPlayed = $('#playtime-table>tbody');
         const tableScores = $('#your-score-table>tbody');
         for (let [key, value] of Object.entries(timesPlayed)) {
-            if (key == 'errorMessage') continue;
-
             const trTimesPlayed = $('<tr></tr>');
             const tdTimesPlayedGame = $('<td>' + key + '</td>');
             const tdTimesPlayedNumber = $('<td>' + value['timesPlayed'] + '</td>');
@@ -202,6 +163,9 @@ const setUpLeaderboard = (user, gameJSON) => {
         }
 
         let badgeList = {};
+
+        const individualLeaderboards = potentialBadges;
+        individualLeaderboards.push('Message Board');
         for (const val of potentialBadges) {
             const currVals = results.filter(item => (item[val] != null));
             currVals.sort((itemOne, itemTwo) => itemTwo[val] - itemOne[val]);
@@ -224,15 +188,39 @@ const setUpLeaderboard = (user, gameJSON) => {
             for (const row of currVals) {
                 const tr = $('<tr></tr>');
                 tr.append($('<td>' + rank++ + '</td>'));
-                tr.append($('<td>' + row['Onyen'] + '</td>'));
+                let name = row['Onyen'];
+                if (name == user) {
+                    tr.addClass('you');
+                    name = 'You';
+                }
+                tr.append($('<td>' + name + '</td>'));
+
                 tr.append($('<td>' + row[val].toLocaleString() + '</td>'));
                 tbody.append(tr);
             }
             newTable.append(tbody);
             newDiv.append(newTable);
 
+            const numRows = tbody.find('tr').length;
+            if (numRows > 10) {
+                tbody.find('tr').each((index, element) => {
+                    if (index < 10) return;
+                    $(element).addClass('hidden');
+                });
+
+                const showMoreRow = $('<tr class="row-info showmore-row"></tr>');
+                const showmoretd = $('<td colspan="3"><button class="showmoreButton">Show More <i class="fas fa-plus-circle"></i></button></td>');
+                showMoreRow.append(showmoretd);
+                showMoreRow.insertBefore(tbody.find('tr').eq(10));
+                const ellipsisrow = $('<tr class="row-info ellipsis-row"><td colspan="3"><i class="fas fa-ellipsis-h"></i></td></tr>');
+                ellipsisrow.insertAfter(showMoreRow);
+            }
+
             newDiv.insertBefore($('#right-arrow-leaderboard'));
             newDiv.hide();
+
+            // don't award badges for spam filtering for now ...
+            if (val == 'Message Board') continue;
 
             let numWithBadge = Math.floor(currVals.length * .15);
             if (numWithBadge == 0) numWithBadge = 1;
@@ -260,6 +248,10 @@ const setUpLeaderboard = (user, gameJSON) => {
             const tdRank = $('<td>' + rank + '</td>');
 
             let name = row['Onyen'];
+            if (name == user) {
+                tr.addClass('you');
+                name = 'You';
+            }
             if (badgeList.hasOwnProperty(row['Onyen'])) {
                 for (const badge of badgeList[row['Onyen']]) {
                     name += ' ' + games[badge]['icon'];
@@ -275,6 +267,21 @@ const setUpLeaderboard = (user, gameJSON) => {
             leaderboard.append(tr);
 
             rank++;
+        }
+
+        const numRows = leaderboard.find('tr').length;
+        if (numRows > 10) {
+            leaderboard.find('tr').each((index, element) => {
+                if (index < 10) return;
+                $(element).addClass('hidden');
+            });
+
+            const showMoreRow = $('<tr class="row-info showmore-row"></tr>');
+            const showmoretd = $('<td colspan="3"><button class="showmoreButton">Show More <i class="fas fa-plus-circle"></i></button></td>');
+            showMoreRow.append(showmoretd);
+            showMoreRow.insertBefore(leaderboard.find('tr').eq(10));
+            const ellipsisrow = $('<tr class="row-info ellipsis-row"><td colspan="3"><i class="fas fa-ellipsis-h"></i></td></tr>');
+            ellipsisrow.insertAfter(showMoreRow);
         }
     });
 }
@@ -319,6 +326,29 @@ const setUpGame = (game, user) => {
 }
 
 const setup = () => {
+    //funFacts imported using a txt file thanks to this video https://www.youtube.com/watch?time_continue=319&v=OWxVjS3yD1c&feature=emb_title
+    fetch('static/funFacts/funFacts.txt')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("HTTP error " + response.status);
+            }
+            return response.text();
+        }).then(data => {
+            const funFacts = data.split("\n");
+
+            const genFunFact = () => {
+                $('#fun-fact').text(randomChoice(funFacts));
+            }
+
+            genFunFact();
+
+            window.setInterval(genFunFact, secondsFunFact * 1000);
+        })
+        .catch(error => {
+            console.log('Error: ' + error);
+        });
+
+
     $('.tab-info').hide();
     const currDiv = $('.tab.active').attr('data-info');
     $('#' + currDiv).show();
@@ -401,12 +431,33 @@ const setup = () => {
         $('#' + content).show();
     });
 
-    $('#showmore').on('click', function () {
-        showMoreHandler();
-    });
-
     $('form').on('submit', function (eve) {
         eve.preventDefault();
+    });
+
+    $('.showmoreButton').each((index, element) => {
+        const tbody = $(element).closest('tbody');
+        $(element).on('click', () => {
+            const rows = tbody.find('tr').not('.row-info');
+            const rowsShown = tbody.find('tr').not('.row-info').not('.hidden').length;
+
+            if (rowsShown > rows.length) {
+                return;
+            }
+            for (let i = rowsShown; i < rowsShown + 5; i++) {
+                rows.eq(i).removeClass('hidden');
+            }
+
+            const firstHidden = rows.find('tr.hidden').eq(0);
+            const showMore = tbody.find('.showmore-row');
+            const ellipsis = tbody.find('.ellipsis-row');
+            showMore.detach();
+            ellipsis.detach();
+            if (firstHidden.length == 0) return;
+            showMore.insertBefore(firstHidden);
+            ellipsis.insertBefore(firstHidden);
+
+        })
     });
 }
 
@@ -450,11 +501,35 @@ $(document).ready(function () {
 
         hideArrows($('#game-cards').scrollLeft(), $('#game-cards').width());
 
-        genFunFact();
-        window.setInterval(genFunFact, secondsFunFact * 1000);
-
         fetchGames(user);
+
+        fetchMessages().then(() => {
+            $('.correctButton').each((index, element) => {
+                $(element).on('click', () => {
+                    correctButtonPress(user);
+                });
+            });
+
+            $('.incorrectButton').each((index, element) => {
+                $(element).on('click', () => {
+                    incorrectButtonPress(user).then(() => {
+                        console.log('hello!');
+                        window.location.href = '/message.html';
+                    }).catch(() => {
+                        window.location.href = '/message.html';
+                    });
+                });
+            });
+        });
 
         setUpAccount(user);
     });
+
+    //messages on button press - this will trigger the php call that will update the db
+    $('.correctButton').on('click', function () {
+        correctButtonPress;
+    })
+    $('.incorrectButton').on('click', function () {
+        incorrectButtonPress;
+    })
 });

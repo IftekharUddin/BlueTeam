@@ -260,7 +260,7 @@ button:hover {
     background-color: black;
 }
 
-#showmore {
+.showmoreButton {
     width: 75%;
     font-family: archery;
     padding-top: 5px;
@@ -404,6 +404,10 @@ button:hover {
     transform: translateY(50%);
 }
 
+#messages-container {
+    height: 100%;
+}
+
 #messages-container>div {
     height: 100%;
     display: inline-block;
@@ -415,7 +419,19 @@ button:hover {
 
 .message-content {
     float: right;
+    position: relative;
     width: 65%;
+    height: 100%;
+}
+
+.correctButton {
+    bottom: 25px;
+    display: block;
+    position: absolute;
+}
+
+.correctButton, .incorrectButton {
+    padding: 5px;
 }
 
 .message {

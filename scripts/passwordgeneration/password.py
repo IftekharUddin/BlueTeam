@@ -4,6 +4,12 @@ from l33t import generate_all_l33t
 from zxcvbn import zxcvbn
 from itertools import permutations, chain
 from random import choice, sample, shuffle, randint, seed
+from numpy import mean, std
+from sys import argv
+
+args = argv[1:]
+
+mode = 'append' if '--append' in args else 'generate'
 
 seed()
 
@@ -106,7 +112,7 @@ def generate_permutations(iterable, number, mode='limit', amount=1e4):
         return ()
 
 
-def combine_two_lists_into_bad_passwords(iterable_one, iterable_two, mode='limit', limit=int(1e3)):
+def combine_two_lists_into_bad_passwords(iterable_one, iterable_two, mode='limit', limit=int(2.5e3)):
     '''
     Gets the combination of two lists (specifically, used in getting bad passwords)
     '''
@@ -210,24 +216,33 @@ print('')
 
 def get_good_passwords_base():
     '''
-    Good passwords are 3 or 4 random english words, l33ted.
+    Good passwords are 2 to 4 random english words, l33ted.
     This is separated into this function b/c originally thought that words would be potentially l33ted, but found
     that passwords don't pass muster if they are not scrambled a bit
     '''
+    amt = int(1e5)
+    # two_words = get_all_good_passwords(
+    #     generate_permutations(english_words, 2, amount=amt))
     three_words = get_all_good_passwords(
-        generate_permutations(english_words, 3, amount=1e5))
+        generate_permutations(english_words, 3, amount=amt))
     four_words = get_all_good_passwords(
-        generate_permutations(english_words, 4, amount=1e5))
+        generate_permutations(english_words, 4, amount=amt))
 
-    return chain(three_words, four_words)
+    return chain(
+        # two_words,
+        three_words,
+        four_words)
 
 
 def get_good_passwords():
     return all_good_l33ts(get_good_passwords_base())
 
 
+write_mode = 'wt' if mode == 'generate' else 'at'
+
+good_passwords_lst = []
 print('Writing good passwords: ', end='', flush=True)
-with open('GOOD_PASSWORDS.txt', 'wt') as fp:
+with open('GOOD_PASSWORDS.txt', write_mode) as fp:
     num = 0
     for pw in get_good_passwords():
         # print(pw)
@@ -237,7 +252,14 @@ with open('GOOD_PASSWORDS.txt', 'wt') as fp:
         num += 1
 
 print('')
-print('Number of good passwords: {}'.format(num))
+with open('GOOD_PASSWORDS.txt', 'rt') as fp:
+    good_passwords_lst = fp.read().split('\n')
+    good_passwords_lst = [pw for pw in good_passwords_lst if len(pw) > 0]
+    num = len(good_passwords_lst)
+
+lens_good_password = [len(pw) for pw in good_passwords_lst]
+print('Number of good passwords: {} \t Mean: {}\tStandard Deviation: {}'.format(
+    num, mean(lens_good_password), std(lens_good_password)))
 
 #################################
 ## EASY (BAD) PASSWORDS        ##
@@ -263,18 +285,34 @@ def get_easy_bad_passwords(mode='all', limit=int(1e3)):
     return chain(bad_zxcvbn_passwords, bad_female_names, bad_male_names, bad_surnames)
 
 
-print('Writing easy bad passwords: ', end='', flush=True)
-with open('EASY_BAD_PASSWORDS.txt', 'wt') as fp:
-    num = 0
-    for pw in get_easy_bad_passwords():
-        # print (pw)
-        if num % 1000 == 0:
-            print('.', end='', flush=True)
-        fp.write(pw + '\n')
-        num += 1
+if mode == 'append':
+    # there are no more that we can possibly append in this case
+    pass
+else:
+    print('Writing easy bad passwords: ', end='', flush=True)
+    with open('EASY_BAD_PASSWORDS.txt', 'wt') as fp:
+        num = 0
+        for pw in get_easy_bad_passwords():
+            # print(pw)
+            if num % 1000 == 0:
+                print('.', end='', flush=True)
+            fp.write(pw + '\n')
+            num += 1
 
 print('')
-print('Number of easy passwords: {}'.format(num))
+with open('EASY_BAD_PASSWORDS.txt', 'rt') as fp:
+    easy_bad_passwords_lst = fp.read().split('\n')
+    easy_bad_passwords_lst = [
+        pw for pw in easy_bad_passwords_lst if len(pw) > 0]
+    num = len(easy_bad_passwords_lst)
+
+with open('EASY_BAD_PASSWORDS.txt', 'wt') as fp:
+    fp.write('\n'.join(good_passwords_lst))
+
+print('')
+lens_easy_bad = [len(pw) for pw in easy_bad_passwords_lst]
+print('Number of easy passwords: {}\tMean: {}\tStandard Deviation: {}'.format(
+    num, mean(lens_easy_bad), std(lens_easy_bad)))
 
 #################################
 ## MEDIUM (BAD) PASSWORDS      ##
@@ -283,7 +321,7 @@ print('Number of easy passwords: {}'.format(num))
 
 def get_medium_bad_passwords_base():
     # 1. has all the easy passwords
-    easy_bad_passwords = get_easy_bad_passwords(mode='rand')
+    # easy_bad_passwords = get_easy_bad_passwords(mode='rand')
 
     # 2. a male name + a surname or a female name + surname (or the reverse)
     male_name_plus_surname = combine_two_lists_into_bad_passwords(
@@ -293,14 +331,16 @@ def get_medium_bad_passwords_base():
 
     # 3. anywhere from 2 to 4 english words
     two_words = get_bad_passwords_from_iterable(
-        generate_permutations(english_words, 2, amount=1e3))
+        generate_permutations(english_words, 2, amount=2.5e3))
     three_words = get_bad_passwords_from_iterable(
-        generate_permutations(english_words, 3, amount=1e3))
+        generate_permutations(english_words, 3, amount=2.5e3))
     four_words = get_bad_passwords_from_iterable(
-        generate_permutations(english_words, 4, amount=1e3))
+        generate_permutations(english_words, 4, amount=2.5e3))
 
-    return chain(easy_bad_passwords, male_name_plus_surname, female_name_plus_surname,
-                 two_words, three_words, four_words)
+    return chain(
+        # easy_bad_passwords,
+        male_name_plus_surname, female_name_plus_surname,
+        two_words, three_words, four_words)
 
 
 def get_medium_bad_passwords():
@@ -309,7 +349,7 @@ def get_medium_bad_passwords():
 
 
 print('Writing medium bad passwords: ', end='', flush=True)
-with open('MEDIUM_BAD_PASSWORDS.txt', 'wt') as fp:
+with open('MEDIUM_BAD_PASSWORDS.txt', write_mode) as fp:
     num = 0
     for pw in get_medium_bad_passwords():
         # print(pw)
@@ -318,8 +358,30 @@ with open('MEDIUM_BAD_PASSWORDS.txt', 'wt') as fp:
         fp.write(pw + '\n')
         num += 1
 
+with open('MEDIUM_BAD_PASSWORDS.txt', 'rt') as fp:
+    medium_bad_passwords_lst = fp.read().split('\n')
+    medium_bad_passwords_lst = [
+        pw for pw in medium_bad_passwords_lst if len(pw) > 0]
+    num = len(medium_bad_passwords_lst)
+
+lens_medium_bad = [len(pw) for pw in medium_bad_passwords_lst]
+curr_mean = mean(lens_medium_bad)
+curr_std = std(lens_medium_bad)
+
+minusrange = curr_mean-2*curr_std
+maxrange = curr_mean+2*curr_std
+
+good_passwords_medium = list(filter(
+    lambda item:  minusrange <= len(item) <= maxrange, good_passwords_lst))
+
+print('\nMedium good passwords: {}\n'.format(len(good_passwords_medium)))
+with open('MEDIUM_GOOD_PASSWORDS.txt', 'wt') as fp:
+    fp.write('\n'.join(good_passwords_medium))
+
+
 print('')
-print('Number of medium passwords: {}'.format(num))
+print('Number of medium passwords: {}\tMean: {}\tStandard Deviation: {}'.format(
+    num, curr_mean, curr_std))
 
 
 #################################
@@ -359,13 +421,36 @@ def get_hard_bad_passwords():
 
 
 print('Writing hard bad passwords: ', end='', flush=True)
-with open('HARD_BAD_PASSWORDS.txt', 'wt') as fp:
+with open('HARD_BAD_PASSWORDS.txt', write_mode) as fp:
     num = 0
     for pw in get_hard_bad_passwords():
+        # print(pw)
         if num % 1000 == 0:
             print('.', end='', flush=True)
         fp.write(pw + '\n')
         num += 1
 
+with open('HARD_BAD_PASSWORDS.txt', 'rt') as fp:
+    hard_bad_passwords_lst = fp.read().split('\n')
+    hard_bad_passwords_lst = [
+        pw for pw in medium_bad_passwords_lst if len(pw) > 0]
+    num = len(hard_bad_passwords_lst)
+
+lens_hard_bad = [len(pw) for pw in hard_bad_passwords_lst]
+curr_mean = mean(lens_hard_bad)
+curr_std = std(lens_hard_bad)
+
+minusrange = curr_mean-curr_std
+maxrange = curr_mean+curr_std
+
+good_passwords_hard = list(filter(
+    lambda item:  minusrange <= len(item) <= maxrange, good_passwords_lst))
+
+print('\nHard good passwords: {}\n'.format(len(good_passwords_hard)))
+with open('HARD_GOOD_PASSWORDS.txt', 'wt') as fp:
+    fp.write('\n'.join(good_passwords_hard))
+
+
 print('')
-print('Number of hard passwords: {}'.format(num))
+print('Number of hard passwords: {}\tMean: {}\tStandard Deviation: {}'.format(
+    num, curr_mean, curr_std))
