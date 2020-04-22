@@ -55,29 +55,6 @@ const scroll = (right) => {
     hideArrows($('#game-cards').scrollLeft(), width);
 }
 
-const showMoreHandler = () => {
-    const rows = $('#leaderboard tbody>tr:not(.row-info)');
-    if (rowsShown > rows.length) {
-        return;
-    }
-    for (let i = rowsShown; i < rowsShown + 5; i++) {
-        rows.eq(i).removeClass('hidden');
-    }
-
-    rowsShown += 5;
-
-    const firstHidden = $('tr.hidden').eq(0);
-    const showMore = $('#showmore-row');
-    const ellipsis = $('#ellipsis-row');
-    showMore.detach();
-    ellipsis.detach();
-    if (firstHidden.length == 0) {
-        return;
-    }
-    showMore.insertBefore(firstHidden);
-    ellipsis.insertBefore(firstHidden);
-}
-
 const getAccountDataRequest = (user) => {
     return $.ajax('/sqlconnect/games/getAccountData.php', {
         type: 'POST',
@@ -211,12 +188,33 @@ const setUpLeaderboard = (user, gameJSON) => {
             for (const row of currVals) {
                 const tr = $('<tr></tr>');
                 tr.append($('<td>' + rank++ + '</td>'));
-                tr.append($('<td>' + row['Onyen'] + '</td>'));
+                let name = row['Onyen'];
+                if (name == user) {
+                    tr.addClass('you');
+                    name = 'You';
+                }
+                tr.append($('<td>' + name + '</td>'));
+
                 tr.append($('<td>' + row[val].toLocaleString() + '</td>'));
                 tbody.append(tr);
             }
             newTable.append(tbody);
             newDiv.append(newTable);
+
+            const numRows = tbody.find('tr').length;
+            if (numRows > 10) {
+                tbody.find('tr').each((index, element) => {
+                    if (index < 10) return;
+                    $(element).addClass('hidden');
+                });
+
+                const showMoreRow = $('<tr class="row-info showmore-row"></tr>');
+                const showmoretd = $('<td colspan="3"><button class="showmoreButton">Show More <i class="fas fa-plus-circle"></i></button></td>');
+                showMoreRow.append(showmoretd);
+                showMoreRow.insertBefore(tbody.find('tr').eq(10));
+                const ellipsisrow = $('<tr class="row-info ellipsis-row"><td colspan="3"><i class="fas fa-ellipsis-h"></i></td></tr>');
+                ellipsisrow.insertAfter(showMoreRow);
+            }
 
             newDiv.insertBefore($('#right-arrow-leaderboard'));
             newDiv.hide();
@@ -250,6 +248,10 @@ const setUpLeaderboard = (user, gameJSON) => {
             const tdRank = $('<td>' + rank + '</td>');
 
             let name = row['Onyen'];
+            if (name == user) {
+                tr.addClass('you');
+                name = 'You';
+            }
             if (badgeList.hasOwnProperty(row['Onyen'])) {
                 for (const badge of badgeList[row['Onyen']]) {
                     name += ' ' + games[badge]['icon'];
@@ -265,6 +267,21 @@ const setUpLeaderboard = (user, gameJSON) => {
             leaderboard.append(tr);
 
             rank++;
+        }
+
+        const numRows = leaderboard.find('tr').length;
+        if (numRows > 10) {
+            leaderboard.find('tr').each((index, element) => {
+                if (index < 10) return;
+                $(element).addClass('hidden');
+            });
+
+            const showMoreRow = $('<tr class="row-info showmore-row"></tr>');
+            const showmoretd = $('<td colspan="3"><button class="showmoreButton">Show More <i class="fas fa-plus-circle"></i></button></td>');
+            showMoreRow.append(showmoretd);
+            showMoreRow.insertBefore(leaderboard.find('tr').eq(10));
+            const ellipsisrow = $('<tr class="row-info ellipsis-row"><td colspan="3"><i class="fas fa-ellipsis-h"></i></td></tr>');
+            ellipsisrow.insertAfter(showMoreRow);
         }
     });
 }
@@ -414,12 +431,33 @@ const setup = () => {
         $('#' + content).show();
     });
 
-    $('#showmore').on('click', function () {
-        showMoreHandler();
-    });
-
     $('form').on('submit', function (eve) {
         eve.preventDefault();
+    });
+
+    $('.showmoreButton').each((index, element) => {
+        const tbody = $(element).closest('tbody');
+        $(element).on('click', () => {
+            const rows = tbody.find('tr').not('.row-info');
+            const rowsShown = tbody.find('tr').not('.row-info').not('.hidden').length;
+
+            if (rowsShown > rows.length) {
+                return;
+            }
+            for (let i = rowsShown; i < rowsShown + 5; i++) {
+                rows.eq(i).removeClass('hidden');
+            }
+
+            const firstHidden = rows.find('tr.hidden').eq(0);
+            const showMore = tbody.find('.showmore-row');
+            const ellipsis = tbody.find('.ellipsis-row');
+            showMore.detach();
+            ellipsis.detach();
+            if (firstHidden.length == 0) return;
+            showMore.insertBefore(firstHidden);
+            ellipsis.insertBefore(firstHidden);
+
+        })
     });
 }
 

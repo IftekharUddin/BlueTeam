@@ -260,7 +260,7 @@ button:hover {
     background-color: black;
 }
 
-#showmore {
+.showmoreButton {
     width: 75%;
     font-family: archery;
     padding-top: 5px;
