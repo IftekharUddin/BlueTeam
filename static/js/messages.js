@@ -26,7 +26,7 @@ const setupMessage = (message, idx) => {
 
 const getMessageRequest = () => {
     return $.ajax('/sqlconnect/games/getMessages.php', {
-        type: 'GET'
+        type: 'POST'
     });
 }
 
@@ -39,12 +39,11 @@ const getMessages = () => {
 }
 
 const fetchMessages = () => {
-    getMessages().then(messages => {
+    return getMessages().then(messages => {
         let idx = 0;
         for (const message of messages) {
             setupMessage(message, idx++);
         }
-        console.log(messages);
         $('.message').eq(0).addClass('active');
     }).catch(err => {
         console.log(err);
@@ -53,24 +52,33 @@ const fetchMessages = () => {
             'Title': 'Keep checking these!',
             'Onyen': 'dbarker'
         }, 0);
+        setupMessage({
+            'Message': '<p>Click <a href="./message.html">here</a> to receive your 100 points!</p><button class="correctButton">Report</button><button class="incorrectButton">Reply</button>',
+            'Title': 'Example',
+            'Onyen': 'tas127'
+        }, 1);
         $('.message').eq(0).addClass('active');
     });
 }
 
 //THE FOLLOWIWNG TWO FUNCTIONS are exported so that the main js page, index.js call listen for the button presses that will call these functions - this will be sent to /sqlconnect/games/updateMessagesScore.php - this will update the db
-export const correctButtonPress = () => {
+export const correctButtonPress = (user) => {
     return $.ajax('/sqlconnect/games/updateMessagesScore.php', {
-        type: 'GET',
-        data: 100,
-        processData: false
+        type: 'POST',
+        data: {
+            'onyen': user,
+            'data': 100
+        }
     });
 }
 
-export const incorrectButtonPress = () => {
+export const incorrectButtonPress = (user) => {
     return $.ajax('/sqlconnect/games/updateMessagesScore.php', {
-        type: 'GET',
-        data: -100,
-        processData: false
+        type: 'POST',
+        data: {
+            'onyen': user,
+            'data': -100
+        }
     });
 }
 

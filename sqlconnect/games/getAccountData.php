@@ -30,6 +30,7 @@ if ($count == 0) {
 
 $stmt = $pdo->prepare('SELECT Score, AttacksCaught FROM dbo.MessageBoardScores WHERE Onyen = :onyen;');
 $stmt->bindParam(':onyen', $onyen);
+$stmt->execute();
 
 $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $count = !$row ? 0 : 1;
@@ -37,10 +38,10 @@ $count = !$row ? 0 : 1;
 if ($count == 0) {
     $data['Message Board'] = array('timesPlayed' => 0, 'score' => 0);
 } else {
-    if ($row['AttacksCaught'] == null) {
-        $data['Message Board'] = array('timesPlayed' => 0, 'score' => $row['Score']);
+    if ($row[0]['AttacksCaught'] == null) {
+        $data['Message Board'] = array('timesPlayed' => 0, 'score' => $row[0]['Score']);
     } else {
-        $data['Message Board'] = array('timesPlayed' => $row['AttacksCaught'], 'score' => $row['Score']);
+        $data['Message Board'] = array('timesPlayed' => $row[0]['AttacksCaught'], 'score' => $row[0]['Score']);
     }
 }
 

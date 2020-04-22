@@ -465,7 +465,24 @@ $(document).ready(function () {
 
         fetchGames(user);
 
-        fetchMessages();
+        fetchMessages().then(() => {
+            $('.correctButton').each((index, element) => {
+                $(element).on('click', () => {
+                    correctButtonPress(user);
+                });
+            });
+
+            $('.incorrectButton').each((index, element) => {
+                $(element).on('click', () => {
+                    incorrectButtonPress(user).then(() => {
+                        console.log('hello!');
+                        window.location.href = '/message.html';
+                    }).catch(() => {
+                        window.location.href = '/message.html';
+                    });
+                });
+            });
+        });
 
         setUpAccount(user);
     });

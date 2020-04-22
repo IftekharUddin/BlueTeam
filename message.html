@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>UNTRUSTED LINK</title>
+    <style>
+        .title {
+            width: 800px;
+            margin-right: auto;
+            margin-left: auto;
+            margin-top: auto;
+            margin-bottom: auto;
+            text-align: center;
+        }
+
+        .lose {
+            width: 500px;
+            margin-right: auto;
+            margin-left: auto;
+            margin-top: auto;
+            margin-bottom: auto;
+            text-align: center;
+        }
+
+        .backbutton {
+            width: 200px;
+            margin-right: auto;
+            margin-left: auto;
+            margin-top: auto;
+            margin-bottom: auto;
+            text-align: center;
+        }
+
+        a {
+            display: block;
+            padding: 10px;
+            background-color: #7BC1E2;
+            color: white;
+            border: 1px solid black;
+            border-radius: 4px;
+        }
+
+        h1 {
+            color: red;
+            font-size: 100px;
+        }
+
+        h3 {
+            font-size: 72px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="title">
+        <h1>DO NOT CLICK ON UNTRUSTED LINKS</h1>
+    </div>
+    <div class="lose">
+        <h3>Lose 100 points</h3>
+    </div>
+    <div class="backbutton"><a href="javascript:history.go(-1)" onMouseOver="self.status.referrer;return true">Go
+            Back</a></div>
+</body>
+
+</html>
