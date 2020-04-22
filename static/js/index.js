@@ -91,7 +91,8 @@ const getAccountData = (user) => {
     }).catch(err => {
         console.log(err);
         return {
-            'Password Platformer': { 'timesPlayed': 0 }
+            'Password Platformer': { 'timesPlayed': 0 },
+            'Message Board': { 'timesPlayed': 0 }
         }
     })
 }
@@ -118,22 +119,16 @@ const setUpAccount = (user) => {
         if (response === undefined) {
             // for debug purposes on server not running PHP
             timesPlayed = {
-                'Password Platformer': { 'timesPlayed': 0 }
+                'Password Platformer': { 'timesPlayed': 0 },
+                'Message Board': { 'timesPlayed': 0 }
             }
         } else {
-            if (response.hasOwnProperty('errorMessage')) {
-                // handle error case
-                console.log(response['errorMessage']);
-            }
-
             timesPlayed = response;
         }
 
         const tableGamesPlayed = $('#playtime-table>tbody');
         const tableScores = $('#your-score-table>tbody');
         for (let [key, value] of Object.entries(timesPlayed)) {
-            if (key == 'errorMessage') continue;
-
             const trTimesPlayed = $('<tr></tr>');
             const tdTimesPlayedGame = $('<td>' + key + '</td>');
             const tdTimesPlayedNumber = $('<td>' + value['timesPlayed'] + '</td>');
@@ -191,6 +186,9 @@ const setUpLeaderboard = (user, gameJSON) => {
         }
 
         let badgeList = {};
+
+        const individualLeaderboards = potentialBadges;
+        individualLeaderboards.push('Message Board');
         for (const val of potentialBadges) {
             const currVals = results.filter(item => (item[val] != null));
             currVals.sort((itemOne, itemTwo) => itemTwo[val] - itemOne[val]);
@@ -222,6 +220,9 @@ const setUpLeaderboard = (user, gameJSON) => {
 
             newDiv.insertBefore($('#right-arrow-leaderboard'));
             newDiv.hide();
+
+            // don't award badges for spam filtering for now ...
+            if (val == 'Message Board') continue;
 
             let numWithBadge = Math.floor(currVals.length * .15);
             if (numWithBadge == 0) numWithBadge = 1;
@@ -309,7 +310,6 @@ const setUpGame = (game, user) => {
 
 const setup = () => {
     //funFacts imported using a txt file thanks to this video https://www.youtube.com/watch?time_continue=319&v=OWxVjS3yD1c&feature=emb_title
-    let funFacts;
     fetch('static/funFacts/funFacts.txt')
         .then(response => {
             if (!response.ok) {
@@ -317,7 +317,7 @@ const setup = () => {
             }
             return response.text();
         }).then(data => {
-            funFacts = data.split("\n");
+            const funFacts = data.split("\n");
 
             const genFunFact = () => {
                 $('#fun-fact').text(randomChoice(funFacts));

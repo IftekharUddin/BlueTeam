@@ -112,7 +112,7 @@ def generate_permutations(iterable, number, mode='limit', amount=1e4):
         return ()
 
 
-def combine_two_lists_into_bad_passwords(iterable_one, iterable_two, mode='limit', limit=int(1e4)):
+def combine_two_lists_into_bad_passwords(iterable_one, iterable_two, mode='limit', limit=int(2.5e3)):
     '''
     Gets the combination of two lists (specifically, used in getting bad passwords)
     '''
@@ -216,7 +216,7 @@ print('')
 
 def get_good_passwords_base():
     '''
-    Good passwords are 3 or 4 random english words, l33ted.
+    Good passwords are 2 to 4 random english words, l33ted.
     This is separated into this function b/c originally thought that words would be potentially l33ted, but found
     that passwords don't pass muster if they are not scrambled a bit
     '''
@@ -328,11 +328,11 @@ def get_medium_bad_passwords_base():
 
     # 3. anywhere from 2 to 4 english words
     two_words = get_bad_passwords_from_iterable(
-        generate_permutations(english_words, 2, amount=1e4))
+        generate_permutations(english_words, 2, amount=2.5e3))
     three_words = get_bad_passwords_from_iterable(
-        generate_permutations(english_words, 3, amount=1e4))
+        generate_permutations(english_words, 3, amount=2.5e3))
     four_words = get_bad_passwords_from_iterable(
-        generate_permutations(english_words, 4, amount=1e4))
+        generate_permutations(english_words, 4, amount=2.5e3))
 
     return chain(
         # easy_bad_passwords,

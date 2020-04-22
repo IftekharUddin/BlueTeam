@@ -48,6 +48,12 @@ const fetchMessages = () => {
         $('.message').eq(0).addClass('active');
     }).catch(err => {
         console.log(err);
+        setupMessage({
+            'Message': '<p>No messages to display yet! Stay tuned!</p>',
+            'Title': 'Keep checking these!',
+            'Onyen': 'dbarker'
+        }, 0);
+        $('.message').eq(0).addClass('active');
     });
 }
 

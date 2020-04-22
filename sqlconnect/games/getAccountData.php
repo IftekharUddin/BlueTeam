@@ -28,6 +28,22 @@ if ($count == 0) {
     $data['Password Platformer'] = array('timesPlayed' => $row[0]['TimesPlayed'], 'score' => $row[0]['Score']);
 }
 
+$stmt = $pdo->prepare('SELECT Score, AttacksCaught FROM dbo.MessageBoardScores WHERE Onyen = :onyen;');
+$stmt->bindParam(':onyen', $onyen);
+
+$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$count = !$row ? 0 : 1;
+
+if ($count == 0) {
+    $data['Message Board'] = array('timesPlayed' => 0, 'score' => 0);
+} else {
+    if ($row['AttacksCaught'] == null) {
+        $data['Message Board'] = array('timesPlayed' => 0, 'score' => $row['Score']);
+    } else {
+        $data['Message Board'] = array('timesPlayed' => $row['AttacksCaught'], 'score' => $row['Score']);
+    }
+}
+
 
 header('Content-Type: application/json');
 print json_encode($data);

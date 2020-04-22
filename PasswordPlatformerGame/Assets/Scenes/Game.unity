@@ -2499,12 +2499,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 220b08c1ea299d94e9d19abc34a77404, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodPasswordsText: {fileID: 4900000, guid: 4f026fc7612520049a2dd4524490592e, type: 3}
   easyBadPasswordsText: {fileID: 4900000, guid: 20b73d1f3e8e01248b93edd4eb9350e2,
+    type: 3}
+  easyGoodPasswordsText: {fileID: 4900000, guid: 96c9f062494be054ab86c9d227ab0fc3,
     type: 3}
   mediumBadPasswordsText: {fileID: 4900000, guid: 7494430b16f0a5d43acabe1524fc8d9d,
     type: 3}
+  mediumGoodPasswordsText: {fileID: 4900000, guid: 956c62ac2ea2af544b10c9a6274c6f26,
+    type: 3}
   hardBadPasswordsText: {fileID: 4900000, guid: 0350be363128563409f56c432f0499d8,
+    type: 3}
+  hardGoodPasswordsText: {fileID: 4900000, guid: 6c339a39169a6a04e82ed85c4cee047c,
     type: 3}
 --- !u!114 &1405728040
 MonoBehaviour:

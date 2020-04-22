@@ -12,14 +12,15 @@ public class PasswordGeneration : MonoBehaviour
 {
 
     private DifficultyUtility.Difficulty difficulty;
-    public TextAsset goodPasswordsText, easyBadPasswordsText, mediumBadPasswordsText, hardBadPasswordsText;
+    public TextAsset easyBadPasswordsText, easyGoodPasswordsText, mediumBadPasswordsText, mediumGoodPasswordsText, hardBadPasswordsText, hardGoodPasswordsText;
 
     private static PasswordGeneration _instance;
-    private List<string> goodPasswords = new List<string>();
     private List<string> easyBadPasswords = new List<string>();
+    private List<string> easyGoodPasswords = new List<string>();
     private List<string> mediumBadPasswords = new List<string>();
+    private List<string> mediumGoodPasswords = new List<string>();
     private List<string> hardBadPasswords = new List<string>();
-    private List<string> badPasswordsFromInternet = new List<string>();
+    private List<string> hardGoodPasswords = new List<string>();
     private Zxcvbn.Zxcvbn passwordChecker = new Zxcvbn.Zxcvbn();
 
     /// <value> The singleton instance of this class which can be accessed by whoever wants to generate passwords. </value>
@@ -42,10 +43,12 @@ public class PasswordGeneration : MonoBehaviour
         _instance = this;
         // DontDestroyOnLoad(this.gameObject);
 
-        this.readTextAssetIntoList(this.goodPasswordsText, this.goodPasswords);
         this.readTextAssetIntoList(this.easyBadPasswordsText, this.easyBadPasswords);
+        this.readTextAssetIntoList(this.easyGoodPasswordsText, this.easyGoodPasswords);
         this.readTextAssetIntoList(this.mediumBadPasswordsText, this.mediumBadPasswords);
+        this.readTextAssetIntoList(this.mediumGoodPasswordsText, this.mediumGoodPasswords);
         this.readTextAssetIntoList(this.hardBadPasswordsText, this.hardBadPasswords);
+        this.readTextAssetIntoList(this.hardGoodPasswordsText, this.hardGoodPasswords);
     }
 
     private void readTextAssetIntoList(TextAsset asset, List<string> list)
@@ -116,13 +119,24 @@ public class PasswordGeneration : MonoBehaviour
         return this.generateBadPassword(this.difficulty);
     }
 
-    private string generateGoodPassword()
+    private string generateGoodPassword(DifficultyUtility.Difficulty diff)
     {
-        return this.getRandFromList(this.goodPasswords);
+        if (diff == DifficultyUtility.Difficulty.EASY)
+        {
+            return this.getRandFromList(this.easyGoodPasswords);
+        }
+        else if (diff == DifficultyUtility.Difficulty.MEDIUM)
+        {
+            return this.getRandFromList(this.mediumGoodPasswords);
+        }
+        else
+        {
+            return this.getRandFromList(this.hardGoodPasswords);
+        }
     }
 
     public string GetGoodPassword()
     {
-        return this.generateGoodPassword();
+        return this.generateGoodPassword(this.difficulty);
     }
 }
