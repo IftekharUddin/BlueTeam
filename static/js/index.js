@@ -1,17 +1,6 @@
+import fetchMessages from './messages.js';
 import { correctButtonPress } from './messages.js';
 import { incorrectButtonPress } from './messages.js';
-
-
-//funFacts imported using a txt file thanks to this video https://www.youtube.com/watch?time_continue=319&v=OWxVjS3yD1c&feature=emb_title
-let funFacts;
-fetch('static/js/funFacts.txt')
-.then(function(response) {return response.text();})
-.then(function(data) {
-  funFacts = data.split("\n");
-})
-.catch(function(error) {
-  console.log('Error:', error);
-});
 
 const scrollAmount = 50;
 const secondsFunFact = 30;
@@ -19,10 +8,6 @@ let rowsShown = 10;
 
 const randomChoice = (arr) => {
     return arr[Math.floor(Math.random() * arr.length)];
-}
-
-const genFunFact = () => {
-    $('#fun-fact').text(randomChoice(funFacts));
 }
 
 const hideArrows = (currScroll, width) => {
@@ -93,15 +78,15 @@ const showMoreHandler = () => {
     ellipsis.insertBefore(firstHidden);
 }
 
-const getTimesPlayedRequest = (user) => {
-    return $.ajax('/sqlconnect/games/getTimesPlayed.php', {
+const getAccountDataRequest = (user) => {
+    return $.ajax('/sqlconnect/games/getAccountData.php', {
         type: 'POST',
         data: { 'onyen': user }
     });
 }
 
-const getTimesPlayed = (user) => {
-    return getTimesPlayedRequest(user).then(response => {
+const getAccountData = (user) => {
+    return getAccountDataRequest(user).then(response => {
         return response;
     }).catch(err => {
         console.log(err);
@@ -128,7 +113,7 @@ const getLeaderboard = () => {
 
 const setUpAccount = (user) => {
     $('#account>h2').text(user);
-    getTimesPlayed(user).then((response) => {
+    getAccountData(user).then((response) => {
         let timesPlayed;
         if (response === undefined) {
             // for debug purposes on server not running PHP
@@ -323,6 +308,30 @@ const setUpGame = (game, user) => {
 }
 
 const setup = () => {
+    //funFacts imported using a txt file thanks to this video https://www.youtube.com/watch?time_continue=319&v=OWxVjS3yD1c&feature=emb_title
+    let funFacts;
+    fetch('static/funFacts/funFacts.txt')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("HTTP error " + response.status);
+            }
+            return response.text();
+        }).then(data => {
+            funFacts = data.split("\n");
+
+            const genFunFact = () => {
+                $('#fun-fact').text(randomChoice(funFacts));
+            }
+
+            genFunFact();
+
+            window.setInterval(genFunFact, secondsFunFact * 1000);
+        })
+        .catch(error => {
+            console.log('Error: ' + error);
+        });
+
+
     $('.tab-info').hide();
     const currDiv = $('.tab.active').attr('data-info');
     $('#' + currDiv).show();
@@ -454,10 +463,9 @@ $(document).ready(function () {
 
         hideArrows($('#game-cards').scrollLeft(), $('#game-cards').width());
 
-        genFunFact();
-        window.setInterval(genFunFact, secondsFunFact * 1000);
-
         fetchGames(user);
+
+        fetchMessages();
 
         setUpAccount(user);
     });
