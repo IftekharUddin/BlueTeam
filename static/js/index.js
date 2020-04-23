@@ -4,13 +4,16 @@ import { incorrectButtonPress } from './messages.js';
 
 const scrollAmount = 50;
 const secondsFunFact = 30;
-let rowsShown = 10;
 
 const randomChoice = (arr) => {
+    // get a random item from an array
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
 const hideArrows = (currScroll, width) => {
+    // hide the left or right arrow on the games carousel according to 
+    // how much the carousel is currently scrolled
+
     if (currScroll == 0) {
         $('#left-arrow').hide();
     } else {
@@ -25,15 +28,20 @@ const hideArrows = (currScroll, width) => {
 }
 
 const getUserRequest = () => {
+    // get the request to get the user - change this here if you want to move this file around
     return $.ajax('/getUser.php', {
         type: 'GET'
     });
 }
 
 const getUser = () => {
+    // handle the fetch of the user - give this back to whoever calls it
     return getUserRequest().then(response => {
+        // if the request is successful, we'll have a JSON with field "user"
         return response['user'];
     }).catch(err => {
+        // if it fails (running locally, the PHP file fails), give the page back a random user
+        // and, if have errorMessage, report that
         const errJSON = err.responseJSON;
         if (errJSON.hasOwnProperty('message')) {
             return {
@@ -48,6 +56,7 @@ const getUser = () => {
 }
 
 const scroll = (right) => {
+    // scroll the games carousel
     const currScroll = $('#game-cards').scrollLeft();
     const newScroll = (right) ? currScroll + scrollAmount : currScroll - scrollAmount;
     const width = $('#game-cards').get(0).scrollWidth - $('#game-cards').outerWidth();
@@ -56,6 +65,8 @@ const scroll = (right) => {
 }
 
 const getAccountDataRequest = (user) => {
+    // get the request to get account data
+    // if you want to change the route, file name, or post data this can easily be changed here
     return $.ajax('/sqlconnect/games/getAccountData.php', {
         type: 'POST',
         data: { 'onyen': user }
@@ -63,6 +74,7 @@ const getAccountDataRequest = (user) => {
 }
 
 const getAccountData = (user) => {
+    // return the account data (times played and score for each game)
     return getAccountDataRequest(user).then(response => {
         return response;
     }).catch(err => {
@@ -75,12 +87,16 @@ const getAccountData = (user) => {
 }
 
 const getLeaderboardRequest = () => {
+    // get the request to get leaderboard data
+    // if you want to change the route or file name this can easily be changed here
     return $.ajax('/sqlconnect/games/getLeaderboard.php', {
         type: 'POST'
     });
 }
 
 const getLeaderboard = () => {
+    // get the leaderboard data
+    // if fails, sets up an example leaderboard
     return getLeaderboardRequest().then(response => {
         return response;
     }).catch(err => {
@@ -89,10 +105,31 @@ const getLeaderboard = () => {
     })
 }
 
+const addToTable = (table, data, classes = "") => {
+    // add an array of data to a table 
+    // this function cannot handle more complex table data yet (e.g. classes and such), but gets the job done
+    let tr;
+    if (classes.length > 0) {
+        tr = $('<tr class="' + classes + '"></tr>');
+    } else {
+        tr = $('<tr></tr>');
+    }
+
+    for (const currData of data) {
+        const td = $('<td>' + currData + '</td>');
+        tr.append(td);
+    }
+
+    table.append(tr);
+}
+
 const setUpAccount = (user) => {
+    // populate the Account page with user's data
     $('#account>h2').text(user);
+
     getAccountData(user).then((response) => {
         let timesPlayed;
+
         if (response === undefined) {
             // for debug purposes on server not running PHP
             timesPlayed = {
@@ -105,35 +142,69 @@ const setUpAccount = (user) => {
 
         const tableGamesPlayed = $('#playtime-table>tbody');
         const tableScores = $('#your-score-table>tbody');
+
         for (let [key, value] of Object.entries(timesPlayed)) {
-            const trTimesPlayed = $('<tr></tr>');
-            const tdTimesPlayedGame = $('<td>' + key + '</td>');
-            const tdTimesPlayedNumber = $('<td>' + value['timesPlayed'] + '</td>');
-            trTimesPlayed.append(tdTimesPlayedGame);
-            trTimesPlayed.append(tdTimesPlayedNumber);
-            tableGamesPlayed.append(trTimesPlayed);
+            addToTable(tableGamesPlayed, [key, value['timesPlayed']]);
 
             if (value.hasOwnProperty('score')) {
-                const trScores = $('<tr></tr>');
-                const tdScoresGame = $('<td>' + key + '</td>');
-                const tdScoresNumber = $('<td>' + value['score'] + '</td>');
-                trScores.append(tdScoresGame);
-                trScores.append(tdScoresNumber);
-                tableScores.append(trScores);
+                // user may not have a score for every game - in this case they do have a 
+                // times played (0), but they do not have a score
+                addToTable(tableScores, [key, value['score']]);
             }
         }
     })
 }
 
 const clearLeaderboard = () => {
+    // clear the leaderboard
+    // when we have the leaderboard load again, this can be used
     $('#leaderboard-overall>tbody').empty();
+
+    // remove leaderboard tables that are not the overall one (which is always first in the DOM)
     const leaderboards = $('.leaderboard-table');
     for (let i = 1; i < leaderboards.length; i++) {
-        leaderboards.eq(i).remove();
+        leaderboards.eq(1).remove();
+    }
+}
+
+const makeNewTable = (headers) => {
+    // make a new table with an array of headers
+    const newTable = $('<table></table>');
+
+    const thead = $('<thead></thead>');
+    const theadtr = $('<tr></tr>');
+    for (const th of headers) {
+        theadtr.append($('<th>' + th + '</th>'));
+    }
+    thead.append(theadtr);
+    newTable.append(thead);
+
+    const tbody = $('<tbody></tbody>');
+    newTable.append(tbody);
+
+    return [newTable, tbody];
+}
+
+const hideRows = (table) => {
+    // hide some number of rows (by default show first 10)
+    const numRows = $(table).find('tr').length;
+    if (numRows > 10) {
+        $(table).find('tr').each((index, element) => {
+            if (index < 10) return;
+            $(element).addClass('hidden');
+        });
+
+        const showMoreRow = $('<tr class="row-info showmore-row"></tr>');
+        const showmoretd = $('<td colspan="3"><button class="showmoreButton">Show More <i class="fas fa-plus-circle"></i></button></td>');
+        showMoreRow.append(showmoretd);
+        showMoreRow.insertBefore($(table).find('tr.hidden').eq(0));
+        const ellipsisrow = $('<tr class="row-info ellipsis-row"><td colspan="3"><i class="fas fa-ellipsis-h"></i></td></tr>');
+        ellipsisrow.insertAfter(showMoreRow);
     }
 }
 
 const setUpLeaderboard = (user, gameJSON) => {
+    // set up the leaderboard(s)
     clearLeaderboard();
 
     const games = {};
@@ -143,6 +214,7 @@ const setUpLeaderboard = (user, gameJSON) => {
 
     return getLeaderboard().then(scores => {
         let results;
+
         if (scores === undefined) {
             // for debug purposes on server not running PHP
             results = [{ 'Onyen': 'tas127', 'Password Platformer': 17110, 'Message Board': 100, 'Total': 17120 }, { 'Onyen': 'sethl', 'Password Platformer': 14805, 'Message Board': null, 'Total': 14805 }, { 'Onyen': 'vinish', 'Password Platformer': 14684, 'Message Board': -100, 'Total': 14584 }, { 'Onyen': 'iftekhar', 'Password Platformer': 7739, 'Message Board': null, 'Total': 7739 }];
@@ -154,9 +226,8 @@ const setUpLeaderboard = (user, gameJSON) => {
 
         let potentialBadges = [];
         for (const key of Object.keys(results[0])) {
-            if (key == 'Onyen' || key == 'Total') {
-                continue;
-            }
+            if (key == 'Onyen' || key == 'Total') continue;
+
             if (games.hasOwnProperty(key)) {
                 potentialBadges.push(key);
             }
@@ -166,55 +237,31 @@ const setUpLeaderboard = (user, gameJSON) => {
 
         const individualLeaderboards = potentialBadges;
         individualLeaderboards.push('Message Board');
-        for (const val of potentialBadges) {
+        for (const val of individualLeaderboards) {
+            // find users which have a score for the current leaderboard we're looking at
             const currVals = results.filter(item => (item[val] != null));
+            // sort the items descending by score for current leaderboard
             currVals.sort((itemOne, itemTwo) => itemTwo[val] - itemOne[val]);
 
             const newDiv = $('<div class="leaderboard-table"></div>');
             newDiv.append($('<h2 class="center xcel">' + val + ' Leaders</h2>'));
 
-            const newTable = $('<table></table>');
-
-            const thead = $('<thead></thead>');
-            const theadtr = $('<tr></tr>');
-            theadtr.append($('<th>Rank</th>'));
-            theadtr.append($('<th>Player</th>'));
-            theadtr.append($('<th>Score</th>'));
-            thead.append(theadtr);
-            newTable.append(thead);
-
-            const tbody = $('<tbody></tbody>');
+            const [newTable, tbody] = makeNewTable(['Rank', 'Player', 'Score']);
             let rank = 1;
             for (const row of currVals) {
-                const tr = $('<tr></tr>');
-                tr.append($('<td>' + rank++ + '</td>'));
                 let name = row['Onyen'];
+                let classes = "";
+
                 if (name == user) {
-                    tr.addClass('you');
+                    classes += 'you';
                     name = 'You';
                 }
-                tr.append($('<td>' + name + '</td>'));
 
-                tr.append($('<td>' + row[val].toLocaleString() + '</td>'));
-                tbody.append(tr);
+                addToTable(tbody, [rank++, name, row[val].toLocaleString()], classes);
             }
-            newTable.append(tbody);
             newDiv.append(newTable);
 
-            const numRows = tbody.find('tr').length;
-            if (numRows > 10) {
-                tbody.find('tr').each((index, element) => {
-                    if (index < 10) return;
-                    $(element).addClass('hidden');
-                });
-
-                const showMoreRow = $('<tr class="row-info showmore-row"></tr>');
-                const showmoretd = $('<td colspan="3"><button class="showmoreButton">Show More <i class="fas fa-plus-circle"></i></button></td>');
-                showMoreRow.append(showmoretd);
-                showMoreRow.insertBefore(tbody.find('tr').eq(10));
-                const ellipsisrow = $('<tr class="row-info ellipsis-row"><td colspan="3"><i class="fas fa-ellipsis-h"></i></td></tr>');
-                ellipsisrow.insertAfter(showMoreRow);
-            }
+            hideRows(tbody);
 
             newDiv.insertBefore($('#right-arrow-leaderboard'));
             newDiv.hide();
@@ -235,6 +282,7 @@ const setUpLeaderboard = (user, gameJSON) => {
             }
         }
 
+        // if the user has any badges, put them on the account page
         if (badgeList.hasOwnProperty(user)) {
             $('#badges').empty();
             for (const badge of badgeList[user]) {
@@ -244,49 +292,26 @@ const setUpLeaderboard = (user, gameJSON) => {
 
         let rank = 1;
         for (const row of results) {
-            const tr = $('<tr></tr>');
-            const tdRank = $('<td>' + rank + '</td>');
+            let classes = (row['Onyen'] == user) ? 'you' : "";
+            let name = (row['Onyen'] == user) ? 'You' : row['Onyen'];
 
-            let name = row['Onyen'];
-            if (name == user) {
-                tr.addClass('you');
-                name = 'You';
-            }
             if (badgeList.hasOwnProperty(row['Onyen'])) {
                 for (const badge of badgeList[row['Onyen']]) {
                     name += ' ' + games[badge]['icon'];
                 }
             }
-            const tdName = $('<td>' + name + '</td>');
-            const tdScore = $('<td>' + row['Total'].toLocaleString() + '</td>');
 
-            tr.append(tdRank);
-            tr.append(tdName);
-            tr.append(tdScore);
-
-            leaderboard.append(tr);
+            addToTable(leaderboard, [rank, name, row['Total'].toLocaleString()], classes);
 
             rank++;
         }
 
-        const numRows = leaderboard.find('tr').length;
-        if (numRows > 10) {
-            leaderboard.find('tr').each((index, element) => {
-                if (index < 10) return;
-                $(element).addClass('hidden');
-            });
-
-            const showMoreRow = $('<tr class="row-info showmore-row"></tr>');
-            const showmoretd = $('<td colspan="3"><button class="showmoreButton">Show More <i class="fas fa-plus-circle"></i></button></td>');
-            showMoreRow.append(showmoretd);
-            showMoreRow.insertBefore(leaderboard.find('tr').eq(10));
-            const ellipsisrow = $('<tr class="row-info ellipsis-row"><td colspan="3"><i class="fas fa-ellipsis-h"></i></td></tr>');
-            ellipsisrow.insertAfter(showMoreRow);
-        }
+        hideRows(leaderboard);
     });
 }
 
 const setUpGame = (game, user) => {
+    // add a single game to the carousel and a tab to the page
     const id = game['id'];
     const name = game['name'];
 
@@ -462,6 +487,7 @@ const setup = () => {
 }
 
 const fetchGames = (user) => {
+    // fetch and set up all the games from the JSON file
     fetch('games.json')
         .then(response => {
             if (!response.ok) {
@@ -479,8 +505,11 @@ const fetchGames = (user) => {
 }
 
 $(document).ready(function () {
+    // run as soon as the page loads
+
     getUser().then((response) => {
         let user;
+
         if (response === undefined) {
             // for debug purposes on server not running PHP
             user = randomChoice(['tas127', 'sethl', 'vinish', 'iftekhar']);
@@ -495,8 +524,8 @@ $(document).ready(function () {
             } else {
                 user = response;
             }
-
         }
+
         console.log('User: ' + user);
 
         hideArrows($('#game-cards').scrollLeft(), $('#game-cards').width());
@@ -524,12 +553,4 @@ $(document).ready(function () {
 
         setUpAccount(user);
     });
-
-    //messages on button press - this will trigger the php call that will update the db
-    $('.correctButton').on('click', function () {
-        correctButtonPress;
-    })
-    $('.incorrectButton').on('click', function () {
-        incorrectButtonPress;
-    })
 });

@@ -45,6 +45,5 @@ if ($count == 0) {
     }
 }
 
-
 header('Content-Type: application/json');
 print json_encode($data);

@@ -2,6 +2,9 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// This class controls the functionality of the play and instruction buttons on the start screen.
+/// </summary>
 public class StartMenu : MonoBehaviour
 {
     public Button playButton, instructionButton;
@@ -14,6 +17,7 @@ public class StartMenu : MonoBehaviour
 
     void Play()
     {
+        // https://docs.unity3d.com/ScriptReference/SceneManagement.SceneManager.html
         SceneManager.LoadSceneAsync("SelectLevel");
     }
 

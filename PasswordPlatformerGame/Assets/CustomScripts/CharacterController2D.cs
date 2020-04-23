@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 
+/// <summary>
+/// Edited from https://github.com/Brackeys/2D-Character-Controller/blob/master/CharacterController2D.cs to include 
+/// downward acceleration
+/// </summary>
 public class CharacterController2D : MonoBehaviour
 {
     [SerializeField] private float m_JumpForce = 400f;                          // Amount of force added when the player jumps.
@@ -114,7 +118,9 @@ public class CharacterController2D : MonoBehaviour
             {
                 //if the down key is not being pressed, just take the velocity of the y value
                 targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.velocity.y);
-            } else {
+            }
+            else
+            {
                 //else, use the moveVertical value multipled by 10
                 targetVelocity = new Vector2(move * 10f, moveVert * 10f);
             }

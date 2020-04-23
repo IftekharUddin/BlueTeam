@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This script destroys the Feedback objects once they get below a certain y position.
+/// </summary>
 public class Feedback : MonoBehaviour
 {
+    // a magic number for the lower bound y position 
+    private const int LOWER_BOUND = 8;
 
-    // Update is called once per frame
     void Update()
     {
-        if (this.transform.position.y < 8)
+        if (this.transform.position.y < LOWER_BOUND)
         {
             Destroy(this.gameObject);
         }

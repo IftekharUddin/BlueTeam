@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// A class which governs the timing of the game (currently set to 90 seconds).
+/// </summary>
 public class Countdown : MonoBehaviour
 {
     public Text timeText;
@@ -10,7 +13,6 @@ public class Countdown : MonoBehaviour
     // time limit set here in seconds
     float timeLeft = 90.0f;
 
-    // Update is called once per frame
     void Update()
     {
         timeLeft -= Time.deltaTime;
