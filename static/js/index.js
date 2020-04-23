@@ -506,14 +506,17 @@ $(document).ready(function () {
         fetchMessages().then(() => {
             $('.correctButton').each((index, element) => {
                 $(element).on('click', () => {
-                    correctButtonPress(user);
+                    correctButtonPress(user).then(() => {
+                        window.location.href = '/goodMessage.html';
+                    });
+                    //add hide functionality here?
+                    //$(this).hide()
                 });
             });
 
             $('.incorrectButton').each((index, element) => {
                 $(element).on('click', () => {
                     incorrectButtonPress(user).then(() => {
-                        console.log('hello!');
                         window.location.href = '/message.html';
                     }).catch(() => {
                         window.location.href = '/message.html';
