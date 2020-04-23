@@ -7,7 +7,10 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 
-
+/// <summary> 
+/// A singleton class which takes care of generating passwords. Originally this was done at run time, but now the passwords 
+/// are loaded from a file, chosen randomly, and passed along to their destination. 
+/// </summary>
 public class PasswordGeneration : MonoBehaviour
 {
 
@@ -69,6 +72,8 @@ public class PasswordGeneration : MonoBehaviour
 
     void OnEnable()
     {
+        // PlayerPrefs is the preferred way to pass (simple) data between scenes
+        // https://docs.unity3d.com/ScriptReference/PlayerPrefs.html
         int difficulty = PlayerPrefs.GetInt("difficulty");
         switch (difficulty)
         {

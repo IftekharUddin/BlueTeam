@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 
 /// <summary>
-/// A class which destroys everything with which it comes into contact. 
+/// A class which destroys everything with which it comes into contact (used to clean up falling objects). 
 /// </summary>
 public class BlackHole : MonoBehaviour
 {
     private Collider2D col;
-    // Start is called before the first frame update
+
     void Start()
     {
         this.col = this.GetComponent<Collider2D>();

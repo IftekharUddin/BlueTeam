@@ -2,8 +2,12 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// This class controls the functionality of the various buttons on the play menu (back or choice of difficulty).
+/// </summary>
 public class ButtonScript : MonoBehaviour
 {
+    // UI elements for each of the various buttons
     public Button easyButton, mediumButton, hardButton, backButton;
 
     // Start is called before the first frame update
@@ -37,6 +41,8 @@ public class ButtonScript : MonoBehaviour
 
     private void loadPlayScene(DifficultyUtility.Difficulty chosen)
     {
+        // PlayerPrefs is the preferred way to pass (simple) data between scenes
+        // https://docs.unity3d.com/ScriptReference/PlayerPrefs.html
         switch (chosen)
         {
             case DifficultyUtility.Difficulty.EASY:
@@ -49,8 +55,10 @@ public class ButtonScript : MonoBehaviour
                 PlayerPrefs.SetInt("difficulty", 2);
                 break;
             default:
+                PlayerPrefs.SetInt("difficulty", 0);
                 break;
         }
+        // https://docs.unity3d.com/ScriptReference/SceneManagement.SceneManager.html
         SceneManager.LoadSceneAsync("Game");
     }
 }

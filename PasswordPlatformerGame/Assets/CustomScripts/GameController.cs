@@ -9,14 +9,18 @@ using System.Text;
 
 /// <summary>
 /// A singleton class which serves as a controller for the game, storing such game-wide information as the score 
-/// and the current user. This class shall also interact with the database.
+/// and the current user and performing such actions as ending the game. 
 /// </summary>
 public class GameController : MonoBehaviour
 {
     private static GameController _instance;
+    // user's current score
     private int score = 0;
+    // the UI element which holds the current score
     public Text scoreText;
+    // the onyen of the user playing the game
     private string user;
+    // the difficulty chosen by the user
     private DifficultyUtility.Difficulty difficulty;
 
     public enum Score
@@ -24,8 +28,9 @@ public class GameController : MonoBehaviour
         GOOD,
         BAD
     }
-    private int goodScore = 100;
-    private int badScore = -100;
+    // you can easily change these values in one place
+    public int goodScore = 100;
+    public int badScore = -100;
     private int streak = 0;
     private int multiplier = 1;
 
@@ -53,20 +58,19 @@ public class GameController : MonoBehaviour
         if (url.Split('?').Length > 1)
         {
             string query = url.Split('?')[1];
-            // Debug.Log($"Query: {query}");
             // accesses the URL GET fields so as to get the ability to properly query the database
             NameValueCollection queryParts = new NameValueCollection();
             this.ParseQueryString(query, Encoding.UTF8, queryParts);
             string user = queryParts.Get("user") as string;
-            // Debug.Log($"User: {user}");
+
             this.user = user;
-        } else {
-            this.user = "tas127";
         }
     }
 
     private void ParseQueryString(string query, Encoding encoding, NameValueCollection result)
     {
+        // taken from: https://gist.github.com/Ran-QUAN/d966423305ce70cbc320f319d9485fa2
+        // as alternative to using C# module which was giving problems when building
         if (query.Length == 0)
             return;
 
@@ -156,6 +160,7 @@ public class GameController : MonoBehaviour
 
     private void makeMultiplier(int multiplier)
     {
+        // tell the user they have earned a multiplier b/c of reaching a streak
         GameObject score = new GameObject();
         score.layer = MaterialController.Instance.FEEDBACK_LAYER;
 
@@ -164,6 +169,7 @@ public class GameController : MonoBehaviour
 
         TextMesh textM = score.AddComponent(typeof(TextMesh)) as TextMesh;
         textM.text = $"{multiplier}x!";
+        // accessible "good" color
         textM.color = new Color(77f / 255f, 172f / 255f, 38f / 255f);
         textM.characterSize = 0.75f;
         textM.font = MaterialController.Instance.textFont;
@@ -174,6 +180,7 @@ public class GameController : MonoBehaviour
         score.AddComponent(typeof(BoxCollider2D));
 
         Rigidbody2D rb = score.AddComponent(typeof(Rigidbody2D)) as Rigidbody2D;
+        // fall slowly!
         rb.mass = 0.001f;
         rb.gravityScale = 0.5f;
 
@@ -182,6 +189,7 @@ public class GameController : MonoBehaviour
 
     private void makeAdd(int plus, bool good)
     {
+        // make the object which shows how many points the user gained or lost
         GameObject score = new GameObject();
         score.layer = MaterialController.Instance.FEEDBACK_LAYER;
 
@@ -189,7 +197,7 @@ public class GameController : MonoBehaviour
         meshR.material = MaterialController.Instance.textMaterial;
 
         TextMesh textM = score.AddComponent(typeof(TextMesh)) as TextMesh;
-        textM.text = (good) ? $"+{plus}" : $"{plus}";
+        textM.text = (good) ? $"+{plus}" : $"-{plus}";
         textM.color = (good) ? new Color(77f / 255f, 172f / 255f, 38f / 255f) : new Color(208f / 255f, 28f / 255f, 139f / 255f);
         textM.characterSize = 0.5f;
         textM.font = MaterialController.Instance.textFont;
@@ -241,8 +249,11 @@ public class GameController : MonoBehaviour
 
     public void EndGame()
     {
+        // PlayerPrefs is the preferred way to pass (simple) data between scenes
+        // https://docs.unity3d.com/ScriptReference/PlayerPrefs.html
         PlayerPrefs.SetInt("score", this.score);
         PlayerPrefs.SetString("user", this.user);
+        // https://docs.unity3d.com/ScriptReference/SceneManagement.SceneManager.html
         SceneManager.LoadSceneAsync("GameOver");
     }
 

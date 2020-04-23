@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Governs player movement by delegating to the CharacterController2D script.
+/// </summary>
 public class PlayerMovement : MonoBehaviour
 {
     public CharacterController2D controller;

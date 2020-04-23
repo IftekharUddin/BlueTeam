@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-// using System.Diagnostics;
 
 /// <summary>
 /// A singleton class which serves as a generator for platforms. To perform this duty, it stores the current rightmost
@@ -36,6 +35,8 @@ public class PlatformGenerator : MonoBehaviour
     private float cameraY;
     // the value subtracted or added to the camera's y position to generate the "upper half" or "lower half" of the screen without moving too far
     private float cameraHeight;
+
+    private DifficultyUtility.Difficulty difficulty;
 
     /// <value> The singleton instance of this class which can be accessed by whoever wants to generate platforms. </value>
     public static PlatformGenerator Instance
@@ -78,6 +79,28 @@ public class PlatformGenerator : MonoBehaviour
         this.height = fakeRenderer.bounds.size.y;
 
         Destroy(fake);
+    }
+
+    void OnEnable()
+    {
+        // PlayerPrefs is the preferred way to pass (simple) data between scenes
+        // https://docs.unity3d.com/ScriptReference/PlayerPrefs.html
+        int difficulty = PlayerPrefs.GetInt("difficulty");
+        switch (difficulty)
+        {
+            case 0:
+                this.difficulty = DifficultyUtility.Difficulty.EASY;
+                break;
+            case 1:
+                this.difficulty = DifficultyUtility.Difficulty.MEDIUM;
+                break;
+            case 2:
+                this.difficulty = DifficultyUtility.Difficulty.HARD;
+                break;
+            default:
+                Application.Quit();
+                return;
+        }
     }
 
     public void setRight(Vector3 right)
@@ -272,29 +295,28 @@ public class PlatformGenerator : MonoBehaviour
     {
         // we want one platform to go up, one to go down
         ((float, float), (float, float)) yBounds = (Random.value > 0.5f) ? ((this.cameraY - this.cameraHeight, this.cameraY), (this.cameraY, this.cameraY + this.cameraHeight)) : ((this.cameraY, this.cameraY + this.cameraHeight), (this.cameraY - this.cameraHeight, this.cameraY));
-        // randomize the order of the good and bad password
-        (bool, bool) goodBad = (Random.value > 0.5f) ? (true, false) : (false, true);
+        // randomize the order of the good and bad password - on medium or hard, can both be the same
+        (bool, bool) goodBad;
+        if (this.difficulty == DifficultyUtility.Difficulty.MEDIUM || this.difficulty == DifficultyUtility.Difficulty.HARD)
+        {
+            float randValue = Random.value;
+            if (randValue < 0.25f) goodBad = (true, true);
+            else if (randValue < 0.5f) goodBad = (true, false);
+            else if (randValue < 0.75f) goodBad = (false, true);
+            else goodBad = (false, false);
+        }
+        else
+        {
+            goodBad = (Random.value > 0.5f) ? (true, false) : (false, true);
+        }
 
         Vector3 start = this.right;
 
-        // Stopwatch stopwatch = Stopwatch.StartNew();
         Vector3 vec = generatePasswordPlatform(Mathf.FloorToInt(Random.Range(3f, 6f)), goodBad.Item1, this.right, yBounds.Item1);
-        // stopwatch.Stop();
-        // var one = stopwatch.ElapsedMilliseconds;
-        // Stopwatch stopwatch2 = Stopwatch.StartNew();
-        vec = generatePasswordPlatform(Mathf.FloorToInt(Random.Range(3f, 6f)), goodBad.Item2, vec, yBounds.Item2);
-        // stopwatch2.Stop();
-        // var two = stopwatch2.ElapsedMilliseconds;
-        this.right = generateFinalPlatform(Mathf.FloorToInt(Random.Range(5f, 11f)), vec, (this.cameraY - this.cameraHeight, this.cameraY + this.cameraHeight));
 
-        // if (goodBad.Item1)
-        // {
-        //     UnityEngine.Debug.Log($"Good: {one}, Bad: {two}");
-        // }
-        // else
-        // {
-        //     UnityEngine.Debug.Log($"Good: {two}, Bad: {one}");
-        // }
+        vec = generatePasswordPlatform(Mathf.FloorToInt(Random.Range(3f, 6f)), goodBad.Item2, vec, yBounds.Item2);
+
+        this.right = generateFinalPlatform(Mathf.FloorToInt(Random.Range(5f, 11f)), vec, (this.cameraY - this.cameraHeight, this.cameraY + this.cameraHeight));
 
         this.generatePortals(start, this.right);
     }

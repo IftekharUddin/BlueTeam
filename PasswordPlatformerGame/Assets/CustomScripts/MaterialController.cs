@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This singleton holds the materials and fonts needed by other procedurally generated objects in one place so each 
+/// individual object does not have to go get them.
+/// </summary>
 public class MaterialController : MonoBehaviour
 {
     public int FEEDBACK_LAYER = 11;
@@ -20,7 +24,6 @@ public class MaterialController : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         if (_instance != null && _instance != this)
