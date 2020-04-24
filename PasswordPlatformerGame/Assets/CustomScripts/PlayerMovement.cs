@@ -28,10 +28,9 @@ public class PlayerMovement : MonoBehaviour
             this.jump = true;
         }
 
-        // if backspace is pressed, trigger the restart condition
-        if(Input.GetButtonDown("Restart")){
-            Destroy(this.gameObject);
-            SceneManager.LoadSceneAsync("SelectLevel");
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            GameController.Instance.Reset();
         }
 
         // set camera position to 7 units ahead of the player - rather arbitrary and naive positioning
