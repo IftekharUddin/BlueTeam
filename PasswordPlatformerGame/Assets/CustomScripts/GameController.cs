@@ -15,7 +15,7 @@ public class GameController : MonoBehaviour
 {
     private static GameController _instance;
     // user's current score
-    private int score = 0;
+    public int score = 0;
     // the UI element which holds the current score
     public Text scoreText;
     // the onyen of the user playing the game
@@ -52,7 +52,8 @@ public class GameController : MonoBehaviour
         }
 
         _instance = this;
-        // DontDestroyOnLoad(this.gameObject);
+        // SceneManager.MoveGameObjectToScene(this.gameObject, SceneManager.GetActiveScene());
+        DontDestroyOnLoad(this.gameObject);
 
         string url = Application.absoluteURL as string;
         if (url.Split('?').Length > 1)
@@ -158,16 +159,24 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public void Reset()
+    {
+        this.score = 0;
+        this.scoreText.text = $"Score: {this.score}";
+        (this.gameObject.GetComponent<Countdown>() as Countdown).Reset();
+        SceneManager.LoadSceneAsync("Game");
+    }
+
     private void makeMultiplier(int multiplier)
     {
         // tell the user they have earned a multiplier b/c of reaching a streak
-        GameObject score = new GameObject();
-        score.layer = MaterialController.Instance.FEEDBACK_LAYER;
+        GameObject multiplierGameObject = new GameObject();
+        multiplierGameObject.layer = MaterialController.Instance.FEEDBACK_LAYER;
 
-        MeshRenderer meshR = score.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+        MeshRenderer meshR = multiplierGameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
         meshR.material = MaterialController.Instance.textMaterial;
 
-        TextMesh textM = score.AddComponent(typeof(TextMesh)) as TextMesh;
+        TextMesh textM = multiplierGameObject.AddComponent(typeof(TextMesh)) as TextMesh;
         textM.text = $"{multiplier}x!";
         // accessible "good" color
         textM.color = new Color(77f / 255f, 172f / 255f, 38f / 255f);
@@ -175,43 +184,43 @@ public class GameController : MonoBehaviour
         textM.font = MaterialController.Instance.textFont;
         textM.anchor = TextAnchor.MiddleCenter;
 
-        score.transform.position = this.scoreText.transform.position + 5 * Vector3.left;
+        multiplierGameObject.transform.position = scoreText.transform.position + 5 * Vector3.left;
 
-        score.AddComponent(typeof(BoxCollider2D));
+        multiplierGameObject.AddComponent(typeof(BoxCollider2D));
 
-        Rigidbody2D rb = score.AddComponent(typeof(Rigidbody2D)) as Rigidbody2D;
+        Rigidbody2D rb = multiplierGameObject.AddComponent(typeof(Rigidbody2D)) as Rigidbody2D;
         // fall slowly!
         rb.mass = 0.001f;
         rb.gravityScale = 0.5f;
 
-        score.AddComponent(typeof(Feedback));
+        multiplierGameObject.AddComponent(typeof(Feedback));
     }
 
     private void makeAdd(int plus, bool good)
     {
         // make the object which shows how many points the user gained or lost
-        GameObject score = new GameObject();
-        score.layer = MaterialController.Instance.FEEDBACK_LAYER;
+        GameObject addGameObject = new GameObject();
+        addGameObject.layer = MaterialController.Instance.FEEDBACK_LAYER;
 
-        MeshRenderer meshR = score.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+        MeshRenderer meshR = addGameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
         meshR.material = MaterialController.Instance.textMaterial;
 
-        TextMesh textM = score.AddComponent(typeof(TextMesh)) as TextMesh;
+        TextMesh textM = addGameObject.AddComponent(typeof(TextMesh)) as TextMesh;
         textM.text = (good) ? $"+{plus}" : $"-{plus}";
         textM.color = (good) ? new Color(77f / 255f, 172f / 255f, 38f / 255f) : new Color(208f / 255f, 28f / 255f, 139f / 255f);
         textM.characterSize = 0.5f;
         textM.font = MaterialController.Instance.textFont;
         textM.anchor = TextAnchor.MiddleCenter;
 
-        score.transform.position = this.scoreText.transform.position + 6 * Vector3.left;
+        addGameObject.transform.position = scoreText.transform.position + 6 * Vector3.left;
 
-        score.AddComponent(typeof(BoxCollider2D));
+        addGameObject.AddComponent(typeof(BoxCollider2D));
 
-        Rigidbody2D rb = score.AddComponent(typeof(Rigidbody2D)) as Rigidbody2D;
+        Rigidbody2D rb = addGameObject.AddComponent(typeof(Rigidbody2D)) as Rigidbody2D;
         rb.mass = 0.01f;
         rb.gravityScale = 1.5f;
 
-        score.AddComponent(typeof(Feedback));
+        addGameObject.AddComponent(typeof(Feedback));
     }
 
     /// <value> Add or subtract a value from the score </value> 
@@ -251,7 +260,7 @@ public class GameController : MonoBehaviour
     {
         // PlayerPrefs is the preferred way to pass (simple) data between scenes
         // https://docs.unity3d.com/ScriptReference/PlayerPrefs.html
-        PlayerPrefs.SetInt("score", this.score);
+        PlayerPrefs.SetInt("score", score);
         PlayerPrefs.SetString("user", this.user);
         // https://docs.unity3d.com/ScriptReference/SceneManagement.SceneManager.html
         SceneManager.LoadSceneAsync("GameOver");
