@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Governs player movement by delegating to the CharacterController2D script.
@@ -25,6 +26,12 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Jump"))
         {
             this.jump = true;
+        }
+
+        // if backspace is pressed, trigger the restart condition
+        if(Input.GetButtonDown("Restart")){
+            Destroy(this.gameObject);
+            SceneManager.LoadSceneAsync("SelectLevel");
         }
 
         // set camera position to 7 units ahead of the player - rather arbitrary and naive positioning
