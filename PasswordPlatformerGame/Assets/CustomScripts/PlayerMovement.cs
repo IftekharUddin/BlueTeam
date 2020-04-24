@@ -33,10 +33,9 @@ public class PlayerMovement : MonoBehaviour
             GameController.Instance.Reset();
         }
 
-        if(Input.GetButtonDown("Cancel"))
+        if (Input.GetButtonDown("Cancel"))
         {
-            GameController.Instance.EndGame();
-            Destroy(this.gameObject);
+            GameController.Instance.GoBack();
         }
 
         // set camera position to 7 units ahead of the player - rather arbitrary and naive positioning

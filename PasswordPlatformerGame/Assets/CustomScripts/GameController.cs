@@ -159,6 +159,11 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public void GoBack() {
+        Destroy(this.gameObject);
+        SceneManager.LoadSceneAsync("SelectLevel");
+    }
+
     public void Reset()
     {
         this.score = 0;
