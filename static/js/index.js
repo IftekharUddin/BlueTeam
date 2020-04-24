@@ -320,6 +320,7 @@ const setUpGame = (game, user) => {
 
     const infoDiv = $('<div id="' + id + '-info" class="tab-info"></div>');
     infoDiv.append($('<h2 class="center pixel">' + name + '</h2>'));
+    infoDiv.append($('<p class="pixel">' + game['overview'] + '</p><br>'));
     infoDiv.append($('<p class="pixel">' + game['tagline'] + '</p>'));
     const div = $('<div></div>');
     const button = $('<button class="play">Play</button>"');
