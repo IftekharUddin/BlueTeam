@@ -10,14 +10,9 @@ if ($pdo == null) {
 }
 
 // have to join this wih message board data when available
-$query = 'SELECT dbo.PasswordPlatformerScores.Onyen AS "Onyen", 
-            dbo.PasswordPlatformerScores.Score AS "Password Platformer", 
-            dbo.MessageBoardScores.Score AS "Message Board", 
-            ISNULL(dbo.PasswordPlatformerScores.Score, 0) + ISNULL(dbo.MessageBoardScores.Score, 0) AS "Total" 
-            FROM dbo.PasswordPlatformerScores 
-            FULL OUTER JOIN dbo.MessageBoardScores 
-            ON dbo.PasswordPlatformerScores.Onyen = dbo.MessageBoardScores.Onyen 
-            ORDER BY Total DESC;';
+$query ='SELECT TOP 10 Onyen, Score
+         FROM Overall_Leaderboard
+         ORDER BY Score DESC;';
 $stmt = $pdo->prepare($query);
 $stmt->execute();
 
