@@ -19,7 +19,7 @@ $stmt = $pdo->prepare('DECLARE @Mscore int,
                         SELECT @Pscore = ISNULL(@Pscore, 0)
 
                         SET @Total = @Mscore + @Pscore
-                        INSERT INTO Overall_Leaderboard (Onyen, Score)
-                        VALUES (@Onyen, @Total)O');
+                        INSERT INTO Overall_Leaderboard (Onyen, Total)
+                        VALUES (@Onyen, @Total)');
 $stmt->bindParam(':onyen', $onyen);
 $stmt->execute();

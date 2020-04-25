@@ -10,9 +10,9 @@ if ($pdo == null) {
 }
 
 // have to join this wih message board data when available
-$query ='SELECT TOP 10 Onyen, Score
+$query ='SELECT TOP 10 Onyen, Total 
          FROM Overall_Leaderboard
-         ORDER BY Score DESC;';
+         ORDER BY Total DESC;';
 $stmt = $pdo->prepare($query);
 $stmt->execute();
 

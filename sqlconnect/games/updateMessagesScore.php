@@ -35,7 +35,11 @@ if ($count == 0) {
         $stmt->bindParam(':onyen', $onyen);
         $stmt->execute();
 
-        include 'updateLeaderboard.php';
     }
 }
+
+    // update leaderboard 
+    // each time an action is taken, messages score is changed
+    // changing overall leaderboard score
+    include 'updateLeaderboard.php';
 exit(0);

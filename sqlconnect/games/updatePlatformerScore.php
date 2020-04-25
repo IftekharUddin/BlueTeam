@@ -24,6 +24,8 @@ if ($count == 0) {
     $stmt->bindParam(':onyen', $onyen);
     $stmt->bindParam(':score', $score, PDO::PARAM_INT);
     $stmt->execute();
+
+    include 'updateLeaderboard.php';
 } else {
     $oldScore = $row[0]['Score'];
 
