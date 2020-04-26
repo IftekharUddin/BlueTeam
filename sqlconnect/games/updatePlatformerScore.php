@@ -24,6 +24,8 @@ if ($count == 0) {
     $stmt->bindParam(':onyen', $onyen);
     $stmt->bindParam(':score', $score, PDO::PARAM_INT);
     $stmt->execute();
+
+    include 'updateLeaderboard.php';
 } else {
     $oldScore = $row[0]['Score'];
 
@@ -32,6 +34,8 @@ if ($count == 0) {
         $stmt->bindParam(':score', $score, PDO::PARAM_INT);
         $stmt->bindParam(':onyen', $onyen);
         $stmt->execute();
+
+        include 'updateLeaderboard.php';
     }
 
     $stmt = $pdo->prepare('UPDATE dbo.PasswordPlatformerScores SET TimesPlayed = TimesPlayed + 1 WHERE Onyen = :onyen;');

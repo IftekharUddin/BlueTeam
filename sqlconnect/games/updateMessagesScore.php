@@ -34,6 +34,12 @@ if ($count == 0) {
         $stmt->bindParam(':score', $score, PDO::PARAM_INT); // should be -100 for wrong button and +100 for correct button presses
         $stmt->bindParam(':onyen', $onyen);
         $stmt->execute();
+
     }
 }
+
+    // update leaderboard 
+    // each time an action is taken, messages score is changed
+    // changing overall leaderboard score
+    include 'updateLeaderboard.php';
 exit(0);
