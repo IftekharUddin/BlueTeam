@@ -297,7 +297,7 @@ public class PlatformGenerator : MonoBehaviour
         ((float, float), (float, float)) yBounds = (Random.value > 0.5f) ? ((this.cameraY - this.cameraHeight, this.cameraY), (this.cameraY, this.cameraY + this.cameraHeight)) : ((this.cameraY, this.cameraY + this.cameraHeight), (this.cameraY - this.cameraHeight, this.cameraY));
         // randomize the order of the good and bad password - on medium or hard, can both be the same
         (bool, bool) goodBad;
-        if (this.difficulty == DifficultyUtility.Difficulty.MEDIUM || this.difficulty == DifficultyUtility.Difficulty.HARD)
+        if (this.difficulty == DifficultyUtility.Difficulty.HARD)
         {
             float randValue = Random.value;
             if (randValue < 0.25f) goodBad = (true, true);
