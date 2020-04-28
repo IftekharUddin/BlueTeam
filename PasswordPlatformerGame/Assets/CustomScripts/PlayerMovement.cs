@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Governs player movement by delegating to the CharacterController2D script.
@@ -25,6 +26,16 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Jump"))
         {
             this.jump = true;
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            GameController.Instance.Reset();
+        }
+
+        if (Input.GetButtonDown("Cancel"))
+        {
+            GameController.Instance.GoBack();
         }
 
         // set camera position to 7 units ahead of the player - rather arbitrary and naive positioning

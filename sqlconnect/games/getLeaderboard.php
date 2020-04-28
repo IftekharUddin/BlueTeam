@@ -9,8 +9,7 @@ if ($pdo == null) {
     exit('Connection error!');
 }
 
-// have to join this wih message board data when available
-$query ='SELECT TOP 10 Onyen, Total 
+$query = 'SELECT Onyen, Total 
          FROM Overall_Leaderboard
          ORDER BY Total DESC;';
 $stmt = $pdo->prepare($query);
@@ -18,6 +17,13 @@ $stmt->execute();
 
 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+
 header('Content-Type: json/application;');
+if (!$results == 0) {
+    // nicely handle empty result by giving back empty array 
+    echo json_encode(array());
+    exit(0);
+}
+
 echo json_encode($results);
 exit(0);

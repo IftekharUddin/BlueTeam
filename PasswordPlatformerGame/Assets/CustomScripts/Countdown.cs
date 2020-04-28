@@ -8,6 +8,7 @@ using UnityEngine.UI;
 /// </summary>
 public class Countdown : MonoBehaviour
 {
+    private const float TIME_START = 90.0f;
     public Text timeText;
 
     // time limit set here in seconds
@@ -23,5 +24,10 @@ public class Countdown : MonoBehaviour
             GameController.Instance.EndGame();
             Destroy(this.gameObject);
         }
+    }
+
+    public void Reset()
+    {
+        this.timeLeft = TIME_START;
     }
 }

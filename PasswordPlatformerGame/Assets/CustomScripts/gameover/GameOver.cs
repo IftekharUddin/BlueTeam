@@ -56,7 +56,7 @@ public class GameOver : MonoBehaviour
 #elif (UNITY_STANDALONE)
         Application.Quit();
 #elif (UNITY_WEBGL)
-        Application.OpenURL("about:blank");
+        Application.OpenURL("https://games.fo.unc.edu");
 #endif
     }
 
