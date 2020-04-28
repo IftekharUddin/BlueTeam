@@ -2,6 +2,10 @@ import fetchMessages from './messages.js';
 import { correctButtonPress } from './messages.js';
 import { incorrectButtonPress } from './messages.js';
 
+// getting started with jQuery - https://api.jquery.com/, https://jquery.com/
+// jQuery AJAX - https://api.jquery.com/category/ajax/, https://api.jquery.com/jquery.ajax/, https://www.w3schools.com/xml/ajax_intro.asp
+
+// Promise allSettled - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled
 // polyfill for allSettled if browser does not implement it
 if (!Promise.allSettled) {
     Promise.allSettled = (promises) => {
@@ -13,18 +17,22 @@ if (!Promise.allSettled) {
     }
 }
 
+// number of units to scroll per click
 const scrollAmount = 50;
+// number of seconds before generating a new fun fact
 const secondsFunFact = 30;
 
 const randomChoice = (arr) => {
     // get a random item from an array
+    if (!Array.isArray(arr)) return null;
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
 const hideArrows = (currScroll, width) => {
-    // hide the left or right arrow on the games carousel according to 
-    // how much the carousel is currently scrolled
-
+    /*
+    * hide the left or right arrow on the games carousel according to 
+    * how much the carousel is currently scrolled 
+    * */
     if (currScroll == 0) {
         $('#left-arrow').hide();
     } else {
@@ -67,7 +75,12 @@ const getUser = () => {
 }
 
 const scroll = (right) => {
+    // parameter right = boolean (true for scrolling right, false for scrolling left)
     // scroll the games carousel
+
+    // scroll width - https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollWidth
+    // jQuery outer width - https://api.jquery.com/outerWidth/
+    // jQuery scrollLeft - https://api.jquery.com/scrollLeft/#scrollLeft
     const currScroll = $('#game-cards').scrollLeft();
     const newScroll = (right) ? currScroll + scrollAmount : currScroll - scrollAmount;
     const width = $('#game-cards').get(0).scrollWidth - $('#game-cards').outerWidth();
@@ -90,6 +103,7 @@ const getAccountData = (user) => {
         return response;
     }).catch(err => {
         console.log(err);
+        // score is allowed to be null (in which case just not filled in in account data tables)
         return {
             'Password Platformer': { 'timesPlayed': 0 },
             'Message Board': { 'timesPlayed': 0 }
@@ -111,15 +125,17 @@ const getOverallLeaderboard = () => {
 }
 
 const getIndividualLeaderboard = (nameFile) => {
-    return $.ajax('/sqlconnect/games/get' + nameFile + '.php', {
+    // return data from a PHP file which corresponds to a given leaderboard
+    // these tables always return the structure of (Onyen, Score)
+    return $.ajax('/sqlconnect/games/' + nameFile + '.php', {
         type: 'POST'
     }).then(response => {
         return response;
     }).catch(err => {
         console.log(err);
-        if (nameFile == 'PasswordLeaderboard') {
+        if (nameFile == 'getPasswordLeaderboard') {
             return [{ 'Onyen': 'tas127', 'Score': 17020 }, { 'Onyen': 'sethl', 'Score': 14905 }, { 'Onyen': 'vinish', 'Score': 14584 }, { 'Onyen': 'iftekhar', 'Score': 7739 }];
-        } else if (nameFile == 'MessageLeaderboard') {
+        } else if (nameFile == 'getMessageLeaderboard') {
             return [{ 'Onyen': 'tas127', 'Score': 100 }, { 'Onyen': 'sethl', 'Score': -100 }];
         } else {
             return [];
@@ -128,12 +144,18 @@ const getIndividualLeaderboard = (nameFile) => {
 }
 
 const setUpIndividualLeaderboard = (nameBoard, nameFile, user) => {
+    /*
+    * Set up an individual leaderboard with the following parameters:
+    * nameBoard - the name of the game (e.g. Password Platformer, Message Board)
+    * nameFile  - the name of the PHP file which can get the (Onyen, Score) data for the leaderboard
+    * user      - the onyen of the current user (used to style that row) 
+    */
     return getIndividualLeaderboard(nameFile).then(scores => {
         let results;
         if (scores === undefined) {
-            if (nameFile == 'PasswordLeaderboard') {
+            if (nameFile == 'getPasswordLeaderboard') {
                 results = [{ 'Onyen': 'tas127', 'Score': 17020 }, { 'Onyen': 'sethl', 'Score': 14905 }, { 'Onyen': 'vinish', 'Score': 14584 }, { 'Onyen': 'iftekhar', 'Score': 7739 }];
-            } else if (nameFile == 'MessageLeaderboard') {
+            } else if (nameFile == 'getMessageLeaderboard') {
                 results = [{ 'Onyen': 'tas127', 'Score': 100 }, { 'Onyen': 'sethl', 'Score': -100 }];
             } else {
                 results = [];
@@ -142,6 +164,7 @@ const setUpIndividualLeaderboard = (nameBoard, nameFile, user) => {
             results = scores;
         }
 
+        // need this class to properly make the arrow handlers work!
         const newDiv = $('<div class="leaderboard-table"></div>');
         newDiv.append($('<h2 class="center xcel">' + nameBoard + ' Leaders</h2>'));
 
@@ -173,30 +196,34 @@ const setUpIndividualLeaderboard = (nameBoard, nameFile, user) => {
 
         const badgeList = {};
 
+        // map - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+        // slice - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice
         const onyensWithBadge = results.map(item => item['Onyen']).slice(0, numWithBadge);
         for (const onyen of onyensWithBadge) {
             badgeList[onyen] = nameBoard;
         }
+
+        // give the badge list to the overall leaderboard
         return badgeList;
     });
 }
 
 const addToTable = (table, data, classes = "") => {
-    // add an array of data to a table 
-    // this function cannot handle more complex table data yet (e.g. classes and such), but gets the job done
-    let tr;
-    if (classes.length > 0) {
-        tr = $('<tr class="' + classes + '"></tr>');
-    } else {
-        tr = $('<tr></tr>');
-    }
+    // add an array of data to a table
+
+    // if passed tbody, use it; otherwise, get it from the table
+    const tagName = table.prop('tagName').toLowerCase();
+    if (tagName != 'table' && tagName != 'tbody') return;
+    const element = (tagName == 'table') ? table.find('tbody') : table;
+
+    const tr = (classes.length > 0) ? $('<tr class="' + classes + '"></tr>') : $('<tr></tr>');
 
     for (const currData of data) {
         const td = $('<td>' + currData + '</td>');
         tr.append(td);
     }
 
-    table.append(tr);
+    element.append(tr);
 }
 
 const setUpAccount = (user) => {
@@ -204,22 +231,31 @@ const setUpAccount = (user) => {
     $('#account>h2').text(user);
 
     getAccountData(user).then((response) => {
-        let timesPlayed;
+        let accountData;
 
         if (response === undefined) {
             // for debug purposes on server not running PHP
-            timesPlayed = {
+            accountData = {
                 'Password Platformer': { 'timesPlayed': 0 },
                 'Message Board': { 'timesPlayed': 0 }
             }
         } else {
-            timesPlayed = response;
+            accountData = response;
         }
 
         const tableGamesPlayed = $('#playtime-table>tbody');
         const tableScores = $('#your-score-table>tbody');
 
-        for (let [key, value] of Object.entries(timesPlayed)) {
+        // Object.values - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Object/values
+        const numScores = Object.values(accountData).filter(item => item.hasOwnProperty('score')).length;
+        if (numScores == 0) {
+            const row = $('<tr class="none"><td colspan="2">No scores yet!</td></tr>');
+            tableScores.append(row);
+        }
+
+        // Object.entries - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries
+        // like dict.items() in Python
+        for (let [key, value] of Object.entries(accountData)) {
             addToTable(tableGamesPlayed, [key, value['timesPlayed']]);
 
             if (value.hasOwnProperty('score')) {
@@ -237,10 +273,8 @@ const clearLeaderboard = () => {
     $('#leaderboard-overall>tbody').empty();
 
     // remove leaderboard tables that are not the overall one (which is always first in the DOM)
-    const leaderboards = $('.leaderboard-table');
-    for (let i = 1; i < leaderboards.length; i++) {
-        leaderboards.eq(1).remove();
-    }
+    // jQuery slice - https://api.jquery.com/slice/
+    $('.leaderboard-table').slice(1).remove();
 }
 
 const makeNewTable = (headers) => {
@@ -261,14 +295,13 @@ const makeNewTable = (headers) => {
     return [newTable, tbody];
 }
 
-const hideRows = (table) => {
+const hideRows = (table, numRowsShown = 10) => {
     // hide some number of rows (by default show first 10)
+    if (numRowsShown <= 0) numRowsShown = 10;
+
     const numRows = $(table).find('tr').length;
-    if (numRows > 10) {
-        $(table).find('tr').each((index, element) => {
-            if (index < 10) return;
-            $(element).addClass('hidden');
-        });
+    if (numRows > numRowsShown) {
+        $(table).find('tr').slice(numRowsShown).addClass('hidden');
 
         const showMoreRow = $('<tr class="row-info showmore-row"></tr>');
         const showmoretd = $('<td colspan="3"><button class="showmoreButton">Show More <i class="fas fa-plus-circle"></i></button></td>');
@@ -280,21 +313,28 @@ const hideRows = (table) => {
 }
 
 const setUpLeaderboard = (user, gameJSON) => {
-    // set up the leaderboard(s)
+    // set up the overall and individual leaderboards
     clearLeaderboard();
 
+    // build a dictionary from game name => game representation from games.json
     const games = {};
     for (const game of gameJSON) {
         games[game['name']] = game;
     }
 
     // change here when we have more individual leaderboards to manage
-    const individualLeaderboards = [['Password Platformer', 'PasswordLeaderboard'], ['Message Board', 'MessageLeaderboard']];
+    const individualLeaderboards = [['Password Platformer', 'getPasswordLeaderboard'], ['Message Board', 'getMessageLeaderboard']];
     const leaderboardPromises = individualLeaderboards.map(item => setUpIndividualLeaderboard(item[0], item[1], user));
 
     return Promise.allSettled(leaderboardPromises).then((results) => {
         let badgeList = {};
-        for (const badges of results.map(item => item['value'])) {
+        // get the promises that succeeded
+        /* 
+        * current structure is that each leaderboard gives back an object with keys of onyens and 
+        * value pointing to the name of the leaderboard (which can then be used to get its icon)
+        * this structure can be changed
+        */
+        for (const badges of results.filter(item => item['status'] == 'fulfilled').map(item => item['value'])) {
             for (const [key, value] of Object.entries(badges)) {
                 if (badgeList.hasOwnProperty(key)) {
                     badgeList[key].push(value);
@@ -314,6 +354,7 @@ const setUpLeaderboard = (user, gameJSON) => {
 
         return badgeList;
     }).then(badgeList => {
+        // use this badge list in thee overall leaderboard
         return getOverallLeaderboard().then(scores => {
             let results;
 
@@ -329,10 +370,7 @@ const setUpLeaderboard = (user, gameJSON) => {
             const getBadgeList = (onyen) => {
                 // let's define a quick function which allows us to either get a user's badgelist 
                 // or nicely handle cases where the user is not in the badge list
-                if (badgeList.hasOwnProperty(onyen)) {
-                    return badgeList[onyen];
-                }
-                return [];
+                return (badgeList.hasOwnProperty(onyen)) ? badgeList[onyen] : [];
             }
 
             let rank = 1;
@@ -357,12 +395,12 @@ const setUpGame = (game, user) => {
     const id = game['id'];
     const name = game['name'];
 
-    const tab = $('<button id="' + id + '-tab" class="tab" data-info="' + id + '-info" style="display: none;">' + name + '<i class="far fa-window-close close-tab"></i></button>');
+    const tab = $('<button id="' + id + '-tab" class="tab" data-info="' + id + '-info" style="display: none;">' + name + ' <i class="far fa-window-close close-tab"></i></button>');
     $('#top-tabs').append(tab);
 
     const infoDiv = $('<div id="' + id + '-info" class="tab-info"></div>');
     infoDiv.append($('<h2 class="center pixel">' + name + '</h2>'));
-    infoDiv.append($('<p class="pixel">' + game['overview'] + '</p><br>'));
+    infoDiv.append($('<p class="pixel">' + game['overview'] + '</p>'));
     infoDiv.append($('<p class="pixel">' + game['tagline'] + '</p>'));
     const div = $('<div></div>');
     const button = $('<button class="play">Play</button>"');
@@ -401,6 +439,7 @@ const setUpGame = (game, user) => {
 
 const setup = () => {
     //funFacts imported using a txt file thanks to this video https://www.youtube.com/watch?time_continue=319&v=OWxVjS3yD1c&feature=emb_title
+    // fetch API - https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
     fetch('static/funFacts/funFacts.txt')
         .then(response => {
             if (!response.ok) {
@@ -416,9 +455,10 @@ const setup = () => {
 
             genFunFact();
 
+            // https://www.w3schools.com/jsref/met_win_setinterval.asp
+            // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setInterval
             window.setInterval(genFunFact, secondsFunFact * 1000);
-        })
-        .catch(error => {
+        }).catch(error => {
             console.log('Error: ' + error);
         });
 
@@ -431,13 +471,9 @@ const setup = () => {
     const showMessage = $('.message.active').attr('data-message');
     $('#' + showMessage).show();
 
-    $('#left-arrow').on('click', function () {
-        scroll(false);
-    });
+    $('#left-arrow').on('click', () => scroll(false));
 
-    $('#right-arrow').on('click', function () {
-        scroll(true);
-    });
+    $('#right-arrow').on('click', () => scroll(true));
 
     let idx = 0;
     const leaderboards = $('.leaderboard-table');
@@ -575,7 +611,7 @@ $(document).ready(function () {
             }
         }
 
-        console.log('User: ' + user);
+        // console.log('User: ' + user);
 
         hideArrows($('#game-cards').scrollLeft(), $('#game-cards').width());
 
@@ -584,11 +620,13 @@ $(document).ready(function () {
         fetchMessages().then(() => {
             $('.correctButton').each((index, element) => {
                 $(element).on('click', () => {
+                    // hide button - is this necessary if it is redirected?
+                    $(element).hide();
                     correctButtonPress(user).then(() => {
                         window.location.href = '/goodMessage.html';
+                    }).catch(() => {
+                        window.location.href = '/goodMessage.html';
                     });
-                    //add hide functionality here?
-                    //$(this).hide()
                 });
             });
 
