@@ -2,6 +2,17 @@ import fetchMessages from './messages.js';
 import { correctButtonPress } from './messages.js';
 import { incorrectButtonPress } from './messages.js';
 
+// polyfill for allSettled if browser does not implement it
+if (!Promise.allSettled) {
+    Promise.allSettled = (promises) => {
+        let wrappedPromises = promises.map(p => Promise.resolve(p)
+            .then(
+                val => ({ status: 'fulfilled', value: val }),
+                err => ({ status: 'rejected', reason: err })));
+        return Promise.all(wrappedPromises);
+    }
+}
+
 const scrollAmount = 50;
 const secondsFunFact = 30;
 
@@ -86,23 +97,88 @@ const getAccountData = (user) => {
     })
 }
 
-const getLeaderboardRequest = () => {
-    // get the request to get leaderboard data
-    // if you want to change the route or file name this can easily be changed here
-    return $.ajax('/sqlconnect/games/getLeaderboard.php', {
-        type: 'POST'
-    });
-}
-
-const getLeaderboard = () => {
+const getOverallLeaderboard = () => {
     // get the leaderboard data
     // if fails, sets up an example leaderboard
-    return getLeaderboardRequest().then(response => {
+    return $.ajax('/sqlconnect/games/getLeaderboard.php', {
+        type: 'POST'
+    }).then(response => {
         return response;
     }).catch(err => {
         console.log(err);
-        return [{ 'Onyen': 'tas127', 'Password Platformer': 17110, 'Message Board': 100, 'Total': 17120 }, { 'Onyen': 'sethl', 'Password Platformer': 14805, 'Message Board': null, 'Total': 14805 }, { 'Onyen': 'vinish', 'Password Platformer': 14684, 'Message Board': -100, 'Total': 14584 }, { 'Onyen': 'iftekhar', 'Password Platformer': 7739, 'Message Board': null, 'Total': 7739 }];
+        return [{ 'Onyen': 'tas127', 'Total': 17120 }, { 'Onyen': 'sethl', 'Total': 14805 }, { 'Onyen': 'vinish', 'Total': 14584 }, { 'Onyen': 'iftekhar', 'Total': 7739 }];
     })
+}
+
+const getIndividualLeaderboard = (nameFile) => {
+    return $.ajax('/sqlconnect/games/get' + nameFile + '.php', {
+        type: 'POST'
+    }).then(response => {
+        return response;
+    }).catch(err => {
+        console.log(err);
+        if (nameFile == 'PasswordLeaderboard') {
+            return [{ 'Onyen': 'tas127', 'Score': 17020 }, { 'Onyen': 'sethl', 'Score': 14905 }, { 'Onyen': 'vinish', 'Score': 14584 }, { 'Onyen': 'iftekhar', 'Score': 7739 }];
+        } else if (nameFile == 'MessageLeaderboard') {
+            return [{ 'Onyen': 'tas127', 'Score': 100 }, { 'Onyen': 'sethl', 'Score': -100 }];
+        } else {
+            return [];
+        }
+    });
+}
+
+const setUpIndividualLeaderboard = (nameBoard, nameFile, user) => {
+    return getIndividualLeaderboard(nameFile).then(scores => {
+        let results;
+        if (scores === undefined) {
+            if (nameFile == 'PasswordLeaderboard') {
+                results = [{ 'Onyen': 'tas127', 'Score': 17020 }, { 'Onyen': 'sethl', 'Score': 14905 }, { 'Onyen': 'vinish', 'Score': 14584 }, { 'Onyen': 'iftekhar', 'Score': 7739 }];
+            } else if (nameFile == 'MessageLeaderboard') {
+                results = [{ 'Onyen': 'tas127', 'Score': 100 }, { 'Onyen': 'sethl', 'Score': -100 }];
+            } else {
+                results = [];
+            }
+        } else {
+            results = scores;
+        }
+
+        const newDiv = $('<div class="leaderboard-table"></div>');
+        newDiv.append($('<h2 class="center xcel">' + nameBoard + ' Leaders</h2>'));
+
+        const [newTable, tbody] = makeNewTable(['Rank', 'Player', 'Score']);
+        if (results.length > 0) {
+            let rank = 1;
+            for (const row of results) {
+                const [name, classes] = (row['Onyen'] == user) ? ['You', 'you'] : [row['Onyen'], ''];
+
+                addToTable(tbody, [rank++, name, row['Score'].toLocaleString()], classes);
+            }
+        } else {
+            const row = $('<tr class="none"><td colspan="3">No data to show!</td></tr>');
+            tbody.append(row);
+        }
+        newDiv.append(newTable);
+
+        hideRows(tbody);
+
+        newDiv.insertBefore($('#right-arrow-leaderboard'));
+        newDiv.hide();
+
+        // don't award badges for spam filtering for now ...
+        if (nameBoard == 'Message Board') return {};
+
+        // award a badge to the top 15%
+        let numWithBadge = Math.floor(results.length * .15);
+        if (numWithBadge == 0) numWithBadge = 1;
+
+        const badgeList = {};
+
+        const onyensWithBadge = results.map(item => item['Onyen']).slice(0, numWithBadge);
+        for (const onyen of onyensWithBadge) {
+            badgeList[onyen] = nameBoard;
+        }
+        return badgeList;
+    });
 }
 
 const addToTable = (table, data, classes = "") => {
@@ -212,62 +288,18 @@ const setUpLeaderboard = (user, gameJSON) => {
         games[game['name']] = game;
     }
 
-    return getLeaderboard().then(scores => {
-        let results;
+    // change here when we have more individual leaderboards to manage
+    const individualLeaderboards = [['Password Platformer', 'PasswordLeaderboard'], ['Message Board', 'MessageLeaderboard']];
+    const leaderboardPromises = individualLeaderboards.map(item => setUpIndividualLeaderboard(item[0], item[1], user));
 
-        if (scores === undefined) {
-            // for debug purposes on server not running PHP
-            results = [{ 'Onyen': 'tas127', 'Password Platformer': 17110, 'Message Board': 100, 'Total': 17120 }, { 'Onyen': 'sethl', 'Password Platformer': 14805, 'Message Board': null, 'Total': 14805 }, { 'Onyen': 'vinish', 'Password Platformer': 14684, 'Message Board': -100, 'Total': 14584 }, { 'Onyen': 'iftekhar', 'Password Platformer': 7739, 'Message Board': null, 'Total': 7739 }];
-        } else {
-            results = scores;
-        }
-
-        const leaderboard = $('#leaderboard-overall>tbody');
-
-        // keys which are eligible to be badges are the names of any individual game in the result 
-        // these should be in the games.json file 
-        const potentialBadges = Object.keys(results[0]).filter((item) => (games.hasOwnProperty(item)));
-
+    return Promise.allSettled(leaderboardPromises).then((results) => {
         let badgeList = {};
-
-        // we have individual leaderboards for all of the games plus the Message Board
-        for (const val of potentialBadges.concat('Message Board')) {
-            // find users which have a score for the current leaderboard we're looking at
-            const currVals = results.filter(item => (item[val] != null));
-            // sort the items descending by score for current leaderboard
-            currVals.sort((itemOne, itemTwo) => itemTwo[val] - itemOne[val]);
-
-            const newDiv = $('<div class="leaderboard-table"></div>');
-            newDiv.append($('<h2 class="center xcel">' + val + ' Leaders</h2>'));
-
-            const [newTable, tbody] = makeNewTable(['Rank', 'Player', 'Score']);
-            let rank = 1;
-            for (const row of currVals) {
-                const [name, classes] = (row['Onyen'] == user) ? ['You', 'you'] : [row['Onyen'], ''];
-
-                addToTable(tbody, [rank++, name, row[val].toLocaleString()], classes);
-            }
-            newDiv.append(newTable);
-
-            hideRows(tbody);
-
-            newDiv.insertBefore($('#right-arrow-leaderboard'));
-            newDiv.hide();
-
-            // don't award badges for spam filtering for now ...
-            if (val == 'Message Board') continue;
-
-            let numWithBadge = Math.floor(currVals.length * .15);
-            if (numWithBadge == 0) numWithBadge = 1;
-
-            const onyensWithBadge = currVals.map(item => item['Onyen']).slice(0, numWithBadge);
-            for (const onyen of onyensWithBadge) {
-                if (badgeList.hasOwnProperty(onyen)) {
-                    // if the badge list has this user already, add it to their array
-                    badgeList[onyen].push(val);
+        for (const badges of results.map(item => item['value'])) {
+            for (const [key, value] of Object.entries(badges)) {
+                if (badgeList.hasOwnProperty(key)) {
+                    badgeList[key].push(value);
                 } else {
-                    // if the badge list does not have this user, add a new array 
-                    badgeList[onyen] = [val];
+                    badgeList[key] = [value];
                 }
             }
         }
@@ -280,26 +312,43 @@ const setUpLeaderboard = (user, gameJSON) => {
             }
         }
 
-        const getBadgeList = (onyen) => {
-            // let's define a quick function which allows us to either get a user's badgelist 
-            // or nicely handle cases where the user is not in the badge list
-            if (badgeList.hasOwnProperty(onyen)) {
-                return badgeList[onyen];
+        return badgeList;
+    }).then(badgeList => {
+        return getOverallLeaderboard().then(scores => {
+            let results;
+
+            if (scores === undefined) {
+                // for debug purposes on server not running PHP
+                results = [{ 'Onyen': 'tas127', 'Total': 17120 }, { 'Onyen': 'sethl', 'Total': 14805 }, { 'Onyen': 'vinish', 'Total': 14584 }, { 'Onyen': 'iftekhar', 'Total': 7739 }];
+            } else {
+                results = scores;
             }
-            return [];
-        }
 
-        let rank = 1;
-        for (const row of results) {
-            const currBadges = getBadgeList(row['Onyen']).map(item => games[item]['icon']).join(' ');
-            const [name, classes] = (row['Onyen'] == user) ? ['You' + currBadges, 'you'] : [row['Onyen'] + currBadges, ''];
+            const leaderboard = $('#leaderboard-overall>tbody');
 
-            addToTable(leaderboard, [rank, name, row['Total'].toLocaleString()], classes);
+            const getBadgeList = (onyen) => {
+                // let's define a quick function which allows us to either get a user's badgelist 
+                // or nicely handle cases where the user is not in the badge list
+                if (badgeList.hasOwnProperty(onyen)) {
+                    return badgeList[onyen];
+                }
+                return [];
+            }
 
-            rank++;
-        }
+            let rank = 1;
+            for (const row of results) {
+                let currBadges = getBadgeList(row['Onyen']).map(item => games[item]['icon']).join(' ');
+                // add leading space to badges for spacing
+                if (currBadges.length > 0) currBadges = ' ' + currBadges;
+                const [name, classes] = (row['Onyen'] == user) ? ['You' + currBadges, 'you'] : [row['Onyen'] + currBadges, ''];
 
-        hideRows(leaderboard);
+                addToTable(leaderboard, [rank, name, row['Total'].toLocaleString()], classes);
+
+                rank++;
+            }
+
+            hideRows(leaderboard);
+        });
     });
 }
 
@@ -319,7 +368,13 @@ const setUpGame = (game, user) => {
     const button = $('<button class="play">Play</button>"');
     button.on('click', function () {
         const newLocation = '/' + game['entrypoint'] + '?user=' + encodeURIComponent(user);
-        window.open(newLocation, '_blank');
+
+        // this code opens the link in the same tab
+        location.href = newLocation;
+
+        // this code opens the link in a new tab - we have chosen to instead use the Quit button in the game to send you 
+        // back to the games.fo.unc.edu main screen
+        // window.open(newLocation, '_blank');
     });
     div.append(button);
     infoDiv.append(div);
