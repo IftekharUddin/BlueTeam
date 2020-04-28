@@ -9,7 +9,6 @@ if ($pdo == null) {
     exit('Connection error!');
 }
 
-// have to join this wih message board data when available
 $query ='SELECT TOP 10 Onyen, Total 
          FROM Overall_Leaderboard
          ORDER BY Total DESC;';

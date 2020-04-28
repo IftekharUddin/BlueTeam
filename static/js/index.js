@@ -224,20 +224,14 @@ const setUpLeaderboard = (user, gameJSON) => {
 
         const leaderboard = $('#leaderboard-overall>tbody');
 
-        let potentialBadges = [];
-        for (const key of Object.keys(results[0])) {
-            if (key == 'Onyen' || key == 'Total') continue;
-
-            if (games.hasOwnProperty(key)) {
-                potentialBadges.push(key);
-            }
-        }
+        // keys which are eligible to be badges are the names of any individual game in the result 
+        // these should be in the games.json file 
+        const potentialBadges = Object.keys(results[0]).filter((item) => (games.hasOwnProperty(item)));
 
         let badgeList = {};
 
-        const individualLeaderboards = potentialBadges;
-        individualLeaderboards.push('Message Board');
-        for (const val of individualLeaderboards) {
+        // we have individual leaderboards for all of the games plus the Message Board
+        for (const val of potentialBadges.concat('Message Board')) {
             // find users which have a score for the current leaderboard we're looking at
             const currVals = results.filter(item => (item[val] != null));
             // sort the items descending by score for current leaderboard
@@ -249,13 +243,7 @@ const setUpLeaderboard = (user, gameJSON) => {
             const [newTable, tbody] = makeNewTable(['Rank', 'Player', 'Score']);
             let rank = 1;
             for (const row of currVals) {
-                let name = row['Onyen'];
-                let classes = "";
-
-                if (name == user) {
-                    classes += 'you';
-                    name = 'You';
-                }
+                const [name, classes] = (row['Onyen'] == user) ? ['You', 'you'] : [row['Onyen'], ''];
 
                 addToTable(tbody, [rank++, name, row[val].toLocaleString()], classes);
             }
@@ -275,8 +263,10 @@ const setUpLeaderboard = (user, gameJSON) => {
             const onyensWithBadge = currVals.map(item => item['Onyen']).slice(0, numWithBadge);
             for (const onyen of onyensWithBadge) {
                 if (badgeList.hasOwnProperty(onyen)) {
+                    // if the badge list has this user already, add it to their array
                     badgeList[onyen].push(val);
                 } else {
+                    // if the badge list does not have this user, add a new array 
                     badgeList[onyen] = [val];
                 }
             }
@@ -290,16 +280,19 @@ const setUpLeaderboard = (user, gameJSON) => {
             }
         }
 
+        const getBadgeList = (onyen) => {
+            // let's define a quick function which allows us to either get a user's badgelist 
+            // or nicely handle cases where the user is not in the badge list
+            if (badgeList.hasOwnProperty(onyen)) {
+                return badgeList[onyen];
+            }
+            return [];
+        }
+
         let rank = 1;
         for (const row of results) {
-            let classes = (row['Onyen'] == user) ? 'you' : "";
-            let name = (row['Onyen'] == user) ? 'You' : row['Onyen'];
-
-            if (badgeList.hasOwnProperty(row['Onyen'])) {
-                for (const badge of badgeList[row['Onyen']]) {
-                    name += ' ' + games[badge]['icon'];
-                }
-            }
+            const currBadges = getBadgeList(row['Onyen']).map(item => games[item]['icon']).join(' ');
+            const [name, classes] = (row['Onyen'] == user) ? ['You' + currBadges, 'you'] : [row['Onyen'] + currBadges, ''];
 
             addToTable(leaderboard, [rank, name, row['Total'].toLocaleString()], classes);
 
