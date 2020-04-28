@@ -20,3 +20,4 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 header('Content-Type: json/application;');
 echo json_encode($results);
+exit(0);
