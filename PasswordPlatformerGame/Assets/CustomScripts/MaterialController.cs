@@ -10,6 +10,8 @@ public class MaterialController : MonoBehaviour
 {
     public int FEEDBACK_LAYER = 11;
     private static MaterialController _instance;
+    // the material used by platforms
+    public PhysicsMaterial2D platformMaterial;
     // the material used by the TextMesh 
     public Material textMaterial;
     // the font used by the TextMesh - can easily be changed by substituting the file in the Resources folder

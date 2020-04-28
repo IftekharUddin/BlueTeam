@@ -181,10 +181,12 @@ public class PlatformGenerator : MonoBehaviour
         parent.layer = PLATFORM_LAYER;
         BoxCollider2D boxCollider = parent.AddComponent(typeof(BoxCollider2D)) as BoxCollider2D;
         boxCollider.size = new Vector2(totalWidth, this.height);
+        boxCollider.sharedMaterial = MaterialController.Instance.platformMaterial;
         parent.transform.position = new Vector3(start.x + middlePlatform, platformY, start.z);
         Rigidbody2D rigidbody = parent.AddComponent(typeof(Rigidbody2D)) as Rigidbody2D;
         rigidbody.bodyType = RigidbodyType2D.Kinematic;
-        // rigidbody.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rigidbody.sharedMaterial = MaterialController.Instance.platformMaterial;
+        rigidbody.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
         // add password components
         if (passwordData.Item1)
