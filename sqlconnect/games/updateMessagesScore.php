@@ -1,28 +1,38 @@
 <?php
 require('../vendor/autoload.php');
 
+// connect
 use Games\SQLConnect;
 
 $pdo = (new SQLConnect())->connect();
 
+// if connection fails
 if ($pdo == null) {
     exit('Connection error!');
 }
 
+// "Need to change this true to something else - ???????"
+// I'm not sure what this comment is. will update if i find out. 
+// dear future team,
+// if you're seeing this, i never figured it out and forgot to delete. Delete it i guess. 
+// warm regards, lonely backend boi
 $onyen = $_POST["onyen"];
-//Need to change this true to something else - ???????
 $score = $_POST["data"];
 
+// query to get user data
 $stmt = $pdo->prepare('SELECT * FROM dbo.MessageBoardScores WHERE Onyen = :onyen;');
 $stmt->bindParam(':onyen', $onyen);
 $stmt->execute();
 
+// get query data
 $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $count = !$row ? 0 : 1;
 $playerAttacks = $row[2];
-// TO get the number of attacks - THIS WILL NEED TO BE CHANGED EVERYTIME A MESSAGE FROM DAN IS PUT ON THE MESSAGEBOARD
+
+// IMPORTANT: TO get the number of attacks - THIS WILL NEED TO BE CHANGED EVERYTIME A MESSAGE FROM DAN IS PUT ON THE MESSAGEBOARD
 $attacks = 1; 
 
+// if user has no previous data
 if ($count == 0) {
     $stmt = $pdo->prepare('INSERT INTO dbo.MessageBoardScores (Onyen, Score, AttacksCaught) VALUES (:onyen, :score, 1);');
     $stmt->bindParam(':onyen', $onyen);
@@ -38,8 +48,9 @@ if ($count == 0) {
     }
 }
 
-    // update leaderboard 
-    // each time an action is taken, messages score is changed
-    // changing overall leaderboard score
-    include 'updateLeaderboard.php';
+// update leaderboard 
+// each time an action is taken, messages score is changed
+// changing overall leaderboard score
+include 'updateLeaderboard.php';
+
 exit(0);
