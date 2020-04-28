@@ -1,4 +1,5 @@
 <?php
+// README.md - please read
 $stmt = $pdo->prepare('DECLARE @Mscore int,
                                 @PScore int,
                                 @Total int,
