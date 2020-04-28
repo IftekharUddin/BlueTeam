@@ -234,7 +234,7 @@ tr.hidden {
     font-size: 1.25em;
 }
 
-#leaderboard tbody>tr:first-child {
+#leaderboard tbody>tr:first-child:not(.none) {
     background: #6666ff;
 }
 

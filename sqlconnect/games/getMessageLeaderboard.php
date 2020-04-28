@@ -23,5 +23,11 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // send query data to js
 header('Content-Type: json/application;');
+if (!$results == 0) {
+    // nicely handle empty result by giving back empty array 
+    echo json_encode(array());
+    exit(0);
+}
+
 echo json_encode($results);
 exit(0);

@@ -3,7 +3,7 @@
         "name": "Password Platformer",
         "id": "password-platformer",
         "tagline": "How good is your password?",
-        "overview": "Your password is one of the most important parts of keeping your data and online activity safe.  In this game, learn what makes a 'good' password and what, if you put in your password, might lead to a loss of your data.",
+        "overview": "Your password is one of the most important parts of keeping your data and online activity safe.  In this game, learn what makes a 'good' password and what, if you put in your password, might lead to the loss of your data.",
         "icon": "<i class=\"fas fa-lock\"></i>",
         "card-text": "How good is your password?",
         "disabled": false,
