@@ -23,4 +23,3 @@ $stmt = $pdo->prepare('DECLARE @Mscore int,
                         VALUES (@Onyen, @Total)');
 $stmt->bindParam(':onyen', $onyen);
 $stmt->execute();
-exit(0);
