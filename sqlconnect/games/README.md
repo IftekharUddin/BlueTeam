@@ -95,6 +95,7 @@ we'll talk about the code in chunks
 1:  we're creating empty variables of types and setting the onyen variable to the post variable onyen 
         The only reason that the :onyen can work is because we're "include"ing it into other files. The scope
         of the $_POST in those files like updatePasswordPlatformer.php allows for $onyen to be referenced. 
+    * https://docs.microsoft.com/en-us/sql/t-sql/language-elements/variables-transact-sql?view=sql-server-ver15
 
 2:  delete user from the overall leaderboard. not doing this causes duplication
     Doesn't affect order because when we getLeaderboard, we select by descending order
