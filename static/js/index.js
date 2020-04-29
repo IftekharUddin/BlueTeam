@@ -1,6 +1,5 @@
 import fetchMessages from './messages.js';
-import { correctButtonPress } from './messages.js';
-import { incorrectButtonPress } from './messages.js';
+import { correctButtonPress, incorrectButtonPress } from './messages.js';
 
 // getting started with jQuery - https://api.jquery.com/, https://jquery.com/
 // jQuery AJAX - https://api.jquery.com/category/ajax/, https://api.jquery.com/jquery.ajax/, https://www.w3schools.com/xml/ajax_intro.asp
@@ -138,18 +137,31 @@ const getOverallLeaderboard = () => {
     })
 }
 
-const getIndividualLeaderboard = (nameFile) => {
+const getIndividualLeaderboard = (nameBoard) => {
     // return data from a PHP file which corresponds to a given leaderboard
     // these tables always return the structure of (Onyen, Score)
-    return $.ajax('/sqlconnect/games/' + nameFile + '.php', {
-        type: 'POST'
+
+    // map from name of leaderboard to table name
+    const tableMap = {
+        'Password Platformer': 'PasswordPlatformerScores',
+        'Message Board': 'MessageBoardScores'
+    }
+
+    // if don't have the the leaderboard in our map, return empty array
+    if (!tableMap.hasOwnProperty(nameBoard)) {
+        return Promise.resolve([]);
+    }
+
+    return $.ajax('/sqlconnect/games/getIndividualLeaderboard.php', {
+        type: 'POST',
+        data: { 'table': tableMap[nameBoard] }
     }).then(response => {
         return response;
     }).catch(err => {
         console.log(err);
-        if (nameFile == 'getPasswordLeaderboard') {
+        if (nameBoard == 'Password Platformer') {
             return [{ 'Onyen': 'tas127', 'Score': 17020 }, { 'Onyen': 'sethl', 'Score': 14905 }, { 'Onyen': 'vinish', 'Score': 14584 }, { 'Onyen': 'iftekhar', 'Score': 7739 }];
-        } else if (nameFile == 'getMessageLeaderboard') {
+        } else if (nameBoard == 'Message Board') {
             return [{ 'Onyen': 'tas127', 'Score': 100 }, { 'Onyen': 'sethl', 'Score': -100 }];
         } else {
             return [];
@@ -157,19 +169,18 @@ const getIndividualLeaderboard = (nameFile) => {
     });
 }
 
-const setUpIndividualLeaderboard = (nameBoard, nameFile, user) => {
+const setUpIndividualLeaderboard = (nameBoard, user) => {
     /*
     * Set up an individual leaderboard with the following parameters:
     * nameBoard - the name of the game (e.g. Password Platformer, Message Board)
-    * nameFile  - the name of the PHP file which can get the (Onyen, Score) data for the leaderboard
     * user      - the onyen of the current user (used to style that row) 
     */
-    return getIndividualLeaderboard(nameFile).then(scores => {
+    return getIndividualLeaderboard(nameBoard).then(scores => {
         let results;
         if (scores === undefined) {
-            if (nameFile == 'getPasswordLeaderboard') {
+            if (nameBoard == 'Password Platformer') {
                 results = [{ 'Onyen': 'tas127', 'Score': 17020 }, { 'Onyen': 'sethl', 'Score': 14905 }, { 'Onyen': 'vinish', 'Score': 14584 }, { 'Onyen': 'iftekhar', 'Score': 7739 }];
-            } else if (nameFile == 'getMessageLeaderboard') {
+            } else if (nameBoard == 'Message Board') {
                 results = [{ 'Onyen': 'tas127', 'Score': 100 }, { 'Onyen': 'sethl', 'Score': -100 }];
             } else {
                 results = [];
@@ -178,7 +189,7 @@ const setUpIndividualLeaderboard = (nameBoard, nameFile, user) => {
             results = scores;
         }
 
-        // need this class to properly make the arrow handlers work!
+        // need this class "leaderboard-table" to properly make the arrow handlers work!
         const newDiv = $('<div class="leaderboard-table"></div>');
         newDiv.append($('<h2 class="center xcel">' + nameBoard + ' Leaders</h2>'));
 
@@ -349,8 +360,8 @@ const setUpLeaderboard = (user, gameJSON) => {
     }
 
     // change here when we have more individual leaderboards to manage
-    const individualLeaderboards = [['Password Platformer', 'getPasswordLeaderboard'], ['Message Board', 'getMessageLeaderboard']];
-    const leaderboardPromises = individualLeaderboards.map(item => setUpIndividualLeaderboard(item[0], item[1], user));
+    const individualLeaderboards = ['Password Platformer', 'Message Board'];
+    const leaderboardPromises = individualLeaderboards.map(item => setUpIndividualLeaderboard(item, user));
 
     return Promise.allSettled(leaderboardPromises).then((results) => {
         /* 
