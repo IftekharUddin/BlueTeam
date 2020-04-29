@@ -22,7 +22,6 @@ $stmt->execute();
 // get query data
 $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $count = !$row ? 0 : 1;
-$playerAttacks = $row[2];
 
 // IMPORTANT: TO get the number of attacks - THIS WILL NEED TO BE CHANGED EVERYTIME A MESSAGE FROM DAN IS PUT ON THE MESSAGEBOARD
 $attacks = 1;
@@ -34,6 +33,7 @@ if ($count == 0) {
     $stmt->bindParam(':score', $score, PDO::PARAM_INT);
     $stmt->execute();
 } else {
+    $playerAttacks = $row[0]['AttacksCaught'];
     if ($playerAttacks < $attack) {
         $stmt = $pdo->prepare('UPDATE dbo.MessageBoardScores SET Score = Score + :score SET AttacksCaught = AttacksCaught + 1 WHERE Onyen = :onyen;');
         $stmt->bindParam(':score', $score, PDO::PARAM_INT); // should be -100 for wrong button and +100 for correct button presses

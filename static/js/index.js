@@ -1,6 +1,5 @@
 import fetchMessages from './messages.js';
-import { correctButtonPress } from './messages.js';
-import { incorrectButtonPress } from './messages.js';
+import { correctButtonPress, incorrectButtonPress } from './messages.js';
 
 // getting started with jQuery - https://api.jquery.com/, https://jquery.com/
 // jQuery AJAX - https://api.jquery.com/category/ajax/, https://api.jquery.com/jquery.ajax/, https://www.w3schools.com/xml/ajax_intro.asp
@@ -138,18 +137,31 @@ const getOverallLeaderboard = () => {
     })
 }
 
-const getIndividualLeaderboard = (nameFile) => {
+const getIndividualLeaderboard = (nameBoard) => {
     // return data from a PHP file which corresponds to a given leaderboard
     // these tables always return the structure of (Onyen, Score)
-    return $.ajax('/sqlconnect/games/' + nameFile + '.php', {
-        type: 'POST'
+
+    // map from name of leaderboard to table name
+    const tableMap = {
+        'Password Platformer': 'PasswordPlatformerScores',
+        'Message Board': 'MessageBoardScores'
+    }
+
+    // if don't have the the leaderboard in our map, return empty array
+    if (!tableMap.hasOwnProperty(nameBoard)) {
+        return Promise.resolve([]);
+    }
+
+    return $.ajax('/sqlconnect/games/getIndividualLeaderboard.php', {
+        type: 'POST',
+        data: { 'table': tableMap[nameBoard] }
     }).then(response => {
         return response;
     }).catch(err => {
         console.log(err);
-        if (nameFile == 'getPasswordLeaderboard') {
+        if (nameBoard == 'Password Platformer') {
             return [{ 'Onyen': 'tas127', 'Score': 17020 }, { 'Onyen': 'sethl', 'Score': 14905 }, { 'Onyen': 'vinish', 'Score': 14584 }, { 'Onyen': 'iftekhar', 'Score': 7739 }];
-        } else if (nameFile == 'getMessageLeaderboard') {
+        } else if (nameBoard == 'Message Board') {
             return [{ 'Onyen': 'tas127', 'Score': 100 }, { 'Onyen': 'sethl', 'Score': -100 }];
         } else {
             return [];
@@ -157,19 +169,18 @@ const getIndividualLeaderboard = (nameFile) => {
     });
 }
 
-const setUpIndividualLeaderboard = (nameBoard, nameFile, user) => {
+const setUpIndividualLeaderboard = (nameBoard, user) => {
     /*
     * Set up an individual leaderboard with the following parameters:
     * nameBoard - the name of the game (e.g. Password Platformer, Message Board)
-    * nameFile  - the name of the PHP file which can get the (Onyen, Score) data for the leaderboard
     * user      - the onyen of the current user (used to style that row) 
     */
-    return getIndividualLeaderboard(nameFile).then(scores => {
+    return getIndividualLeaderboard(nameBoard).then(scores => {
         let results;
         if (scores === undefined) {
-            if (nameFile == 'getPasswordLeaderboard') {
+            if (nameBoard == 'Password Platformer') {
                 results = [{ 'Onyen': 'tas127', 'Score': 17020 }, { 'Onyen': 'sethl', 'Score': 14905 }, { 'Onyen': 'vinish', 'Score': 14584 }, { 'Onyen': 'iftekhar', 'Score': 7739 }];
-            } else if (nameFile == 'getMessageLeaderboard') {
+            } else if (nameBoard == 'Message Board') {
                 results = [{ 'Onyen': 'tas127', 'Score': 100 }, { 'Onyen': 'sethl', 'Score': -100 }];
             } else {
                 results = [];
@@ -178,7 +189,7 @@ const setUpIndividualLeaderboard = (nameBoard, nameFile, user) => {
             results = scores;
         }
 
-        // need this class to properly make the arrow handlers work!
+        // need this class "leaderboard-table" to properly make the arrow handlers work!
         const newDiv = $('<div class="leaderboard-table"></div>');
         newDiv.append($('<h2 class="center xcel">' + nameBoard + ' Leaders</h2>'));
 
@@ -196,7 +207,7 @@ const setUpIndividualLeaderboard = (nameBoard, nameFile, user) => {
         }
         newDiv.append(newTable);
 
-        hideRows(tbody);
+        hideRows(tbody, user);
 
         newDiv.insertBefore($('#right-arrow-leaderboard'));
         newDiv.hide();
@@ -309,18 +320,30 @@ const makeNewTable = (headers) => {
     return [newTable, tbody];
 }
 
-const hideRows = (table, numRowsShown = 10) => {
+const hideRows = (table, user, numRowsShown = 10) => {
     // hide some number of rows (by default show first 10)
     if (numRowsShown <= 0) numRowsShown = 10;
 
-    const numRows = $(table).find('tr').length;
+    // if passed tbody, use it; otherwise, get it from the table
+    const tagName = table.prop('tagName').toLowerCase();
+    if (tagName != 'table' && tagName != 'tbody') return;
+    const element = (tagName == 'table') ? table.find('tbody') : table;
+
+    const numRows = $(element).find('tr').length;
     if (numRows > numRowsShown) {
-        $(table).find('tr').slice(numRowsShown).addClass('hidden');
+        $(element).find('tr').slice(numRowsShown).addClass('hidden');
+
+        const userRow = $(element).find('td').filter((idx, elem) => $(elem).text() == 'You' || $(elem).text() == user).parent();
+        userRow.removeClass('hidden');
+
+        const numHidden = $(table).find('tr.hidden').length;
+
+        if (numHidden == 0) return;
 
         const showMoreRow = $('<tr class="row-info showmore-row"></tr>');
         const showmoretd = $('<td colspan="3"><button class="showmoreButton">Show More <i class="fas fa-plus-circle"></i></button></td>');
         showMoreRow.append(showmoretd);
-        showMoreRow.insertBefore($(table).find('tr.hidden').eq(0));
+        showMoreRow.insertBefore($(element).find('tr.hidden').eq(0));
         const ellipsisrow = $('<tr class="row-info ellipsis-row"><td colspan="3"><i class="fas fa-ellipsis-h"></i></td></tr>');
         ellipsisrow.insertAfter(showMoreRow);
     }
@@ -337,27 +360,29 @@ const setUpLeaderboard = (user, gameJSON) => {
     }
 
     // change here when we have more individual leaderboards to manage
-    const individualLeaderboards = [['Password Platformer', 'getPasswordLeaderboard'], ['Message Board', 'getMessageLeaderboard']];
-    const leaderboardPromises = individualLeaderboards.map(item => setUpIndividualLeaderboard(item[0], item[1], user));
+    const individualLeaderboards = ['Password Platformer', 'Message Board'];
+    const leaderboardPromises = individualLeaderboards.map(item => setUpIndividualLeaderboard(item, user));
 
     return Promise.allSettled(leaderboardPromises).then((results) => {
-        let badgeList = {};
-        // get the promises that succeeded
         /* 
         * current structure is that each leaderboard gives back an object with keys of onyens and 
         * value pointing to the name of the leaderboard (which can then be used to get its icon)
         * this structure can be changed
         */
-        for (const badges of results.filter(item => item['status'] == 'fulfilled').map(item => item['value'])) {
-            for (const [key, value] of Object.entries(badges)) {
-                if (badgeList.hasOwnProperty(key)) {
-                    badgeList[key].push(value);
+        const reducer = (accumulator, currentValue) => {
+            for (const [key, value] of Object.entries(currentValue)) {
+                if (accumulator.hasOwnProperty(key)) {
+                    accumulator[key].push(value);
                 } else {
-                    badgeList[key] = [value];
+                    accumulator[key] = [value];
                 }
             }
+            return accumulator;
         }
+        // get the promises that succeeded => get the values => combine them together
+        let badgeList = results.filter(item => item['status'] == 'fulfilled').map(item => item['value']).reduce(reducer, {});
 
+        if (badgeList == null || badgeList == undefined) badgeList = {};
         // if the user has any badges, put them on the account page
         if (badgeList.hasOwnProperty(user)) {
             $('#badges').empty();
@@ -399,7 +424,7 @@ const setUpLeaderboard = (user, gameJSON) => {
                 rank++;
             }
 
-            hideRows(leaderboard);
+            hideRows(leaderboard, user);
         });
     });
 }
@@ -564,18 +589,24 @@ const setup = () => {
             const rows = tbody.find('tr').not('.row-info');
             const rowsShown = tbody.find('tr').not('.row-info').not('.hidden').length;
 
+            console.log(rows.length, rowsShown);
             if (rowsShown > rows.length) {
                 return;
             }
-            for (let i = rowsShown; i < rowsShown + 5; i++) {
-                rows.eq(i).removeClass('hidden');
-            }
 
-            const firstHidden = rows.find('tr.hidden').eq(0);
             const showMore = tbody.find('.showmore-row');
             const ellipsis = tbody.find('.ellipsis-row');
             showMore.detach();
             ellipsis.detach();
+
+            const indexFirstHidden = tbody.find('tr.hidden').eq(0).index();
+            if (indexFirstHidden == -1) return;
+            for (let i = indexFirstHidden; i < rowsShown + 5; i++) {
+                rows.eq(i).removeClass('hidden');
+            }
+
+            const firstHidden = rows.find('tr.hidden').eq(0);
+
             if (firstHidden.length == 0) return;
             showMore.insertBefore(firstHidden);
             ellipsis.insertBefore(firstHidden);
