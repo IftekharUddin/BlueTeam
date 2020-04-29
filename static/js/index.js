@@ -196,7 +196,7 @@ const setUpIndividualLeaderboard = (nameBoard, nameFile, user) => {
         }
         newDiv.append(newTable);
 
-        hideRows(tbody);
+        hideRows(tbody, user);
 
         newDiv.insertBefore($('#right-arrow-leaderboard'));
         newDiv.hide();
@@ -309,18 +309,30 @@ const makeNewTable = (headers) => {
     return [newTable, tbody];
 }
 
-const hideRows = (table, numRowsShown = 10) => {
+const hideRows = (table, user, numRowsShown = 10) => {
     // hide some number of rows (by default show first 10)
     if (numRowsShown <= 0) numRowsShown = 10;
 
-    const numRows = $(table).find('tr').length;
+    // if passed tbody, use it; otherwise, get it from the table
+    const tagName = table.prop('tagName').toLowerCase();
+    if (tagName != 'table' && tagName != 'tbody') return;
+    const element = (tagName == 'table') ? table.find('tbody') : table;
+
+    const numRows = $(element).find('tr').length;
     if (numRows > numRowsShown) {
-        $(table).find('tr').slice(numRowsShown).addClass('hidden');
+        $(element).find('tr').slice(numRowsShown).addClass('hidden');
+
+        const userRow = $(element).find('td').filter((idx, elem) => $(elem).text() == 'You' || $(elem).text() == user).parent();
+        userRow.removeClass('hidden');
+
+        const numHidden = $(table).find('tr.hidden').length;
+
+        if (numHidden == 0) return;
 
         const showMoreRow = $('<tr class="row-info showmore-row"></tr>');
         const showmoretd = $('<td colspan="3"><button class="showmoreButton">Show More <i class="fas fa-plus-circle"></i></button></td>');
         showMoreRow.append(showmoretd);
-        showMoreRow.insertBefore($(table).find('tr.hidden').eq(0));
+        showMoreRow.insertBefore($(element).find('tr.hidden').eq(0));
         const ellipsisrow = $('<tr class="row-info ellipsis-row"><td colspan="3"><i class="fas fa-ellipsis-h"></i></td></tr>');
         ellipsisrow.insertAfter(showMoreRow);
     }
@@ -341,23 +353,25 @@ const setUpLeaderboard = (user, gameJSON) => {
     const leaderboardPromises = individualLeaderboards.map(item => setUpIndividualLeaderboard(item[0], item[1], user));
 
     return Promise.allSettled(leaderboardPromises).then((results) => {
-        let badgeList = {};
-        // get the promises that succeeded
         /* 
         * current structure is that each leaderboard gives back an object with keys of onyens and 
         * value pointing to the name of the leaderboard (which can then be used to get its icon)
         * this structure can be changed
         */
-        for (const badges of results.filter(item => item['status'] == 'fulfilled').map(item => item['value'])) {
-            for (const [key, value] of Object.entries(badges)) {
-                if (badgeList.hasOwnProperty(key)) {
-                    badgeList[key].push(value);
+        const reducer = (accumulator, currentValue) => {
+            for (const [key, value] of Object.entries(currentValue)) {
+                if (accumulator.hasOwnProperty(key)) {
+                    accumulator[key].push(value);
                 } else {
-                    badgeList[key] = [value];
+                    accumulator[key] = [value];
                 }
             }
+            return accumulator;
         }
+        // get the promises that succeeded => get the values => combine them together
+        let badgeList = results.filter(item => item['status'] == 'fulfilled').map(item => item['value']).reduce(reducer, {});
 
+        if (badgeList == null || badgeList == undefined) badgeList = {};
         // if the user has any badges, put them on the account page
         if (badgeList.hasOwnProperty(user)) {
             $('#badges').empty();
@@ -399,7 +413,7 @@ const setUpLeaderboard = (user, gameJSON) => {
                 rank++;
             }
 
-            hideRows(leaderboard);
+            hideRows(leaderboard, user);
         });
     });
 }
@@ -564,18 +578,24 @@ const setup = () => {
             const rows = tbody.find('tr').not('.row-info');
             const rowsShown = tbody.find('tr').not('.row-info').not('.hidden').length;
 
+            console.log(rows.length, rowsShown);
             if (rowsShown > rows.length) {
                 return;
             }
-            for (let i = rowsShown; i < rowsShown + 5; i++) {
-                rows.eq(i).removeClass('hidden');
-            }
 
-            const firstHidden = rows.find('tr.hidden').eq(0);
             const showMore = tbody.find('.showmore-row');
             const ellipsis = tbody.find('.ellipsis-row');
             showMore.detach();
             ellipsis.detach();
+
+            const indexFirstHidden = tbody.find('tr.hidden').eq(0).index();
+            if (indexFirstHidden == -1) return;
+            for (let i = indexFirstHidden; i < rowsShown + 5; i++) {
+                rows.eq(i).removeClass('hidden');
+            }
+
+            const firstHidden = rows.find('tr.hidden').eq(0);
+
             if (firstHidden.length == 0) return;
             showMore.insertBefore(firstHidden);
             ellipsis.insertBefore(firstHidden);
