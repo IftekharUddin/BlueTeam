@@ -17,6 +17,20 @@ if (!Promise.allSettled) {
     }
 }
 
+// show a spinner whenever do AJAX request per https://stackoverflow.com/questions/68485/how-to-show-loading-spinner-in-jquery
+// spinner generated at https://loading.io
+jQuery.ajaxSetup({
+    beforeSend: () => {
+        $('#spinner').show();
+        $('body').css('opacity', '0.5');
+    },
+    complete: () => {
+        $('#spinner').hide();
+        $('body').css('opacity', '1.0');
+    },
+    success: () => { }
+})
+
 // number of units to scroll per click
 const scrollAmount = 50;
 // number of seconds before generating a new fun fact
@@ -108,7 +122,7 @@ const getAccountData = (user) => {
             'Password Platformer': { 'timesPlayed': 0 },
             'Message Board': { 'timesPlayed': 0 }
         }
-    })
+    });
 }
 
 const getOverallLeaderboard = () => {
@@ -462,7 +476,6 @@ const setup = () => {
             console.log('Error: ' + error);
         });
 
-
     $('.tab-info').hide();
     const currDiv = $('.tab.active').attr('data-info');
     $('#' + currDiv).show();
@@ -620,8 +633,6 @@ $(document).ready(function () {
         fetchMessages().then(() => {
             $('.correctButton').each((index, element) => {
                 $(element).on('click', () => {
-                    // hide button - is this necessary if it is redirected?
-                    $(element).hide();
                     correctButtonPress(user).then(() => {
                         window.location.href = '/goodMessage.html';
                     }).catch(() => {
