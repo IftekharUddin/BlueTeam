@@ -122,9 +122,8 @@ we'll talk about the code in chunks
 
 ## When adding a game
 
-1. Create a getGameLeaderboard file that should be almost identical to those existing
-    * I've thought about creating a generic getLeaderboard while sending a variable to specify the table but i haven't gotten that to work yet.
-2. Create an updateScore function that should be almost identical to the existing.
+1. Add a new line in the JS to map from the name of the game to the name of the table.
+2. Create an updateScore function/file that should be almost identical to the existing.
 3. UPDATE updateLeaderboard.php
     * add a variable in chunk 1 to hold that value
     * add a chunk after chunk 4 almost identical to it to get the score and check null
