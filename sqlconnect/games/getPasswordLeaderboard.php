@@ -14,7 +14,7 @@ if ($pdo == null) {
 
 // query for password platformer scores
 $stmt = $pdo->prepare(' SELECT Onyen, Score
-                        FROM PasswordPlatformerScores
+                        FROM dbo.PasswordPlatformerScores
                         ORDER BY Score DESC');
 $stmt->execute();
 
@@ -23,7 +23,7 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // send data to js
 header('Content-Type: json/application;');
-if (!$results == 0) {
+if (!$results) {
     // nicely handle empty result by giving back empty array 
     echo json_encode(array());
     exit(0);

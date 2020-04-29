@@ -11,9 +11,8 @@ if ($pdo == null) {
     exit('Connection error!');
 }
 
-// query to select top 10 
-$stmt = $pdo->prepare(' SELECT TOP 10 Onyen, Total 
-                        FROM Overall_Leaderboard
+$stmt = $pdo->prepare(' SELECT Onyen, Total 
+                        FROM dbo.Overall_Leaderboard
                         ORDER BY Total DESC;');
 $stmt->execute();
 
@@ -22,5 +21,10 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // send query data to js
 header('Content-Type: json/application;');
+if (!$results) {
+    echo json_encode(array());
+    exit(0);
+}
+
 echo json_encode($results);
 exit(0);

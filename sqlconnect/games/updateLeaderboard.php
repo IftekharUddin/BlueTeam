@@ -6,21 +6,21 @@ $stmt = $pdo->prepare('DECLARE @Mscore int,
                                 @Onyen varchar(50)
                         SET @Onyen = :onyen
 
-                        DELETE FROM Overall_Leaderboard
+                        DELETE FROM dbo.Overall_Leaderboard
                         WHERE Onyen = @Onyen
 
                         SELECT @Mscore = Score
-                        FROM MessageBoardScores
+                        FROM dbo.MessageBoardScores
                         WHERE Onyen = @Onyen
                         SELECT @Mscore = ISNULL(@Mscore, 0)
 
                         SELECT @PScore = Score
-                        FROM PasswordPlatformerScores
+                        FROM dbo.PasswordPlatformerScores
                         WHERE Onyen = @Onyen
                         SELECT @Pscore = ISNULL(@Pscore, 0)
 
                         SET @Total = @Mscore + @Pscore
-                        INSERT INTO Overall_Leaderboard (Onyen, Total)
+                        INSERT INTO dbo.Overall_Leaderboard (Onyen, Total)
                         VALUES (@Onyen, @Total)');
 $stmt->bindParam(':onyen', $onyen);
 $stmt->execute();
