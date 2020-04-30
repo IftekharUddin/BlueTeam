@@ -87,6 +87,16 @@ namespace Zxcvbn
                 // matches = matches.Union(matcher.MatchPassword(password));
             }
 
+            List<Match> matchList = matches.ToList();
+            matchList.Sort(delegate (Match m1, Match m2)
+            {
+                if (m1.i != m2.i)
+                {
+                    return m1.i - m2.i;
+                }
+                return m1.j - m2.j;
+            });
+
             var result = FindMinimumEntropyMatch(password, matches);
 
             timer.Stop();
@@ -137,7 +147,6 @@ namespace Zxcvbn
                     k = bestMatchForIndex[k].i; // Jump back to start of match
                 }
             }
-            matchSequence.Reverse();
 
             // The match sequence might have gaps, fill in with bruteforce matching
             // After this the matches in matchSequence must cover the whole string (i.e. match[k].j == match[k + 1].i - 1)

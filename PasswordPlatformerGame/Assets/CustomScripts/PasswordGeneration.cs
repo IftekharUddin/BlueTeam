@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Zxcvbn;
 using System.Text;
 using System;
-using System.Diagnostics;
+// using System.Diagnostics;
 using System.Linq;
 
 /// <summary> 
@@ -24,7 +24,7 @@ public class PasswordGeneration : MonoBehaviour
     private List<string> mediumGoodPasswords = new List<string>();
     private List<string> hardBadPasswords = new List<string>();
     private List<string> hardGoodPasswords = new List<string>();
-    private Zxcvbn.Zxcvbn passwordChecker = new Zxcvbn.Zxcvbn();
+    private Zxcvbn.Zxcvbn passwordChecker;
 
     /// <value> The singleton instance of this class which can be accessed by whoever wants to generate passwords. </value>
     public static PasswordGeneration Instance
@@ -52,6 +52,8 @@ public class PasswordGeneration : MonoBehaviour
         this.readTextAssetIntoList(this.mediumGoodPasswordsText, this.mediumGoodPasswords);
         this.readTextAssetIntoList(this.hardBadPasswordsText, this.hardBadPasswords);
         this.readTextAssetIntoList(this.hardGoodPasswordsText, this.hardGoodPasswords);
+
+        this.passwordChecker = new Zxcvbn.Zxcvbn();
     }
 
     private void readTextAssetIntoList(TextAsset asset, List<string> list)
@@ -94,7 +96,7 @@ public class PasswordGeneration : MonoBehaviour
 
     public string EvaluatePassword(string password)
     {
-        var result = this.passwordChecker.EvaluatePassword(password);
+        Zxcvbn.Result result = this.passwordChecker.EvaluatePassword(password);
         return $"{result.CrackTimeDisplay}!";
     }
 

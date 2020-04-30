@@ -1,3 +1,4 @@
+
 <?php
 require('../vendor/autoload.php');
 
@@ -6,22 +7,25 @@ use Games\SQLConnect;
 
 $pdo = (new SQLConnect())->connect();
 
-// if connection fails 
+// if connection fails
 if ($pdo == null) {
     exit('Connection error!');
 }
 
-$stmt = $pdo->prepare(' SELECT Onyen, Total 
-                        FROM dbo.Overall_Leaderboard
-                        ORDER BY Total DESC;');
+$table = $_POST['table'];
+$scoreColumn = (array_key_exists('total', $_POST)) ? 'Total' : 'Score';
+
+$query = "SELECT Onyen, " . $scoreColumn . " FROM dbo." . $table .  " ORDER BY " . $scoreColumn . " DESC;";
+$stmt = $pdo->prepare($query);
 $stmt->execute();
 
 // get query data
 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// send query data to js
+// send data to js
 header('Content-Type: json/application;');
 if (!$results) {
+    // nicely handle empty result by giving back empty array 
     echo json_encode(array());
     exit(0);
 }

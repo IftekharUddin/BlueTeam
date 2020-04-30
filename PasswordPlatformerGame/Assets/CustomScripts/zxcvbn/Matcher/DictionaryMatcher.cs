@@ -27,7 +27,7 @@ namespace Zxcvbn.Matcher
         private const string DictionaryPattern = "dictionary";
 
         private readonly string _dictionaryName;
-        private readonly Lazy<Dictionary<string, int>> _rankedDictionary;
+        private readonly Dictionary<string, int> _rankedDictionary;
 
         /// <summary>
         /// Creates a new dictionary matcher. <paramref name="wordListPath"/> must be the path (relative or absolute) to a file containing one word per line,
@@ -38,7 +38,7 @@ namespace Zxcvbn.Matcher
         public DictionaryMatcher(string name, string wordListPath)
         {
             _dictionaryName = name;
-            _rankedDictionary = new Lazy<Dictionary<string, int>>(() => BuildRankedDictionary(wordListPath));
+            _rankedDictionary = BuildRankedDictionary(wordListPath);
         }
 
         /// <summary>
@@ -50,17 +50,18 @@ namespace Zxcvbn.Matcher
             _dictionaryName = name;
 
             // Must ensure that the dictionary is using lowercase words only
-            _rankedDictionary = new Lazy<Dictionary<string, int>>(() => BuildRankedDictionary(wordList.Select(w => w.ToLower())));
+            _rankedDictionary = BuildRankedDictionary(wordList.Select(w => w.ToLower()));
         }
 
         private IEnumerable<DictionaryMatch> query(string password)
         {
-            foreach (int i in Enumerable.Range(0, password.Length))
+            int len = password.Length;
+            foreach (int i in EnumerableUtility.Range(0, len))
             {
-                foreach (int j in Enumerable.Range(i, password.Length - i))
+                foreach (int j in EnumerableUtility.Range(i, len))
                 {
                     string psub = password.ToLower().Substring(i, j - i + 1);
-                    if (_rankedDictionary.Value.ContainsKey(psub))
+                    if (_rankedDictionary.ContainsKey(psub))
                     {
                         yield return new DictionaryMatch
                         {
@@ -69,13 +70,29 @@ namespace Zxcvbn.Matcher
                             j = j,
                             Token = password.Substring(i, j - i + 1), // could have diff case so pull from password
                             MatchedWord = psub,
-                            Rank = _rankedDictionary.Value[psub],
+                            Rank = _rankedDictionary[psub],
                             DictionaryName = _dictionaryName,
-                            Cardinality = _rankedDictionary.Value.Count
+                            Cardinality = _rankedDictionary.Count
                         };
                     }
                 }
             }
+        }
+
+        private IEnumerable<DictionaryMatch> reverseMatch(string password)
+        {
+            string reversedPassword = Utility.StringReverse(password.ToLower());
+            List<DictionaryMatch> matches = query(reversedPassword).ToList();
+            foreach (Match m in matches)
+            {
+                m.Token = Utility.StringReverse(m.Token);
+
+                int i = m.i;
+                int j = m.j;
+                m.i = password.Length - 1 - j;
+                m.j = password.Length - 1 - i;
+            }
+            return matches;
         }
 
         /// <inheritdoc />
@@ -89,7 +106,8 @@ namespace Zxcvbn.Matcher
         {
             var passwordLower = password.ToLower();
 
-            var matches = this.query(password).ToList();
+            List<DictionaryMatch> matches = this.query(password).ToList();
+            matches = matches.Concat(this.reverseMatch(password)).ToList();
 
             foreach (var match in matches) CalculateEntropyForMatch(match);
 
@@ -98,10 +116,8 @@ namespace Zxcvbn.Matcher
 
         private static Dictionary<string, int> BuildRankedDictionary(string wordListFile)
         {
-            // Look first to wordlists embedded in assembly (i.e. default dictionaries) otherwise treat as file path
-
             string baseFile = wordListFile.Split('.')[0];
-		
+
             var lines = Resources.Load<TextAsset>(baseFile).text.Split('\n');
 
             return BuildRankedDictionary(lines);
