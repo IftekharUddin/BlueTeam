@@ -57,6 +57,21 @@ namespace Zxcvbn
             return Math.Log(Enumerable.Range(0, Math.Min(uppers, lowers) + 1).Sum(i => Binomial(uppers + lowers, i)), 2);
         }
 
+        public static double GuessesToCrackTime(double guesses)
+        {
+            return guesses / Math.Pow(10, 4);
+        }
+
+        public static int GuessesToScore(double guesses)
+        {
+            double DELTA = 5;
+            if (guesses < Math.Pow(10, 3) + DELTA) return 0;
+            if (guesses < Math.Pow(10, 6) + DELTA) return 1;
+            if (guesses < Math.Pow(10, 8) + DELTA) return 2;
+            if (guesses < Math.Pow(10, 10) + DELTA) return 3;
+            return 4;
+        }
+
         /// <summary>
         /// Return a score for password strength from the crack time. Scores are 0..4, 0 being minimum and 4 maximum strength.
         /// </summary>

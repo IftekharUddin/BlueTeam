@@ -72,7 +72,8 @@ namespace Zxcvbn.Matcher
                             MatchedWord = psub,
                             Rank = _rankedDictionary[psub],
                             DictionaryName = _dictionaryName,
-                            Cardinality = _rankedDictionary.Count
+                            Cardinality = _rankedDictionary.Count,
+                            Reversed = false
                         };
                     }
                 }
@@ -83,7 +84,7 @@ namespace Zxcvbn.Matcher
         {
             string reversedPassword = Utility.StringReverse(password.ToLower());
             List<DictionaryMatch> matches = query(reversedPassword).ToList();
-            foreach (Match m in matches)
+            foreach (DictionaryMatch m in matches)
             {
                 m.Token = Utility.StringReverse(m.Token);
 
@@ -91,6 +92,7 @@ namespace Zxcvbn.Matcher
                 int j = m.j;
                 m.i = password.Length - 1 - j;
                 m.j = password.Length - 1 - i;
+                m.Reversed = true;
             }
             return matches;
         }

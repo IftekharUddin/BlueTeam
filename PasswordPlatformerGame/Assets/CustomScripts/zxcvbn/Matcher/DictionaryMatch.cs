@@ -30,5 +30,7 @@
         /// Additional entropy for this match from the use of mixed case
         /// </summary>
         public double UppercaseEntropy { get; set; }
+
+        public bool Reversed { get; set; }
     }
 }
