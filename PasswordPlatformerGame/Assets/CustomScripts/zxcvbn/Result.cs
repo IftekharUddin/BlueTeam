@@ -44,5 +44,9 @@ namespace Zxcvbn
         /// Useful for implementing a strength meter
         /// </summary>
         public int Score { get; set; }
+
+        public double Guesses { get; set; }
+
+        public double GuessesLog10 { get; set; }
     }
 }

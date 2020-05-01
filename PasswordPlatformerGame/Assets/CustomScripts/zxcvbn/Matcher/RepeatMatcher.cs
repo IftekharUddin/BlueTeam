@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace Zxcvbn.Matcher
 {
@@ -13,6 +15,12 @@ namespace Zxcvbn.Matcher
         /// The character that was repeated
         /// </summary>
         public char RepeatChar { get; set; }
+
+        public double BaseGuesses { get; set; }
+
+        public IList<Match> BaseMatches { get; set; }
+
+        public int RepeatCount { get; set; }
     }
 
     /// <inheritdoc />
@@ -33,15 +41,24 @@ namespace Zxcvbn.Matcher
         public IEnumerable<Match> MatchPassword(string password)
         {
             // Be sure to not count groups of one or two characters
-            return password.GroupAdjacent(c => c).Where(g => g.Count() > 2).Select(g => new RepeatMatch
+            foreach (var g in password.GroupAdjacent(c => c).Where(g => g.Count() > 2))
             {
-                Pattern = RepeatPattern,
-                Token = password.Substring(g.StartIndex, g.EndIndex - g.StartIndex + 1),
-                i = g.StartIndex,
-                j = g.EndIndex,
-                Entropy = CalculateEntropy(password.Substring(g.StartIndex, g.EndIndex - g.StartIndex + 1)),
-                RepeatChar = g.Key
-            });
+                string token = password.Substring(g.StartIndex, g.EndIndex - g.StartIndex + 1);
+                // Result res = Zxcvbn.MostGuessableMatchSequence(token, Zxcvbn.Omnimatch(token));
+                yield return new RepeatMatch
+                {
+                    Pattern = RepeatPattern,
+                    Token = token,
+                    i = g.StartIndex,
+                    j = g.EndIndex,
+                    Entropy = CalculateEntropy(password.Substring(g.StartIndex, g.EndIndex - g.StartIndex + 1)),
+                    RepeatChar = g.Key,
+                    BaseGuesses = 1,
+                    BaseMatches = null,
+                    RepeatCount = token.Length
+                };
+            }
+
         }
 
         private static double CalculateEntropy(string match)

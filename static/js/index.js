@@ -128,7 +128,8 @@ const getOverallLeaderboard = () => {
     // get the leaderboard data
     // if fails, sets up an example leaderboard
     return $.ajax('/sqlconnect/games/getLeaderboard.php', {
-        type: 'POST'
+        type: 'POST',
+        data: { 'table': 'Overall_Leaderboard', 'total': true }
     }).then(response => {
         return response;
     }).catch(err => {
@@ -152,7 +153,7 @@ const getIndividualLeaderboard = (nameBoard) => {
         return Promise.resolve([]);
     }
 
-    return $.ajax('/sqlconnect/games/getIndividualLeaderboard.php', {
+    return $.ajax('/sqlconnect/games/getLeaderboard.php', {
         type: 'POST',
         data: { 'table': tableMap[nameBoard] }
     }).then(response => {
@@ -359,8 +360,10 @@ const setUpLeaderboard = (user, gameJSON) => {
         games[game['name']] = game;
     }
 
-    // change here when we have more individual leaderboards to manage
-    const individualLeaderboards = ['Password Platformer', 'Message Board'];
+    // get all the games which are not disabled + the Message Board => if you aren't getting the right 
+    // values here, you should change the map in getIndividualLeaderboard
+    const potentialGames = Object.keys(games);
+    const individualLeaderboards = potentialGames.filter(item => !games[item]['disabled']).concat('Message Board');
     const leaderboardPromises = individualLeaderboards.map(item => setUpIndividualLeaderboard(item, user));
 
     return Promise.allSettled(leaderboardPromises).then((results) => {

@@ -43,5 +43,9 @@
         /// The portion of the password that was matched
         /// </summary>
         public string Token { get; set; }
+
+        public double? Guesses { get; set; }
+
+        public double GuessesLog10 { get; set; }
     }
 }

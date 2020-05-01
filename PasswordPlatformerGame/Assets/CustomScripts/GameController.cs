@@ -196,8 +196,9 @@ public class GameController : MonoBehaviour
 
         Rigidbody2D rb = multiplierGameObject.AddComponent(typeof(Rigidbody2D)) as Rigidbody2D;
         // fall slowly!
-        rb.mass = 0.001f;
-        rb.gravityScale = 0.5f;
+        rb.mass = 0.01f;
+        rb.gravityScale = 0.8f;
+        rb.AddForce(new Vector3(3.5f, 5f, 0));
 
         multiplierGameObject.AddComponent(typeof(Feedback));
     }
@@ -212,7 +213,7 @@ public class GameController : MonoBehaviour
         meshR.material = MaterialController.Instance.textMaterial;
 
         TextMesh textM = addGameObject.AddComponent(typeof(TextMesh)) as TextMesh;
-        textM.text = (good) ? $"+{plus}" : $"-{plus}";
+        textM.text = (good) ? $"+{plus}" : $"{plus}";
         textM.color = (good) ? new Color(77f / 255f, 172f / 255f, 38f / 255f) : new Color(208f / 255f, 28f / 255f, 139f / 255f);
         textM.characterSize = 0.5f;
         textM.font = MaterialController.Instance.textFont;
@@ -225,6 +226,12 @@ public class GameController : MonoBehaviour
         Rigidbody2D rb = addGameObject.AddComponent(typeof(Rigidbody2D)) as Rigidbody2D;
         rb.mass = 0.01f;
         rb.gravityScale = 1.5f;
+
+        float randXForce = UnityEngine.Random.Range(5f, 7.5f);
+        float randYForce = UnityEngine.Random.Range(5f, 7.5f);
+
+        rb.AddForce(new Vector3(randXForce, randYForce, 0));
+        rb.AddTorque(UnityEngine.Random.Range(-1f, 1f));
 
         addGameObject.AddComponent(typeof(Feedback));
     }
