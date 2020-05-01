@@ -62,12 +62,14 @@ const fetchMessages = () => {
 }
 
 //THE FOLLOWIWNG TWO FUNCTIONS are exported so that the main js page, index.js call listen for the button presses that will call these functions - this will be sent to /sqlconnect/games/updateMessagesScore.php - this will update the db
+
+// number of points below can easily be changed!
 export const correctButtonPress = (user) => {
     return $.ajax('/sqlconnect/games/updateMessagesScore.php', {
         type: 'POST',
         data: {
             'onyen': user,
-            'data': 100
+            'data': 500
         }
     });
 }
@@ -77,7 +79,7 @@ export const incorrectButtonPress = (user) => {
         type: 'POST',
         data: {
             'onyen': user,
-            'data': -100
+            'data': -500
         }
     });
 }
